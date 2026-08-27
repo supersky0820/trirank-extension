@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="tokens.css" />
+    <link rel="stylesheet" href="sidepanel.css" />
+    <title>TriRank</title>
+  </head>
+  <body>
+    <!-- The theme control is appended here by initTheme in sidepanel.js, so
+         this element holds three things and only two of them are written down.
+
+         🔴 WS-EXT-1.3.0 C — WHY THERE IS NO REFRESH BUTTON HERE. It was asked
+         for and the answer is no, so the reasoning is left where the next
+         person will look for the button:
+
+         1. Every open already IS a refresh. `load()` runs on every panel
+            document load, and since WS-EXT-CACHE-BYPASS both of its backend
+            reads pass `cache: 'no-store'` — the exact bug that made reopening
+            useless is the bug that commit fixed. A button that re-reads would
+            re-read what was read seconds ago.
+         2. The one moment it would earn its place is unreachable. That moment
+            is "the audit I just started has finished, show me the new numbers"
+            — and starting it means opening trirankai.com in a new tab, which
+            activates a different tab, which closes this panel
+            (chrome.tabs.onActivated in sidepanel.js). Coming back opens a new
+            panel document, which runs `load()` again. The refresh already
+            happened, by a route the user cannot avoid taking.
+         3. The third block refreshes itself already and separately. Site
+            basics is read from the page, not from us, and `scanButton` sits on
+            each of those screens — scoped to the one block whose data can
+            actually change under an open panel.
+
+         ⚠️ One thing this is NOT: a spend risk. Both endpoints the panel reads
+         are cache-only by construction — a miss is a state, never a probe (see
+         getSignals in background.js) — so no button here could have triggered a
+         paid fetch even if we had built one. The button was dropped for having
+         nothing to do, not for being dangerous. -->
+    <header class="head">
+      <span class="mark">TriRank</span>
+      <span class="host" id="host">—</span>
+    </header>
+
+    <div class="shell">
+      <!-- Four groups of dimensions, built by sidepanel.js from GROUPS there.
+           This said "18 dimensions" until WS-EXT-PAGESPEED-BLOCK added a
+           nineteenth; the number is gone rather than bumped, for the reason
+           written above GROUPS. AI visibility is the DEFAULT screen: this
+           product's claim is AI visibility, so it is what the panel opens on.
+           Summary sits above it in the rail without taking that place. -->
+      <nav class="rail" id="rail" aria-label="Dimensions"></nav>
+      <main class="content" id="content" tabindex="-1"></main>
+    </div>
+
+    <script type="module" src="sidepanel.js"></script>
+  </body>
+</html>

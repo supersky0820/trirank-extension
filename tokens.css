@@ -1,0 +1,363 @@
+/**
+ * WS-CHROME-EXT-UI — TriRank design tokens, synced into the extension.
+ *
+ * 🔴 Every value below is copied VERBATIM from src/styles/design-tokens.css
+ * (colours + radii + shadows + type scale + tracking + spacing) and from
+ * src/assets/fonts/index.ts (the font fallback stacks). The extension ships as
+ * plain static files with no bundler, so it cannot import the app's CSS — a
+ * synced copy is the only option. Two rules keep that copy honest:
+ *
+ *   1. Dark values stay as OKLCH STRINGS, exactly as the source writes them.
+ *      Chrome supports oklch() natively (and the popup only ever runs in
+ *      Chrome), so there is nothing to convert — which means both files can be
+ *      compared literally, value by value, instead of by eye.
+ *   2. Nothing is invented here. A colour the app does not define does not
+ *      belong in this file.
+ *
+ * Drift check: see "Styling" in extension/README.md for a paste-and-run script
+ * (54 values, no build step). 🔴 It deliberately lives there and not here — the
+ * script's own source contains the two-character CSS comment terminator, which
+ * would close this comment early and turn the rest of the header into invalid
+ * CSS. Browsers recover from that silently, so it would not have been caught by
+ * looking at the popup.
+ *
+ * 🔴 The app switches themes with a `.dark` CLASS (next-themes). The panel does
+ * it with `data-theme` on <html> and the palette applied as inline custom
+ * properties, and until the user picks a side it follows the OS via
+ * prefers-color-scheme — which is the whole of what this file used to say,
+ * before WS-EXT-THEME gave the panel a control. Both are MECHANISM differences
+ * only; the values on both sides stay identical.
+ */
+
+:root {
+  --brand-500: #3568f4;
+  --brand-700: #1e48c8;
+  --brand-900: #14296e;
+
+  --accent-300: #6ee7b7;
+  --accent-500: #10b981;
+  --accent-700: #047857;
+
+  --ink-300: #94a3b8;
+  --ink-500: #475569;
+  --ink-700: #334155;
+  --ink-900: #0f172a;
+
+  --surface-base: #ffffff;
+  --surface-muted: #f6f8fc;
+  --surface-subtle: #eef2f9;
+
+  --border-subtle: #e3e9f4;
+  --border-strong: #cbd6e8;
+
+  --badge-cited-bg: #e7fbf3;
+  --badge-cited-border: #bbf0d9;
+  --feedback-danger: #dc2626;
+  --feedback-warning: #d97706;
+
+  --tr-radius-sm: 4px;
+  --tr-radius-md: 8px;
+  --tr-radius-lg: 12px;
+  --tr-radius-pill: 999px;
+
+  --tr-shadow-sm:
+    0 1px 2px rgba(20, 41, 110, 0.06), 0 1px 3px rgba(20, 41, 110, 0.08);
+
+  --tr-text-xs: 0.75rem;
+  --tr-text-sm: 0.875rem;
+  --tr-text-base: 1rem;
+
+  --tr-tracking-tight: -0.02em;
+  --tr-tracking-wide: 0.04em;
+  --tr-tracking-caps: 0.08em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+
+  /* Fallback stacks verbatim from src/assets/fonts/index.ts. The webfonts
+     themselves are next/font build artefacts under .next (gitignored, hashed
+     filenames), so they are deliberately NOT vendored — same call the badge
+     SVG makes. */
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-data: "SF Mono", ui-monospace, Menlo, monospace;
+  --font-display: Georgia, "Times New Roman", serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --brand-500: oklch(0.685 0.168 265);
+    --brand-700: oklch(0.76 0.15 265);
+    --brand-900: oklch(0.585 0.195 265);
+
+    --accent-300: oklch(0.865 0.135 166);
+    --accent-500: oklch(0.745 0.155 163);
+    --accent-700: oklch(0.82 0.15 163);
+
+    --ink-300: oklch(0.56 0.016 264);
+    --ink-500: oklch(0.69 0.014 264);
+    --ink-700: oklch(0.875 0.01 264);
+    --ink-900: oklch(0.97 0.006 264);
+
+    --surface-base: oklch(0.205 0.014 264);
+    --surface-muted: oklch(0.168 0.011 264);
+    --surface-subtle: oklch(0.258 0.016 264);
+
+    --border-subtle: oklch(0.292 0.016 264);
+    --border-strong: oklch(0.372 0.02 264);
+
+    --feedback-danger: oklch(0.64 0.19 25);
+
+    --badge-cited-bg: color-mix(
+      in oklch,
+      var(--accent-500) 16%,
+      var(--surface-base)
+    );
+    --badge-cited-border: color-mix(
+      in oklch,
+      var(--accent-500) 34%,
+      var(--surface-base)
+    );
+  }
+}
+
+/* ==========================================================================
+   SIDE-PANEL LAYER — extension-only. The app has no counterpart for anything
+   below, which is why it lives AFTER the two synced blocks above instead of
+   inside them: README's drift check cuts the light block at the first `@media`
+   and the dark block at its first `}`, so the 53 synced values stay exactly 53
+   and keep comparing byte-for-byte against src/styles/design-tokens.css.
+   🔴 Nothing above this line may be edited to accommodate anything below it.
+
+   The design export (design-refs/) styles everything through a `--sp-*` alias
+   layer and never touches a base token directly (verified: zero `var(--ink-*)`
+   / `var(--surface-*)` / `var(--border-*)` in its sidepanel.css). That is what
+   makes this file the only place a theme decision has to be made — the aliases
+   are re-pointed at OUR tokens here, and the design's own 21-line dark block is
+   not needed at all: base tokens already flip in the @media above, so every
+   alias defined as var(--token) flips with them (PM ruling: the extension keeps
+   the app's OKLCH dark set; the export's hand-picked dark hexes would have been
+   a third palette — measured, all 12 roles differed, --sp-action by 1.41x).
+   ========================================================================== */
+:root {
+  /* --- surfaces / lines / text -------------------------------------------- */
+  --sp-bg: var(--surface-muted);
+  --sp-surf: var(--surface-base);
+  --sp-sunken: var(--surface-subtle);
+  --sp-border: var(--border-subtle);
+  --sp-border-strong: var(--border-strong);
+  --sp-head: var(--ink-900);
+  --sp-body: var(--ink-700);
+  --sp-muted: var(--ink-500);
+
+  /* 🔴 The third text tier is the ONE alias that cannot point at the token the
+     export used. `--ink-300` measures 2.56:1 on white and 2.28:1 on the sunken
+     card — and it carries both the "Source: … " provenance lines and the 24px
+     em-dash that marks "not measured yet", the symbol whose whole job is to be
+     distinguishable from a real 0. PM ruling: raise the colour, do not enlarge
+     the type and do not repurpose the tier. (🔴 The parenthetical that used to
+     sit here — "9px/9.5px are already at the floor" — was true of the scale as
+     it then stood and is not true of the scale below: WS-EXT-UI ④ raised those
+     two steps to 12px on legibility grounds. What survives is the RULING, which
+     was about where to reach first: contrast is fixed with colour. The value
+     below is unchanged by ④ and did not need to change — it was derived against
+     the 4.5:1 normal-text threshold, so larger type only clears it by more.)
+     The value is the app's own ink ramp continued — an OKLab interpolation
+     between --ink-300 and --ink-500, taken to the first point that clears 4.5:1
+     against the WORST background it is used on (--surface-subtle), then given
+     margin so antialiasing can never dip under. It is not a new hue, and it is
+     not copied from the export either (whose #94A3B8 light / #6B7A91 dark both
+     fail) — but it IS a stop the app does not define, so it is the one value in
+     this file that the drift script cannot check against the app. Measured, not
+     eyeballed: 16 failing light elements and 15 failing dark ones go to 0. */
+  --sp-faint: #5b6b84; /* 5.41 white / 5.09 muted / 4.82 subtle */
+
+  /* --- brand / state ------------------------------------------------------ */
+  --sp-link: var(--brand-700);
+  --sp-action: var(--brand-900);
+  --sp-action-hover: var(--brand-700);
+  --sp-ok: var(--accent-500);
+  --sp-ok-fg: var(--accent-700);
+  /* the export's #E7FBF3 is this token's value verbatim */
+  --sp-ok-bg: var(--badge-cited-bg);
+  --sp-metric: var(--accent-500);
+
+  /* 🔴 The rail's status dot is the ONLY carrier of each row's state — the
+     label beside it says what the row is, not how it is doing — so it is a
+     graphical object and answers to 3:1, not 4.5:1. --accent-500 on the panel
+     surface measures 2.54 in light (dark is fine at 8.46). PM ruling: do not
+     touch --accent-500, it is the app's green; derive a dot-only step here,
+     same手法 as --sp-action. Mixing toward black in OKLCH holds the hue at
+     162.5° exactly, so this stays the same green as --sp-ok-fg (165.6°) rather
+     than becoming a second one — it just sits between accent-500 (L .696) and
+     accent-700 (L .508). Dots use this; everything else keeps --sp-ok. */
+  --sp-ok-dot: color-mix(in oklch, var(--accent-500) 90%, black);
+
+  /* 🔴 The action label is the one colour in this file that must NOT follow the
+     theme. --sp-action is a brand blue in both themes, so its label is white in
+     both; pointing it at --surface-base (the reflex) would flip it to near-black
+     on #3D6BE1 in dark, which measures 4.11 and undoes exactly what the 96%
+     derivation was computed for. Fixed white keeps 13.36 light / 4.78 dark.
+     It is a literal on purpose, and this comment is why. */
+  --sp-action-fg: #ffffff;
+  --focus-ring: color-mix(in srgb, var(--brand-500) 35%, transparent);
+
+  /* 🟡 PENDING PM — the app defines no counterpart for these five, so they are
+     the export's values for now, adopted only because they MEASURE clean
+     (warn-fg on warn-bg = 6.19 light / 8.64 dark, versus the app's lone
+     --feedback-warning #D97706 at 3.19 as text on white, which is the failure
+     red line 3 already caught once). Kept together so one ruling flips them all:
+     adopt as extension-only, or add the counterpart to the app first. */
+  --sp-brand-bg: #eaf0fe;
+  --sp-warn: #c2721c;
+  --sp-warn-fg: #8a4b0a;
+  --sp-warn-bg: #fdf3e5;
+  --sp-warn-border: #ebd3ae;
+
+  /* 🟡 PENDING PM — same status: the app's --tr-shadow-sm second layer is
+     `0 1px 3px …/.08`, the export's is `0 4px 12px …/.06`. Different intent
+     (hairline lift vs floating card), not a drift. */
+  --sp-shadow:
+    0 1px 2px rgba(20, 41, 110, 0.06), 0 4px 12px rgba(20, 41, 110, 0.06);
+
+  /* --- type + spacing steps the panel actually uses ------------------------
+     🔴 SUPERSEDED, WS-EXT-UI ④. The previous ruling and this one are about two
+     different questions, and the old note read as if it settled both:
+
+       THEN — "the density is a requirement of the 16-column form; every step
+       was measured off the export's rendered DOM; 9px and 9.5px are the floor,
+       nothing may be SHRUNK to buy space." That was written while fixing
+       CONTRAST, and its point was that raising the colour was the lever to
+       reach for instead of the type. It never asked whether the scale was
+       legible in the first place — it only forbade making it smaller.
+
+       NOW — PM, side by side with the competitor: the panel reads a full step
+       small. The floors are absolute legibility, not the export's rendered
+       DOM: body >= 13px, anything auxiliary >= 12px. The provenance lines are
+       the reason it matters rather than a nicety — "every number carries where
+       it came from and when" is a red line, and a source line nobody can read
+       satisfies it on paper only. Those lines were the two smallest steps in
+       the panel.
+
+     The two do not actually conflict: enlarging cannot cost contrast (see
+     --sp-faint above — it was derived against the 4.5:1 NORMAL-text threshold,
+     which is the stricter one; only shrinking past 24px/18.66px-bold could
+     lose an exemption, and nothing here shrinks). Re-measured after the change:
+     1617 text elements, both themes, zero below threshold.
+
+     Steps that no longer had a caller were removed rather than left as a
+     tempting smaller option. */
+  --sp-text-12: 12px;
+  --sp-text-12-5: 12.5px;
+  --sp-text-13: 13px;
+  --sp-text-14: 14px;
+  --sp-text-15: 15px;
+  --sp-text-18: 18px;
+  --sp-text-26: 26px;
+  --sp-text-46: 46px;
+
+  --sp-lh-tight: 0.9;
+  --sp-lh-snug: 1.25;
+  --sp-lh-normal: 1.5;
+  --sp-lh-relaxed: 1.6;
+
+  --sp-space-1: 1px;
+  --sp-space-2: 2px;
+  --sp-space-4: 4px;
+  --sp-space-6: 6px;
+  --sp-space-7: 7px;
+  --sp-space-8: 8px;
+  --sp-space-9: 9px;
+  --sp-space-10: 10px;
+  --sp-space-12: 12px;
+  --sp-space-14: 14px;
+
+  /* The export names these three; they are the synced values under new names,
+     so they alias rather than redeclare. */
+  --radius-md: var(--tr-radius-md);
+  --radius-lg: var(--tr-radius-lg);
+  --radius-pill: var(--tr-radius-pill);
+  --tracking-caps: var(--tr-tracking-caps);
+  --font-mono: var(--font-data);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Only the aliases that are NOT plain var() references need a dark value:
+       everything else follows the base tokens that already flipped above.
+       --sp-faint is the ink ramp continued on the dark side (same 0.016 chroma
+       / 264 hue as --ink-300), taken past 4.5:1 against --surface-subtle. */
+    /* 5.23 on base / 5.59 on muted / 4.54 on subtle */
+    --sp-faint: oklch(0.635 0.016 264);
+
+    /* Dark needs no dot step: --accent-500 already reads 8.46 on the panel
+       surface here. Pointing straight back at the token keeps the dark dot and
+       every other accent surface literally the same colour. */
+    --sp-ok-dot: var(--accent-500);
+
+    /* 🔴 The primary button's label is white on --sp-action, and in dark
+       --brand-900 resolves to #4171ED, whose relative luminance (0.1905) puts
+       white at 4.37:1 — under the line. That colour is a dead zone: the best
+       any existing token can do is 4.37 going lighter (white IS the ceiling)
+       and 4.39 going darker (--surface-muted), so "keep the token, change the
+       label" has no solution — measured, every candidate, both directions.
+       PM ruling: darken the BUTTON by the derivation the app already uses in
+       this very block (--badge-cited-bg is color-mix(in oklch, …)), so the
+       value still comes from the token, still recomputes if the token moves,
+       and no third palette is introduced. 96% is the stop that clears the line
+       (4.80) while staying closest to brand-900 — a dark primary CTA needs its
+       visual weight, so the margin is "past the line", not "as high as
+       possible" (90% would give 5.55 and a visibly duller button). */
+    --sp-action: color-mix(in oklch, var(--brand-900) 96%, black);
+
+    /* Hover has to go DARKER than the base, which is the opposite of the light
+       theme and of the export (both brighten to --brand-700). There is no
+       choice in it: the base already sits at 96%, and 100% — brand-900 itself —
+       is the 4.37 we just walked away from, so every step toward brighter is
+       out of compliance before it starts. The export's dark hover, --brand-700
+       at #82AEFF, puts the white label at 2.22. 88% reads 5.83, and "presses
+       down" is the ordinary dark-UI gesture anyway. */
+    --sp-action-hover: color-mix(in oklch, var(--brand-900) 88%, black);
+
+    /* 🟡 PENDING PM, as above — the export's dark warn set, which measures
+       clean; the app has no dark --feedback-warning at all (it keeps #D97706). */
+    --sp-brand-bg: #16224a;
+    --sp-warn: #d9913f;
+    --sp-warn-fg: #e8b678;
+    --sp-warn-bg: #2b2013;
+    --sp-warn-border: #4a3820;
+    --sp-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ==========================================================================
+   EXPLICIT THEME — WS-EXT-THEME. Three rules, and they are the WHOLE of the
+   CSS side of the theme control.
+
+   🔴 The palette is not restated here, and must not be. The dark values live in
+   the two @media blocks above and are read back out of them at runtime (see
+   "WS-EXT-THEME" in extension/sidepanel.js). A [data-theme='dark'] block
+   holding a copy would sit AFTER the first `@media`, which is exactly where the
+   drift check in extension/README.md stops cutting — 28 app-owned colours would
+   land in this file with nothing left to notice the app had moved them.
+
+   `color-scheme` is declared here and nowhere else; before this section the
+   property was never set at all, so Chrome drew the scrollbar, the caret, the
+   selection highlight and the search field's clear button in their light forms
+   even with the dark palette above in force. Unset is `light dark` rather than
+   absent on purpose: it is the state that still follows the OS, and the
+   two-value form is how that is spelled.
+   ========================================================================== */
+:root {
+  color-scheme: light dark;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}

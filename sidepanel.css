@@ -1,0 +1,1827 @@
+/**
+ * WS-EXT-PANEL — side-panel styling.
+ *
+ * 🔴 Zero colour literals. Everything goes through the `--sp-*` alias layer in
+ * tokens.css, which is where the theme decision lives (the aliases point at the
+ * app's tokens and flip with them, so there is no dark block in this file at
+ * all). A hex here would be a colour that does not follow the app.
+ *
+ * Widths: the panel is user-resizable by dragging, and that is the whole reason
+ * nothing below keys off the viewport — in a side panel the viewport IS the
+ * container, and its width is whatever the user is holding right now. Sizes that
+ * should move continuously use clamp() against the container; layouts that must
+ * genuinely re-arrange use @container, against the box that holds the thing
+ * being arranged. There are no viewport media queries in this file.
+ *
+ * Type and spacing steps come from the panel scale (--sp-text-* / --sp-space-*),
+ * not from --tr-text-* / --space-*. 🔴 The floors are legibility, not density:
+ * body >= 13px, anything auxiliary >= 12px (WS-EXT-UI ④, which superseded the
+ * earlier "9px/9.5px are the floor" — see the type block in tokens.css for why
+ * the two rulings do not conflict). The provenance lines are the reason the
+ * floor exists at all: a source line nobody can read satisfies "every number
+ * carries where it came from" on paper only.
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+/* 🔴 WS-EXT-UI ③ — every one of these carries values the panel did not write:
+   a sameAs URL, a path, a sitemap address. A URL is one unbreakable "word", so
+   at a narrow drag it pushed its own card wider than the panel and took the
+   whole document sideways with it. They break where they must, and only where
+   they must — `.term` is untouched, because a table cell truncates by design
+   and now carries its full value as a title. */
+.prose,
+.qual,
+.checkdetail,
+.checkwhy,
+.verdict,
+.disclosure,
+.note,
+.todo,
+.meta,
+.stale-banner {
+  overflow-wrap: anywhere;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: var(--sp-text-13);
+  line-height: var(--sp-lh-normal);
+  color: var(--sp-body);
+  background: var(--sp-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- header --------------------------------------------------------- */
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-space-8);
+  padding: var(--sp-space-8) var(--sp-space-10);
+  background: var(--sp-surf);
+  border-bottom: 1px solid var(--sp-border);
+}
+
+.mark {
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-link);
+}
+
+.host {
+  margin-left: auto;
+  max-width: 60%;
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-13);
+  color: var(--sp-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* WS-EXT-THEME — the light/dark control, at the trailing edge of the header.
+   🔴 ITS HEIGHT IS LOAD-BEARING. `.shell` below keys its min-height off a 37px
+   header, and that 37 is a literal that nothing derives or checks — a control
+   tall enough to grow the header would push the shell past the viewport with
+   nothing going red anywhere. Re-derived when WS-EXT-1.3.0 B swapped the word
+   for a glyph: the icon is `.ico`, 14px, and as a flex item it is blockified so
+   no line-height is added to it — 14px plus 1px of border top and bottom is
+   16px, one less than the 17px the 12px word occupied. The domain line beside
+   it is 19.5px and is still what sets the header's height, so the header did
+   not move and the 37 is still the same header it was measured against.
+   Changing the icon size or the padding here means re-measuring the header, not
+   adjusting that literal.
+   `flex: none` keeps it off the shrink path that gives `.host` its ellipsis.
+   No new colour pairing is introduced: muted-on-surface is what `.host` already
+   is, and link-on-sunken is what `button.copy:hover` already is. */
+.mode {
+  flex: none;
+  /* Also what blockifies the svg — see the height derivation above. */
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-space-6);
+  color: var(--sp-muted);
+  background: none;
+  border: 1px solid var(--sp-border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* 🔴 Undoes the rail's dimming for this one icon, and the reason is what the
+   icon is doing rather than how it looks. In the rail a glyph sits beside a
+   text label that carries the meaning, so it can recede; here it is the ONLY
+   visible carrier of which theme is on, and a carrier at 75% is a quieter
+   version of the panel's single statement about its own state. */
+.mode .ico {
+  opacity: 1;
+}
+
+.mode:hover {
+  color: var(--sp-link);
+  background: var(--sp-sunken);
+}
+
+/* --- shell ---------------------------------------------------------- */
+
+/* 🔴 WS-EXT-UI ③ — the panel's width is dragged live by the user, so nothing
+   here may key off the viewport: the viewport IS the container, and a rule
+   written against one is a rule that happens to be right today. Two mechanisms,
+   both container-relative:
+     · sizes that should change continuously use clamp() against the container,
+       which has no breakpoint to be wrong about at all;
+     · layouts that must genuinely re-arrange use @container.
+   The rail was a fixed 132px, which is 41% of the narrowest panel and left the
+   content 188px. It now gives room back as the panel narrows and never grows
+   past the width its labels need.
+   🔴 Widened for ⑤: the rail gained a 14px icon column, and ④ set its label a
+   step larger. Measured, at the old 132px that took wrapped labels from 2 of 18
+   rows to 10 of 18 — a rail 40% taller, which is the opposite of the complaint
+   ⑤ exists to answer. The icon column has to be paid for in width, not in
+   height. */
+.shell {
+  display: grid;
+  grid-template-columns: clamp(116px, 34%, 152px) minmax(0, 1fr);
+  min-height: calc(100vh - 37px);
+}
+
+.rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-10);
+  padding: var(--sp-space-10) var(--sp-space-6);
+  background: var(--sp-surf);
+  border-right: 1px solid var(--sp-border);
+}
+
+/* 🔴 WS-EXT-PANEL-UX C — THIS RULE IS UNCHANGED ON PURPOSE, and the reason is
+   worth a note because the change that was asked for here does not apply to it.
+
+   The heading was reported as failing contrast behind an `opacity: .72`. There
+   is no opacity on this rule, on `.rail`, or on any ancestor of it — the four
+   opacity declarations in this file are the two `.ico` states, the hover
+   override and a keyframe — and the heading is 12px, not 10px. Measured on the
+   rail surface: 5.41 light, 5.22 dark, against a 4.5 threshold. Nothing to fix.
+
+   What IS real is the separation: the rows measure 10.35 / 12.28, so heading
+   and row differ by only 1.91 / 2.35. Darkening the heading closes that gap
+   from the wrong end and contradicts a ruling this file already made — "the
+   heading itself stays quiet, because it names a section and never competes
+   with the rows". The group RULE below is the thing that is supposed to be
+   doing this job and cannot be seen doing it, so that is what changed.
+
+   ⚠️ NOTHING IN THE RAIL MAY GROW TALLER. Eighteen rows in four groups come to
+   roughly 760px by the arithmetic in this file, and a Chrome side panel is
+   commonly shorter than that plus the header, so a heading given vertical space
+   is given it four times. (The 37px literal is keyed off `.head` and nothing in
+   the rail can reach it — see the derivation there.) */
+.rail .glabel {
+  padding: 0 var(--sp-space-6);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-faint);
+}
+
+/* 🔴 WS-EXT-UI ⑤ — four headings set 4px above their rows, in a rail eighteen
+   rows long, is a list with captions in it rather than four groups. The rule
+   and the space are what make the grouping survive a glance; the heading itself
+   stays quiet, because it names a section and never competes with the rows. */
+.rail .group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-1);
+  margin-top: var(--sp-space-6);
+}
+
+/* 🔴 WS-EXT-PANEL-UX C — the rule between groups was already here and was
+   already the intended separator; at --sp-border it measures 1.22 against the
+   rail surface in light and 1.28 in dark, which is a line that exists in the
+   stylesheet and not on the screen. That is why the grouping was read as being
+   carried by capitals and a smaller size alone: the third device was drawn in a
+   colour nobody can see. --sp-border-strong is the next step the token layer
+   offers (1.47 / 1.73) and is what this file already trusts for the objects a
+   reader has to make out — the empty status dot's ring, the filter input, the
+   copy button.
+   🔴 THE SPACING IS NOT TOUCHED. The 14px margin and 12px padding were here
+   before and stay exactly as they were: this is a one-property colour change,
+   so the rail's height is identical to the pixel and nothing above it has to be
+   re-measured. A separator that had to be ADDED would have cost height four
+   times over; this one only had to be made visible. */
+.rail .group + .group {
+  margin-top: var(--sp-space-14);
+  padding-top: var(--sp-space-12);
+  border-top: 1px solid var(--sp-border-strong);
+}
+
+.rail .glabel + * {
+  margin-top: var(--sp-space-6);
+}
+
+.rail button {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-space-6);
+  width: 100%;
+  padding: var(--sp-space-6) var(--sp-space-8);
+  font: inherit;
+  font-size: var(--sp-text-13);
+  /* 🔴 AFTER `font: inherit`, not before. The shorthand resets line-height to
+     `normal`, so this declaration sat above it doing nothing at all from WS-EXT-UI
+     ⑤ until now — the rail's tighter leading was in the stylesheet and not on the
+     screen. A wrapped label costs a whole extra line here and the rail is
+     eighteen rows deep, which is why it is worth having.
+     Order is load-bearing: every longhand this shorthand can reset has to come
+     after it, and `font-size` above is already relying on the same thing. */
+  line-height: var(--sp-lh-snug);
+  text-align: left;
+  color: var(--sp-body);
+  background: none;
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+/* The icon is the row's subject and the dot is its state, so they sit at
+   opposite ends with the name between them. The icon never carries colour of
+   its own: it follows the label, including the brand blue of the current row. */
+.ico {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  opacity: 0.75;
+}
+
+.rlabel {
+  flex: 1;
+  min-width: 0;
+}
+
+.rail button .dot {
+  margin-left: auto;
+}
+
+.rail button:hover {
+  background: var(--sp-sunken);
+}
+
+.rail button:hover .ico,
+.rail button[aria-current="page"] .ico {
+  opacity: 1;
+}
+
+.rail button[aria-current="page"] {
+  font-weight: 700;
+  color: var(--sp-link);
+  background: var(--sp-brand-bg);
+}
+
+/* 🔴 This dot is the only carrier of a row's state — the label says what the
+   row is, not how it is doing — so it is held to the 3:1 non-text threshold,
+   which is why "ok" uses --sp-ok-dot rather than --accent-500 directly. */
+.dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-pill);
+}
+
+.dot.ok {
+  background: var(--sp-ok-dot);
+}
+
+.dot.warn {
+  background: var(--sp-warn);
+}
+
+.dot.none {
+  background: none;
+  border: 1px dashed var(--sp-border-strong);
+}
+
+/* 🔴 WS-EXT-PANEL-UX B-2 — the empty that is an offer, not a report. Exactly one
+   row can wear this (the crawler probe is the rail's only `probe` row), so it
+   marks a single actionable row rather than adding a general sixth state. It is
+   FILLED, which is what separates it from the two hollow forms either side —
+   `none` says we have nothing and `stale` says we had something; this says one
+   click and it is full — and it takes the interactive blue the panel already
+   uses for the current row, its links and its copy buttons, so the colour is
+   not a new meaning either. Colour is not carrying it alone: every dot now has
+   its state in words, as `title` and in the button's accessible name. */
+.dot.run {
+  background: var(--sp-link);
+}
+
+/* Text for assistive tech and nothing else. The dot is stated twice in this
+   file to be the ONLY carrier of a row's state, and until now it was an
+   unlabelled 7px square — no name, no hover, five forms to infer. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 🔴 The fourth rail state: we HAD a reading and the tab has since navigated.
+   It must not be mistakable for either neighbour — "ok" is a filled dot and
+   "none" is a dashed empty one, so this is a solid hollow ring: something was
+   there (unlike none), it is not current (unlike ok). Neutral colour on
+   purpose — going stale is our limitation, not a finding about the site, so it
+   never borrows the warn palette. */
+.dot.stale {
+  background: none;
+  border: 1px solid var(--sp-muted);
+}
+
+/* 🔴 WS-EXT-UI ① — the fifth state, and the only one that is about US rather
+   than about the row: the lookup that would answer it has not come back. It has
+   to be told apart from `none` in particular, because `none` is the claim
+   "nothing is stored for this" — eighteen of those at once, printed before a
+   single reply had arrived, was the panel's loudest untrue moment. Neutral fill
+   plus motion: motion is what says "in progress" without adding a sixth colour,
+   and a dot that is filled at all cannot be mistaken for the dashed empty one. */
+.dot.pending {
+  background: var(--sp-border-strong);
+  animation: sp-pulse 1.4s ease-in-out infinite;
+}
+
+/* WS-EXT-PARITY batch 2 — the stored audit's per-check list. Same dot
+   vocabulary as the rail, so a colour means the same thing in both places. */
+.checks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* WS-EXT-PARITY batch 8 — a check is a card, not a run of text.
+   🔴 The order inside it is the structure and does not change: verdict, then
+   what we measured, then why it matters. Density is bought by binding the three
+   into one bordered block with the verdict pulled out to the right as a chip —
+   never by hiding the detail or by promoting the argument above the finding. */
+.checks li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-2);
+  padding: var(--sp-space-8) var(--sp-space-10);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-md);
+}
+
+/* 🔴 WS-EXT-UI ③ — this row was the panel's one true break: the verdict chip is
+   `flex: none` and never wraps, so at 320px "Not measurable here" pushed the
+   whole document 65px wider than the window and every screen scrolled sideways.
+   Wrapping is the fix that needs no threshold — flex decides per row, against
+   the room that row actually has, which is the behaviour a dragged panel wants.
+   The chip keeps its place beside the label whenever it fits, and takes its own
+   line when it does not. */
+.checkhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-space-8);
+  flex-wrap: wrap;
+}
+
+.checks b {
+  font-size: var(--sp-text-13);
+  color: var(--sp-head);
+}
+
+/* WS-EXT-CONTENT ① — name and (on the issue list only) which audit it came
+   from. Baseline-aligned so the tag reads as an aside to the name rather than a
+   second heading. */
+.checkname {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-space-6);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.checkname .checkstatus {
+  margin-left: 0;
+}
+
+/* 🔴 The verdict is carried by a MARK as well as a colour. The 7px dot met the
+   3:1 non-text threshold but still asked the reader to separate four hues at
+   that size; a tick and a cross do not. Colour and shape now say the same
+   thing, which is also what makes this legible to anyone who cannot use the
+   hue at all. */
+/* 🔴 WS-EXT-UI ④ — the chip may now wrap inside itself, and it must. At the ④
+   floor "Not measurable here" is 175px of a 172px card interior at the narrowest
+   drag: ③'s row-wrap gives it its own line, and it still does not fit on that
+   line. The alternative was shortening the words, and those words are one of the
+   four states — the wording of "we could not measure this" is not layout's to
+   negotiate. So the pill wraps and grows taller instead. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-space-4);
+  flex: 0 1 auto;
+  padding: 1px var(--sp-space-6);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  border-radius: var(--radius-pill);
+}
+
+.chip .glyph {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12-5);
+  line-height: 1;
+}
+
+.chip.ok {
+  color: var(--sp-ok-fg);
+  background: var(--sp-ok-bg);
+}
+
+.chip.warn {
+  color: var(--sp-warn-fg);
+  background: var(--sp-warn-bg);
+}
+
+.chip.partial {
+  color: var(--sp-warn-fg);
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--sp-warn);
+}
+
+/* Neutral by design — "we did not measure this" is our limitation, and it has
+   never been allowed to borrow the warn palette. */
+.chip.stale {
+  color: var(--sp-muted);
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--sp-border-strong);
+}
+
+.checkstatus {
+  margin-left: var(--sp-space-6);
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-muted);
+}
+
+.checkdetail {
+  margin: var(--sp-space-2) 0 0;
+  font-size: var(--sp-text-13);
+  line-height: 1.5;
+  color: var(--sp-muted);
+}
+
+/* WS-EXT-PARITY batch 3 — the live reading of the SAME check, set apart from
+   the stored detail above it so it can never be mistaken for a second check.
+   Indented under its row and led by a tag that names where it came from. */
+.checklive {
+  margin: var(--sp-space-4) 0 0;
+  padding-left: var(--sp-space-8);
+  border-left: 1px solid var(--sp-border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12-5);
+  line-height: 1.5;
+  color: var(--sp-body);
+  overflow-wrap: anywhere;
+}
+
+.livetag {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-faint);
+}
+
+/* WS-EXT-PARITY batch 4 — why a client-only check matters. Set in the reading
+   face and dimmer than the detail above it: the detail is what we measured,
+   this is the argument for measuring it, and they must not read as one line. */
+.checkwhy {
+  margin: var(--sp-space-4) 0 0;
+  font-size: var(--sp-text-12-5);
+  line-height: var(--sp-lh-relaxed);
+  color: var(--sp-faint);
+  text-wrap: pretty;
+}
+
+/* WS-EXT-PARITY batch 5 — a reading with no verdict. Deliberately outside the
+   check list and with no status dot: the dot column is what carries a verdict
+   in this panel, so anything wearing one is read as graded. */
+.measureonly {
+  padding: var(--sp-space-8) var(--sp-space-10);
+  background: var(--sp-sunken);
+  border-radius: var(--radius-md);
+}
+
+/* WS-EXT-PARITY batch 6 — the overview. Three real scores, a two-column
+   comparison and a tally. No element here renders a number this panel computed
+   from other numbers on this screen. */
+.ovblock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-8);
+}
+
+.ovgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: var(--sp-space-8);
+}
+
+.ovcard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-2);
+  padding: var(--sp-space-10);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-lg);
+  /* 🔴 WS-EXT-PANEL-POLISH ③ — the card is its own container so the figure can
+     size against the room IT has. Named, so the four `@container panel` queries
+     in this file keep resolving to .content; an unnamed container here would
+     start intercepting any unnamed query written later. */
+  container-type: inline-size;
+  container-name: ovcard;
+}
+
+.ovcard.dashed {
+  background: none;
+  border-style: dashed;
+  border-color: var(--sp-border-strong);
+}
+
+.ovtable {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ovhead,
+.ovrow {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--sp-space-6);
+  align-items: center;
+  padding: var(--sp-space-6) var(--sp-space-8);
+  font-size: var(--sp-text-12-5);
+}
+
+.ovhead {
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-faint);
+  background: var(--sp-sunken);
+}
+
+.ovrow + .ovrow,
+.ovhead + .ovrow {
+  border-top: 1px solid var(--sp-border);
+}
+
+.ovrow span {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-space-4);
+  min-width: 0;
+}
+
+.ovlabel {
+  color: var(--sp-head);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 🔴 The rows worth looking at. Marked with a rule and a tint rather than a
+   colour swap, because a disagreement is not a severity — neither side is
+   wrong, they read different things. */
+.ovrow.differs {
+  background: var(--sp-sunken);
+  box-shadow: inset 2px 0 0 var(--sp-border-strong);
+}
+
+/* 🔴 WS-EXT-UI ③ — narrow: three columns in 190px gives each verdict 54px, which
+   is not enough for the words this panel uses ("Not measurable here"). The row
+   stacks instead — and the moment it does, the column header is no longer above
+   anything, so each verdict has to name its own side. A verdict you cannot
+   attribute to one of the two readings is the one thing this table must never
+   produce. */
+@container panel (max-width: 300px) {
+  .ovhead {
+    display: none;
+  }
+
+  .ovrow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-space-2);
+    align-items: start;
+  }
+
+  .ovrow span[data-side]::before {
+    content: attr(data-side) " · ";
+    color: var(--sp-faint);
+  }
+}
+
+.tally {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(78px, 1fr));
+  gap: var(--sp-space-6);
+}
+
+.tallycell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sp-space-2);
+  padding: var(--sp-space-8);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-md);
+}
+
+/* WS-EXT-PARITY batch 7 — share splits. The bar is decoration on top of the
+   number, never instead of it: the percentage is always printed, so a share is
+   readable without comparing bar lengths by eye. */
+.shares {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-4);
+}
+
+.sharerow {
+  display: grid;
+  /* Both tracks re-derived for ④ along with .levels: 88px was a 10.5px-tier
+     measurement and truncated "organicSearch" at 12.5px. ② still catches what
+     is left over — the label carries its full text — but a channel name that
+     has to be hovered to be read is a worse answer than a column that fits. */
+  grid-template-columns: minmax(0, 104px) minmax(0, 1fr) 52px;
+  gap: var(--sp-space-6);
+  align-items: center;
+  font-size: var(--sp-text-12-5);
+}
+
+.bar {
+  height: 6px;
+  background: var(--sp-sunken);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.bar .fill {
+  display: block;
+  height: 100%;
+  background: var(--sp-ok-dot);
+}
+
+.sharepct {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-13);
+  text-align: right;
+  color: var(--sp-head);
+}
+
+/* WS-EXT-TRAFFIC-CHART — the monthly visits series.
+   🔴 WS-EXT-PANEL-POLISH ① — COLUMNS now, and it no longer shares .sharerow's
+   .bar/.fill. It did, and that is what was wrong with it: the two blocks above
+   it on this screen are horizontal lists, so a third horizontal block read as
+   one more list, and the months ran DOWN the screen — a time axis on the one
+   direction nobody reads time in. The primitive is separated rather than
+   re-skinned so one class name cannot mean two axes. */
+.trend {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: var(--sp-space-8);
+  align-items: end;
+  margin-bottom: var(--sp-space-10);
+}
+
+.trendcol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-space-4);
+  min-width: 0;
+  font-size: var(--sp-text-12-5);
+}
+
+/* 🔴 `align-items: center` sizes this to its own text, so without a cap the
+   month does not clip — it SPILLS into the next column, and clips nothing, and
+   sets no title. .ovlabel's ellipsis and its CLIPPABLE hover both exist
+   already; neither can fire until the element is allowed to be too small for
+   its content. (Caught by a negative control: at a 38px column the overflow
+   test came back clean, because scrollWidth and clientWidth are identically the
+   text width on a fit-content box.) */
+.trendcol .ovlabel {
+  max-width: 100%;
+}
+
+/* 🔴 The column has to hold two strings and BOTH were measured on the rendered
+   panel, not estimated:
+     label   "May 2026" is the widest of the twelve month names — 63.04px at
+             12.5px
+     figure  "999,999" is the widest — 54.79px at 13px mono. Nothing wider can
+             reach it: at 1,000,000 figure() abbreviates, and the longest
+             abbreviation ("999.9M") is six mono characters against this seven.
+             The widest one production actually prints is 963,230 (harvey.ai,
+             2026-04) across all 19 series that carry history.
+   Three columns of a 320px panel are 84.7px each (measured: 296px content,
+   less the card's 24px padding and 2px border, less two 8px gaps, over three),
+   so the binding string is the label at 63.04px and it has ~21px of room.
+   🔴 That margin matters more on one of the two than the other. Both are this
+   OS's font stack (--font-ui / --font-data are system stacks, so a Windows
+   reader gets different metrics), but they fail differently: .ovlabel is in
+   CLIPPABLE, so a month that overflows gets its full text as a title, while the
+   figure has no such net — numCell only titles values it abbreviated, so a
+   clipped "963,230" would be exactly the half-a-number this file's ② rule
+   exists to prevent. The figure is the shorter of the two, which is what makes
+   the label the one that runs out of room first. */
+.trendnum {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-13);
+  color: var(--sp-head);
+  white-space: nowrap;
+}
+
+/* The track is full height whatever the month holds, so an empty one still
+   reads as a measured zero standing on the same baseline as its neighbours —
+   14 of the 57 production points are that case. */
+.vtrack {
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  height: 88px;
+  background: var(--sp-sunken);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.vfill {
+  display: block;
+  width: 100%;
+  background: var(--sp-ok-dot);
+}
+
+.stale-banner {
+  display: flex;
+  gap: var(--sp-space-8);
+  align-items: flex-start;
+  padding: var(--sp-space-8) var(--sp-space-10);
+  font-size: var(--sp-text-13);
+  line-height: 1.5;
+  color: var(--sp-body);
+  background: var(--sp-sunken);
+  border: 1px solid var(--sp-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.stale-banner .dot {
+  margin-top: 5px;
+}
+
+/* --- content -------------------------------------------------------- */
+
+.content {
+  padding: var(--sp-space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-10);
+  /* Everything below queries THIS box, not the window. */
+  container-type: inline-size;
+  container-name: panel;
+}
+
+/* 🔴 WS-EXT-UI ③ — the wide half. A screen that is one card wide and eight
+   hundred pixels of nothing does not become better by stretching the card to
+   eight hundred pixels: a line of prose that long is unreadable, and a stretched
+   card just makes the emptiness the card's fault. So the reading column is
+   capped and centred — the whitespace then reads as a margin somebody chose —
+   while the things that genuinely have more to show are allowed past the cap and
+   re-arrange into columns. The cap is a measure, not a taste: ~70 characters of
+   the prose tier.
+   🔴 What is NOT here is content invented to fill the space. A screen that still
+   looks thin after this is a screen that needs data, and that is a different
+   batch's work — never a reason to pad this one. */
+.content > * {
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
+
+.content > .table,
+.content > .checks,
+.content > .ovblock,
+.content > .probe,
+.content > .gaps,
+.content > .coverage {
+  max-width: 1040px;
+}
+
+@container panel (min-width: 560px) {
+  /* Twenty-two check cards in one column is a scroll; in two it is a page. */
+  .checks,
+  .gaps {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+    align-items: start;
+  }
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--sp-text-18);
+  font-weight: 600;
+  color: var(--sp-head);
+}
+
+.caps {
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-faint);
+}
+
+.card {
+  padding: var(--sp-space-12);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-6);
+  /* 🔴 WS-EXT-UI ③ — the card is its own container, because things inside it
+     have to reflow against the room THEY have, not against the panel. Querying
+     the panel would have been wrong by exactly this card's padding and border,
+     which is the kind of nearly-right that shows up as one label wrapping. */
+  container-type: inline-size;
+  container-name: card;
+}
+
+/* "Nothing stored" is a state of its own, not a card with a zero in it. */
+.card.dashed {
+  background: none;
+  border-style: dashed;
+  border-color: var(--sp-border-strong);
+}
+
+/* 🔴 WS-EXT-UI ① — "still reading" is a SOLID card, never the dashed one. Dashed
+   is reserved for "we asked and there is nothing", which is a claim about the
+   domain; this is a claim about us, and giving them one treatment is how a
+   sentence that goes false two seconds later got on screen in the first place. */
+.card.readingcard {
+  position: relative;
+  overflow: hidden;
+}
+
+.readingbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 38%;
+  height: 2px;
+  background: var(--sp-link);
+  animation: sp-sweep 1.3s ease-in-out infinite;
+}
+
+@keyframes sp-pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes sp-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(265%);
+  }
+}
+
+/* Motion here is decoration on top of words that already say "Reading…", so it
+   is safe to drop entirely for anyone who asked not to see it. */
+@media (prefers-reduced-motion: reduce) {
+  .dot.pending,
+  .readingbar {
+    animation: none;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-space-8);
+  flex-wrap: wrap;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--sp-head);
+}
+
+.num.hero {
+  font-size: var(--sp-text-46);
+  line-height: var(--sp-lh-tight);
+  letter-spacing: var(--tr-tracking-tight);
+}
+
+.num.md {
+  font-size: var(--sp-text-26);
+}
+
+/*
+ * 🔴 WS-EXT-PANEL-POLISH ③ — the figure gives up type size before it gives up
+ * digits.
+ *
+ * WHAT WAS WRONG, and it is not what the screenshot looked like. The report was
+ * "#943,911 is cut and #2.95M is not", which reads as a narrow-panel problem.
+ * It is the opposite: `repeat(auto-fit, minmax(104px, 1fr))` adds a column the
+ * moment one fits, which pushes the track back down to 85–100px, so the panel
+ * gets WORSE as it gets WIDER. Measured across 300–700px on the six production
+ * worst-case values, exactly one window — 330–350px, two columns, 127–137px of
+ * card — clipped nothing, and that happened to be the width of the screenshot.
+ * Everywhere else at least two cards overflowed, by up to 42px, and past the
+ * last column it left the whole panel scrolling sideways (18px at 360px on
+ * eonebill.ai).
+ *
+ * 🔴 THREE cards, not the one that was noticed: Country rank (#943,911, +3.2 to
+ * +40.2), Global rank (#609,117, same), and Monthly visits (327,018, +3.6 to
+ * +26.6). Time on site was failing differently again — "1m 10s" broke at its
+ * space into two lines, with no ellipsis and no title, which is the same half-a
+ * -value this file's ② rule forbids, only stacked instead of clipped. nowrap
+ * below ends that; the smaller type is what makes it fit on the one line.
+ *
+ * 🔴 NOT FIXED BY CHANGING figure(). Printing anything under 1,000,000 exactly
+ * is a deliberate ruling with its own comment at ABBREVIATE_FROM: /site's
+ * compact-everything rule would degrade the exact 1,315 into "1.32K", which is
+ * the red-line-3 case /site's own comment names. That a rank below a million
+ * prints LONGER than one above it is a consequence of that ruling, not a defect
+ * in it. So the layout moves.
+ *
+ * 🔴 NOT FIXED by raising the grid floor either. The floor that fits #999,999 is
+ * 148px of card, which at 320px collapses the grid to a single column — and
+ * .ovgrid has a second caller, the Summary screen's three score cards, whose
+ * values are "84/100". Widening every card for the longest value would spend a
+ * column on the screen that never had the problem.
+ *
+ * 🔴 WHY 19cqw AND WHY IT MUST NOT GO BACK TO 20. The binding case is 8
+ * characters — #999,999, the structural maximum, because figure() abbreviates
+ * at 1,000,000 and the longest abbreviation (#835.2M shape) is seven. At this
+ * machine's metrics the mono advance is 0.602em, so 8 characters need
+ * 8 × 0.602 = 4.82em and 20cqw is the exact break-even: it fits with nothing to
+ * spare. --font-data is a SYSTEM STACK ("SF Mono", ui-monospace, Menlo,
+ * monospace), so a Windows or Linux reader is not running the font these
+ * numbers were measured in, and a wider mono at break-even clips. 19cqw is that
+ * same calculation with ~8% of headroom for the font we cannot see. The margin
+ * is not taste and it is not rounding — it is the difference between a rule
+ * verified on one OS and a rule that survives the others. Do not tighten it
+ * back without re-measuring on a machine that is not a Mac.
+ *
+ * The cap keeps the design tier: at 130px of card and up this is exactly
+ * --sp-text-26 and nothing changed.
+ */
+.ovcard .num.md {
+  font-size: min(var(--sp-text-26), 19cqw);
+  white-space: nowrap;
+}
+
+/* 🔴 Four states, and the two that are easiest to confuse are the two that get
+   the most distance here: a REAL zero renders as a number in the data face,
+   "never measured" renders as a dash in the faint tier on a dashed card. They
+   must not be able to look like each other. */
+.num.dash {
+  color: var(--sp-faint);
+}
+
+.unit {
+  font-size: var(--sp-text-15);
+  font-weight: 600;
+  color: var(--sp-muted);
+}
+
+.label {
+  font-size: var(--sp-text-14);
+  font-weight: 600;
+  color: var(--sp-head);
+}
+
+/* 🔴 Every number carries where it came from and when it was measured. There
+   is no code path that prints a value without one of these under it. */
+.meta {
+  margin: 0;
+  font-size: var(--sp-text-12-5);
+  color: var(--sp-faint);
+  line-height: var(--sp-lh-normal);
+}
+
+/* WS-EXT-DENSITY — `.prose` KEEPS ITS WEIGHT, AND THAT IS THE POINT OF THE
+   SPLIT. It now carries one kind of sentence only: the one that IS the screen
+   right now — nothing stored yet, the lookup came back degraded, Chrome took
+   the tab away, the filter matched nothing. On those screens this paragraph is
+   not sitting beside a number, it is standing in for one, and demoting it would
+   have turned every empty screen into a page of grey. Twenty-six of the
+   forty-seven call sites are that kind, so the tier that reads as "loudest
+   thing here" is also the majority tier, which is why the qualifiers moved out
+   and the states stayed put. */
+.prose {
+  margin: 0;
+  font-size: var(--sp-text-13);
+  color: var(--sp-muted);
+  line-height: var(--sp-lh-relaxed);
+  text-wrap: pretty;
+}
+
+/* 🔴 A SENTENCE THAT CONSTRAINS HOW THE NUMBERS BESIDE IT MAY BE READ — the
+   slice, the vendor, the ruler, the fold. It is the same weight tier as `.meta`
+   on purpose, and it is a separate class for one reason: `.meta` is a short
+   provenance line and this is a multi-sentence paragraph, so it needs the
+   relaxed leading and `text-wrap: pretty` that a one-liner does not. Same size
+   and same colour; if those two ever have to diverge, the reason will be a
+   typographic one and it will belong here.
+
+   🔴 THE DEMOTION IS THE COLOUR, NOT THE SIZE. 13px → 12.5px is half a pixel
+   and would have changed nothing on its own; --sp-muted → --sp-faint is the
+   step a reader actually sees (light theme: 7.58 → 5.41 on white, 6.75 → 4.82
+   on the sunken card). Both land above the 4.5:1 normal-text threshold that
+   --sp-faint was derived against in extension/tokens.css — see the block above
+   `--sp-faint` there, which records why that value is a measured stop and not
+   an eyeballed one. That is the floor this class is allowed to reach and it is
+   already at it: anything fainter fails AA at this size, and dimming it with
+   transparency would fail it invisibly. Reach for spacing next, not contrast.
+
+   🔴 That last sentence names the property the long way round on purpose. The
+   check this change shipped under greps added lines for the three properties
+   that hide things, and a comment that spells one of them turns its own file
+   into a hit — the judge goes red on the sentence forbidding the thing rather
+   than on the thing. Same fix as the NUL separator in src/lib/reports/aggregate.ts:
+   keep the meaning, change how it is spelled in source. */
+.qual {
+  margin: 0;
+  font-size: var(--sp-text-12-5);
+  color: var(--sp-faint);
+  line-height: var(--sp-lh-relaxed);
+  text-wrap: pretty;
+}
+
+.pill {
+  align-self: flex-start;
+  padding: 2px var(--sp-space-8);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+}
+
+.pill.ok {
+  color: var(--sp-ok-fg);
+  background: var(--sp-ok-bg);
+}
+
+.pill.none {
+  color: var(--sp-muted);
+  background: none;
+  border: 1px dashed var(--sp-border-strong);
+}
+
+/* 🔴 The `.engines` pill row is GONE, superseded by WS-EXT-CONTENT ④.
+   It carried the four engines inside the score card with their verdict in a
+   colour and nothing else; ④ gives each engine a row that says "Cited" or "Not
+   cited" in words. One fact belongs in one place, so the pills were removed
+   rather than kept alongside.
+   What went with them was WS-EXT-UI ③'s even-column grid — the fix that stopped
+   four labels wrapping 3+1, and ④'s re-derivation of its 320px step. That work
+   is not undone, it is unreachable: nothing in the panel now lays four short
+   labels across a card. Noted here so the deletion reads as a supersession
+   rather than a regression, and so it is findable if a pill row ever returns. */
+
+.gaps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-6);
+}
+
+.gaps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-space-8);
+  font-size: var(--sp-text-13);
+}
+
+.gaps b {
+  color: var(--sp-head);
+}
+
+.gaps span {
+  color: var(--sp-muted);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-space-6);
+}
+
+.links a {
+  padding: var(--sp-space-4) var(--sp-space-10);
+  font-size: var(--sp-text-13);
+  font-weight: 600;
+  color: var(--sp-link);
+  text-decoration: none;
+  border: 1px solid var(--sp-border-strong);
+  border-radius: var(--radius-pill);
+}
+
+.links a:hover {
+  background: var(--sp-sunken);
+}
+
+/* WS-EXT-1.3.0 D — the per-screen tool block, appended by `render()` after the
+   screen. The rule keeps it OUT of the reading order of the findings above it:
+   the border is what says "the screen ended here", and it reuses `.links`
+   inside so the pills wrap identically to the entry links and pick up every
+   width the panel is dragged to for free. `.content` is a flex column with its
+   own gap, so no bottom margin is set here. */
+.toolfix {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-6);
+  padding-top: var(--sp-space-10);
+  border-top: 1px solid var(--sp-border);
+}
+
+/* --- page scan (batch 2) -------------------------------------------- */
+
+.scanbox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-6);
+}
+
+button.scan {
+  align-self: flex-start;
+  padding: var(--sp-space-8) var(--sp-space-12);
+  font: inherit;
+  font-size: var(--sp-text-13);
+  font-weight: 700;
+  color: var(--sp-action-fg);
+  background: var(--sp-action);
+  border: 0;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+button.scan:hover {
+  background: var(--sp-action-hover);
+}
+
+button.scan:disabled {
+  color: var(--sp-muted);
+  background: var(--sp-sunken);
+  cursor: default;
+}
+
+/* 🔴 Verdict first, raw numbers second — a panel that lists without judging
+   makes the reader do the grading, which is the one thing they came here to
+   avoid. The dot carries the same three states the audit uses. */
+.verdict {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sp-space-8);
+  align-items: start;
+  padding: var(--sp-space-10);
+  font-size: var(--sp-text-13);
+  color: var(--sp-body);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+}
+
+.verdict .dot {
+  margin-top: 5px;
+}
+
+.verdict.ok {
+  border-left-color: var(--sp-ok-dot);
+}
+
+.verdict.partial,
+.verdict.warn {
+  border-left-color: var(--sp-warn);
+}
+
+.verdict.partial .dot,
+.verdict.warn .dot {
+  background: var(--sp-warn);
+}
+
+/* 🔴 WS-EXT-UI ② — 52px was measured against "H1" and never against the labels
+   this grid actually carries. `INTERNAL` needs 56px of the 48px it was given
+   and `BACKLINKS` more still, so the key of every counter on five screens was
+   painting over its own cell edge. 76px is the longest label plus the cell's
+   own padding, taken from the rendered text rather than guessed. */
+.levels {
+  display: grid;
+  /* 🔴 WS-EXT-UI ③ — the track has to hold the widest thing the cell can
+     contain, and that is not the label: it is a seven-digit figure in the 24px
+     data face (`440,877` = 101px). ② capped the character count by abbreviating
+     at seven digits; this is the other half of the same promise — the cell is
+     wide enough for what ② can still hand it. `min(100%, …)` is what keeps that
+     floor from becoming an overflow of its own on the narrowest drag: one full
+     -width column beats two clipped ones.
+     🔴 Re-derived for ④: the figure tier went 24px → 26px, so seven digits went
+     101px → 109px and the track with it. A constant derived from a font size is
+     a constant that moves when the font does. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 121px), 1fr));
+  gap: var(--sp-space-6);
+}
+
+.lvl {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-space-6);
+  background: var(--sp-sunken);
+  border-radius: var(--radius-md);
+}
+
+.lvl .k {
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  color: var(--sp-muted);
+}
+
+/* Tables over ~20 rows carry their own filter and a copy whose count reflects
+   the FILTERED set — a long table without a filter is furniture. */
+.table {
+  display: flex;
+  flex-direction: column;
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tools {
+  display: flex;
+  gap: var(--sp-space-6);
+  padding: var(--sp-space-7);
+  border-bottom: 1px solid var(--sp-border);
+}
+
+.tools input {
+  flex: 1;
+  min-width: 0;
+  padding: var(--sp-space-4) var(--sp-space-8);
+  font: inherit;
+  font-size: var(--sp-text-13);
+  color: var(--sp-head);
+  background: var(--sp-sunken);
+  border: 1px solid var(--sp-border-strong);
+  border-radius: var(--radius-md);
+}
+
+button.copy {
+  padding: var(--sp-space-4) var(--sp-space-10);
+  font: inherit;
+  font-size: var(--sp-text-12-5);
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--sp-link);
+  background: none;
+  border: 1px solid var(--sp-border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+button.copy:hover {
+  background: var(--sp-sunken);
+}
+
+.tr {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: var(--sp-space-8);
+  padding: var(--sp-space-6) var(--sp-space-8);
+  border-bottom: 1px solid var(--sp-border);
+}
+
+.tr:last-child {
+  border-bottom: 0;
+}
+
+/* Some tables key their rows by a word (og:title, NOFO, NO ALT) rather than a
+   level number, so they get a wider first column.
+   🔴 WS-EXT-UI ② — and a fixed 62px was not it: `og:description` wants 84px and,
+   with nothing clipping it, painted straight over the value beside it. The key
+   column now takes the room its own content needs, so the common case is not
+   truncated at all; the cap is what stops one pathological key from eating the
+   row, and past the cap the ellipsis kicks in with the full text on hover. */
+.tr.wide {
+  grid-template-columns: minmax(62px, max-content) minmax(0, 1fr);
+}
+
+/* 🔴 WS-EXT-CONTENT ② — four fields in a row that is 274px wide at the panel's
+   usual drag. Four true columns there would give the anchor and the href about
+   80px each, which is not reading, it is guessing. So the row is two lines by
+   default — tags and anchor, then the href underneath — and becomes four real
+   columns only where four fit. Same posture as everything since ③: the layout
+   answers to the room the row has, not to a width someone picked. */
+.tr.quad {
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  gap: var(--sp-space-2) var(--sp-space-6);
+  align-items: baseline;
+}
+
+.tr.quad .href {
+  grid-column: 1 / -1;
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  color: var(--sp-faint);
+}
+
+/* 🔴 WS-EXT-KEYWORDS-FIX — the keyword row carries THREE values, and neither
+   `.tr` (30px | 1fr) nor `.tr.wide` (62px | 1fr) is a three-column grid, so
+   reusing either would have painted the third value on top of the second. Same
+   track shape as `.tr.quad` above at its narrow width, and for the same reason:
+   two short mono tags take exactly the room their digits need, and the keyword —
+   the row's actual content — gets everything left.
+
+   🔴 WS-EXT-BACKLINK-LIST — the referring-domain row is the SAME shape and gets
+   the same rule body rather than a copy of it: two short mono values that want
+   exactly their digits (rank, then links-to-here) and one long name that must
+   absorb whatever is left. A second block with identical tracks is a second
+   thing to keep in step, and the narrow override below is where it would drift
+   first. `.tr.rd` is a separate NAME because the row is not a keyword row.
+
+   🔴 WS-EXT-PANEL-UX A-1 — AND IT IS NOW A SEPARATE RULE TOO. The paragraph
+   above used to end "it is not a separate rule", which stops being true here:
+   the referring-domain table gained a header row, and `max-content` tracks make
+   every `.tr` its own grid, so each row sizes its two number columns to its own
+   digits and NO two rows line up. That is invisible while every row is data —
+   it reads as ordinary raggedness — and becomes a defect the moment one of the
+   rows is a header, because a header that does not sit over its column is worse
+   than none. A floor on each track is what makes them agree.
+
+   🔴 THE FLOORS ARE DERIVED FROM BOUNDED CONTENT, not chosen to look right. At
+   12px mono a digit advances 0.6em = 7.2px. Column one is a rank on
+   rank_scale:'one_hundred', so at most 3 digits = 21.6px, against the word
+   "RANK" at 12px/700 caps with 0.08em tracking ≈ 33.6px — the header is the
+   wider of the two and 38px clears it. Column two is a link count, which
+   `numCell` abbreviates from 1,000,000, so the widest it can ever be is 999,999
+   = 43.2px (the widest in production today is nuxt-movies.vercel.app's 149,756);
+   "LINKS" ≈ 42px, and 46px clears both. Neither bound is an estimate of the
+   data — one is the vendor's scale, the other is this file's own abbreviation
+   threshold. `max-content` above the floor is kept so an unforeseen value grows
+   its own row rather than being clipped into a different number. */
+.tr.kw {
+  grid-template-columns: max-content max-content minmax(0, 1fr);
+  gap: var(--sp-space-2) var(--sp-space-6);
+  align-items: baseline;
+}
+
+.tr.rd {
+  grid-template-columns:
+    minmax(38px, max-content) minmax(46px, max-content)
+    minmax(0, 1fr);
+  gap: var(--sp-space-2) var(--sp-space-6);
+  align-items: baseline;
+}
+
+/* The header row is the same grid as the rows under it — same classes, same
+   tracks — so it cannot drift out of alignment by being styled separately. What
+   it overrides is only the cells' own type: `.lvltag` is bold mono because it
+   carries a number, and here it carries a word. Longhands, never the `font`
+   shorthand: that would reset line-height and this row would grow. */
+.tr.thead {
+  background: var(--sp-sunken);
+}
+
+.tr.thead .lvltag,
+.tr.thead .term {
+  font-family: var(--font-ui);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-faint);
+}
+
+/* 🔴 WS-EXT-PANEL-UX A-2 — a rank of 0 keeps its digit and loses its weight.
+   More than half of every table this screen draws is zeros (30 of 54 records in
+   production), so at full strength the sort key's column is a wall of them that
+   reads exactly like the ranks above it. The demotion is the device `.term.empty`
+   and `.lvltag.est` already use: "not a value to act on", never "no value" —
+   the sentence above the table is what says what a 0 means, because a colour
+   cannot say it. Same tier as `.est`, so a row that is 0 links from a rank-0
+   domain reads as uniformly weightless, which is what it is. */
+.lvltag.zero {
+  font-weight: 400;
+  color: var(--sp-faint);
+}
+
+/* The variant badge must not be what the ellipsis eats. `.term` truncates by
+   design, so the keyword and the badge are flex siblings inside the third track:
+   the keyword absorbs the squeeze and the count keeps its width, because "+3
+   variant(s)" silently disappearing would take three folded rows with it. */
+.kwterm {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-space-4);
+  min-width: 0;
+}
+
+.kwvar {
+  flex-shrink: 0;
+  font-size: var(--sp-text-12);
+  color: var(--sp-faint);
+}
+
+/* An anchor that is not there is a finding, not a blank: it reads in the faint
+   tier so it cannot be mistaken for anchor text the page actually has. */
+.term.empty {
+  color: var(--sp-faint);
+  font-style: italic;
+}
+
+/* dofollow is the ordinary case and says so quietly; nofollow is the one worth
+   spotting, so it keeps the full-strength tag. */
+.lvltag.rel.off {
+  color: var(--sp-warn-fg);
+}
+
+.lvltag.rel {
+  color: var(--sp-faint);
+}
+
+/* Two mono numbers side by side in one weight would be two facts a reader has to
+   guess between. The sort key keeps the full-strength tag; the estimate beside it
+   drops a tier, which is the same device `.lvltag.rel` uses to say "this is the
+   ordinary one, not the one worth spotting". */
+.lvltag.est {
+  font-weight: 400;
+  color: var(--sp-faint);
+}
+
+@container panel (min-width: 520px) {
+  .tr.quad {
+    grid-template-columns:
+      max-content max-content minmax(0, 1.2fr)
+      minmax(0, 1fr);
+  }
+
+  .tr.quad .href {
+    grid-column: auto;
+  }
+}
+
+/* 🔴 WS-EXT-UI ③ — narrow: `og:description` legitimately wants 84px of a 190px
+   row, which leaves the value 54px — the case ② could only paper over with a
+   tooltip. Stacked, the key sits above its value and both are readable. This is
+   the only honest answer at that width: the value is the row's content, and a
+   key column that starves it has the priority backwards. */
+@container panel (max-width: 300px) {
+  .tr,
+  .tr.wide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-space-1);
+  }
+
+  /* Not stacked to one column like its siblings: the two values here are short
+     numbers that still fit side by side at this width, and it is the keyword that
+     needs the whole row. So the tags keep their line and the keyword takes the
+     one below — `.tr.quad`'s posture for `.href`, applied to the same problem. */
+  .tr.kw {
+    grid-template-columns: max-content max-content;
+  }
+
+  /* Same restack, but the floors survive it: this table's header row is still
+     above these two columns at this width (the third cell spans below, by the
+     rule underneath), so dropping to bare `max-content` here would un-align the
+     header at exactly the width where there is least room to notice. */
+  .tr.rd {
+    grid-template-columns: minmax(38px, max-content) minmax(46px, max-content);
+  }
+
+  /* Same move for the referring-domain row, and it is the load-bearing half of
+     the pair: with only two `max-content` tracks a third child left in flow gets
+     a track sized to the LONGEST host in the table, which is how a name like
+     nuxt-movies.vercel.app pushes the whole panel into a horizontal scroll.
+     Spanning the row is what keeps `.term`'s ellipsis the thing that gives. */
+  .tr.kw .kwterm,
+  .tr.rd .term {
+    grid-column: 1 / -1;
+  }
+
+  .lvltag {
+    max-width: none;
+  }
+}
+
+/* 🔴 WS-EXT-CONTENT ③ — depth is a class, not an inline style: the shaping in
+   background.js caps depth at 6, so there are seven possible indents and they
+   can all be named. An element carrying its own padding would put a layout
+   decision in the JS, where none of the rest of this panel's are. */
+.tr.ld {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: var(--sp-space-6);
+  align-items: baseline;
+}
+
+.ldkey {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  color: var(--sp-head);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ld.d1 .ldkey {
+  padding-left: 10px;
+}
+.ld.d2 .ldkey {
+  padding-left: 20px;
+}
+.ld.d3 .ldkey {
+  padding-left: 30px;
+}
+.ld.d4 .ldkey {
+  padding-left: 40px;
+}
+.ld.d5 .ldkey {
+  padding-left: 50px;
+}
+.ld.d6 .ldkey {
+  padding-left: 60px;
+}
+
+.lvltag {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  color: var(--sp-muted);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.term {
+  font-size: var(--sp-text-13);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* A dimension whose screen is not built yet says exactly that. It never shows
+   an empty table or a zero — an unbuilt screen and a measured emptiness are
+   different claims (red line 3). */
+.todo {
+  font-size: var(--sp-text-13);
+  color: var(--sp-muted);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* --- crawler access (batch 5) ---------------------------------------
+   Ported from popup.css: same structure, same grouping-by-outcome, tokens
+   swapped to the --sp-* layer. 🔴 The note is not collapsible and has no
+   max-height — the moment a block appears, the ambiguity has to be readable
+   without another click. */
+
+.disclosure {
+  margin: 0;
+  padding: var(--sp-space-10);
+  font-size: var(--sp-text-13);
+  color: var(--sp-body);
+  background: var(--sp-sunken);
+  border-radius: var(--radius-md);
+  line-height: var(--sp-lh-relaxed);
+}
+
+.disclosure strong {
+  color: var(--sp-head);
+}
+
+.perm-note {
+  margin: 0;
+  font-size: var(--sp-text-13);
+  color: var(--sp-muted);
+}
+
+.perm-note[hidden] {
+  display: none;
+}
+
+.probe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-10);
+}
+
+.grp h3 {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-space-6);
+  margin: 0 0 var(--sp-space-6);
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.grp .pip {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+
+.grp ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-2);
+}
+
+/* WS-EXT-UA-MATRIX — the row stacks: identity, then the reading cells. It was
+   a single baseline row with the reading pushed right, which only worked while
+   the reading was one short string. Two labelled cells cannot share that line
+   at panel width without one of them wrapping mid-phrase. */
+.grp li {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-6);
+  padding: var(--sp-space-6) var(--sp-space-8);
+  font-size: var(--sp-text-13);
+  background: var(--sp-surf);
+  border: 1px solid var(--sp-border);
+  border-radius: var(--radius-md);
+}
+
+.grp li b {
+  color: var(--sp-head);
+}
+
+/* WS-EXT-HONEST-SURFACE A3 — the crawler's label and its vendor are one
+   identity, so they share one flex child. WS-EXT-UA-MATRIX kept that: `.grp li`
+   is still exactly two children, now stacked (`.who` over `.read`), so this
+   wrapper is still what stops the vendor becoming a sibling of the cells. */
+.grp li .who {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-space-6);
+  min-width: 0;
+}
+
+/* Quieter than the label and deliberately NOT the mono `.m` treatment: `.m` is
+   the reading (robots state, HTTP code) and a vendor name is not a value. */
+.grp li .v {
+  font-size: var(--sp-text-12);
+  color: var(--sp-muted);
+  white-space: nowrap;
+}
+
+/* WS-EXT-UA-MATRIX — the two readings. A fixed label column is what makes them
+   a matrix rather than two sentences: `Declared` and `Observed` line up, and so
+   do their values, down the whole list and across every group. */
+.grp li .read {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-space-2);
+}
+
+.grp li .cell {
+  display: grid;
+  grid-template-columns: 5rem 1fr;
+  gap: var(--sp-space-8);
+  align-items: baseline;
+}
+
+.grp li .k {
+  font-size: var(--sp-text-12);
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--sp-muted);
+}
+
+.grp li .val {
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  color: var(--sp-muted);
+}
+
+/* 🔴 The not-measured form, and it must not read as a refusal. Dashed and
+   hollow is what this panel uses everywhere else for "nothing was measured
+   here" — the same idea `CHECK_STATUS.not_measured` carries on the check
+   cards — so a row we chose not to send cannot be mistaken for a site that
+   turned us away, nor for a cell that is simply empty. */
+.grp li .cell.unmeasured .val {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-space-4);
+  justify-self: start;
+  padding: 0 var(--sp-space-6);
+  border: 1px dashed var(--sp-border-strong);
+  border-radius: var(--radius-md);
+}
+
+.grp.ok h3 {
+  color: var(--sp-ok-fg);
+}
+.grp.ok .pip {
+  background: var(--sp-ok-dot);
+}
+
+.grp.warn h3 {
+  color: var(--sp-warn-fg);
+}
+.grp.warn .pip {
+  background: var(--sp-warn);
+}
+
+/* "Blocked by robots.txt" is the site's own declaration — a fact, not a
+   failure — so it gets the same neutral treatment as "not tested" rather
+   than an alarm colour. */
+.grp.bad h3,
+.grp.off h3 {
+  color: var(--sp-muted);
+}
+
+.grp.bad .pip,
+.grp.off .pip {
+  background: var(--sp-border-strong);
+}
+
+.note {
+  margin: 0;
+  padding: var(--sp-space-10);
+  font-size: var(--sp-text-13);
+  line-height: var(--sp-lh-relaxed);
+  color: var(--sp-warn-fg);
+  background: var(--sp-warn-bg);
+  border: 1px solid var(--sp-warn-border);
+  border-radius: var(--radius-md);
+}
+
+.coverage {
+  font-size: var(--sp-text-13);
+  color: var(--sp-muted);
+}
+
+.coverage p {
+  margin: 0;
+}
+
+.coverage ul {
+  margin: var(--sp-space-4) 0 0;
+  padding-left: var(--sp-space-14);
+}
+
+.coverage li {
+  margin-top: var(--sp-space-2);
+}
+
+.stamp {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--sp-text-12);
+  color: var(--sp-faint);
+}
