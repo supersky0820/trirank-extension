@@ -727,11 +727,24 @@ async function collectOutline(unknownPath) {
     // it is named here so that is a known debt rather than a discovery.
     scanTruncated: faqScanTruncated,
     scanError: faqScanError,
+    // 🔴 THE CEILINGS TRAVEL WITH THE PAYLOAD, which is the whole point of this
+    // object. The panel has to name these numbers when it explains that a
+    // reading stopped — "we stop at N text nodes" — and it used to do that from
+    // a literal hand-copied into extension/sidepanel.js that nothing compared
+    // against the constants here. Changing a cap in this file left the panel
+    // quoting the old one, and no gate anywhere could notice.
+    // ⚠️ `maxItems` and `maxQChars` MOVED HERE OUT OF `dropped`, they were not
+    // duplicated into it. `dropped` answers "how much did we lose"; this answers
+    // "where is the edge". A second copy of a ceiling sitting one field over
+    // would rebuild exactly the duplication this change exists to remove.
+    limits: {
+      maxTextNodes: FAQ_MAX_TEXT_NODES,
+      maxItems: FAQ_MAX_ITEMS,
+      maxQChars: FAQ_MAX_Q_CHARS,
+    },
     dropped: {
       items: Math.max(0, faqDistinctSeen - FAQ_MAX_ITEMS),
       qChars: faqQCharsCut,
-      maxItems: FAQ_MAX_ITEMS,
-      maxQChars: FAQ_MAX_Q_CHARS,
     },
   };
 

@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "TriRank SEO & AEO — AI Visibility Checker",
   "short_name": "TriRank",
-  "version": "1.8.0",
+  "version": "1.8.1",
+  "homepage_url": "https://github.com/supersky0820/trirank-extension",
   "description": "See what AI engines already know about the site you're on, and test whether AI crawlers can actually reach it.",
   "minimum_chrome_version": "116",
   "permissions": [

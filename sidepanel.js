@@ -3599,7 +3599,7 @@ function screenSchema() {
           `Couldn't compare: ${
             !faq.parsedOk
               ? 'some JSON-LD on this page did not parse, so we cannot tell whether a FAQ was inside it'
-              : `this page declares more than the ${faq.dropped.maxItems} questions we read`
+              : `this page declares more than the ${faq.limits.maxItems} questions we read`
           }. That is our reading stopping, not a finding about your page.`
         )
       );
@@ -3634,22 +3634,21 @@ function screenSchema() {
         )
       );
     } else if (faq.scanTruncated) {
-      // 🔴 20000 IS A SECOND COPY OF `FAQ_MAX_TEXT_NODES` IN
-      // extension/background.js AND NOTHING COMPARES THEM. The payload carries
-      // the boolean but not the ceiling, so the number cannot be derived here
-      // without a field that does not exist yet — the honest fix is to send
-      // it alongside `scanTruncated`, and that is a change to the other file.
-      // Until then this is the same standing as the SERVER_RULE thresholds and
-      // the SAME_ORIGIN_TIMEOUT_MS pair this extension already documents: a
-      // comment is the mechanism.
-      // ⚠️ Written as the bare digits `20000` and NOT as `20,000` on purpose:
-      // whoever changes the constant will look for its value, and a grouped
-      // copy is invisible to that search.
+      // The ceiling comes from the payload. It used to be spelled out here as
+      // bare digits — a second copy of `FAQ_MAX_TEXT_NODES` from
+      // extension/background.js with nothing comparing the two, so changing the
+      // cap there left this sentence quoting the old value and no gate could
+      // see it. `faq.limits` now carries every cap this screen has to name, and
+      // the same field feeds the "more than N questions" SKIP above.
+      // ⚠️ THE OLD VALUE IS DELIBERATELY NOT REPEATED IN THIS COMMENT. Someone
+      // changing the cap greps for its digits, exactly as the note that used to
+      // sit here predicted; a historical mention would answer that search with
+      // a hit in the one file that no longer holds a copy.
       appendSome(
         box,
         verdict(
           'partial',
-          "Couldn't compare: this page has more text than we read (we stop at 20000 text nodes). That is our reading stopping, not a finding about your page."
+          `Couldn't compare: this page has more text than we read (we stop at ${faq.limits.maxTextNodes} text nodes). That is our reading stopping, not a finding about your page.`
         )
       );
     } else if (faq.present && faq.distinctCount > 0 && missing.length === 0) {
