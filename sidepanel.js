@@ -516,7 +516,22 @@ function screenAeo() {
       )
     );
   }
-  box.append(citationDetail(c), entryLinks());
+  // WS-EXT-NULL-AEO — `appendSome`, not `append`, for the same reason as the
+  // Structured data screen (WS-EXT-FIXPACK-A): `citationDetail` returns null
+  // whenever the state is neither 'scored' nor 'partial', and `append` takes the
+  // WebIDL union `(Node or DOMString)`, which has no nullable member — so the
+  // null became the string "null" and was drawn as a text node.
+  //
+  // 🔴 THE STATE THAT DOES IT IS 'none', WHICH IS ORDINARY, NOT AN EDGE CASE.
+  // 'none' is what `toCitationReadingView` (src/lib/citation-score.ts) returns
+  // when nothing has citation-probed a domain — which includes every domain
+  // that has been audited but never checked. ⚠️ No count of that union's other
+  // states is written here: it would be a number in a comment about another
+  // file, and nothing would go red when it changed. This
+  // screen is also the one the panel opens on (`state.screen = 'aeo'`), so the
+  // word `null` sat directly under "No AI-citation check is stored for this
+  // domain yet." on first open for that whole class of site.
+  appendSome(box, citationDetail(c), entryLinks());
   return box;
 }
 
@@ -3689,7 +3704,19 @@ function screenSchema() {
       );
     }
   }
-  box.append(
+  // WS-EXT-FIXPACK-A ① — `appendSome`, not `append`, and `schemaTree` is the
+  // reason. It returns null for a page with no parsable JSON-LD (see its first
+  // line), and this raw `append` stringified that null into a text node — so a
+  // reader on a page with no structured data was shown the word `null` directly
+  // under "Nothing to list.". Reproduced on github.com. It is the same defect
+  // WS-EXT-NULL-APPEND-SWEEP fixed elsewhere in this file, at a call site the
+  // sweep did not reach — which is exactly what `appendSome`'s own docblock
+  // warns about: a fix only some call sites wear is one the next author will
+  // not copy. ⚠️ No count of the other sites is written here on purpose. That
+  // docblock says "all five read the same way" and there are more than five
+  // `appendSome` calls today; a number in a comment has no failing entrance.
+  appendSome(
+    box,
     el('span', 'caps', `Types · ${schema.jsonLdTypes.length}`),
     dataTable(
       schema.jsonLdTypes.map((t, i) => ({ t, i })),

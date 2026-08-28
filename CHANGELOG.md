@@ -9,6 +9,23 @@ than reconstruct the older descriptions from memory, the entries below carry
 what was actually recorded. An entry with no description is not a build with no
 changes — it is a build whose changes were never written down.
 
+## 1.8.2 — packed 2026-08-28 · 203,309 bytes
+
+Two screens stopped printing the word `null`. On **Structured data**, a page
+carrying no JSON-LD showed it directly under "Nothing to list."; on **AI
+visibility** — the screen the panel opens on — it appeared under "No AI-citation
+check is stored for this domain yet.", which is the ordinary state for any
+domain nothing has citation-probed yet. Both came from the same mistake in two
+places: handing `append` a value that is sometimes null, which the DOM converts
+to the string "null" and draws as text.
+
+The store listing's name and description were rewritten. Nothing the extension
+reads, sends, stores or asks permission for changed in this build.
+
+Packed 2026-08-28, not yet submitted to the Chrome Web Store. Neither 1.8.1 nor
+this build has been submitted, so the store listing serves 1.8.0 until one of
+them is.
+
 ## 1.8.1 — packed 2026-08-27 · 202,626 bytes
 
 The panel's FAQ ceilings now travel with the scan payload instead of the panel

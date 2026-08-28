@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "TriRank SEO & AEO — AI Visibility Checker",
+  "name": "TriRank: AI Visibility Checker — SEO & GEO Audit",
   "short_name": "TriRank",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "homepage_url": "https://github.com/supersky0820/trirank-extension",
-  "description": "See what AI engines already know about the site you're on, and test whether AI crawlers can actually reach it.",
+  "description": "Free AI visibility checker & GEO audit — see if ChatGPT, Claude, Gemini & Perplexity cite a site, and test real AI crawler access.",
   "minimum_chrome_version": "116",
   "permissions": [
     "activeTab",
