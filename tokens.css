@@ -30,6 +30,13 @@
  */
 
 :root {
+  --glow-brand: none;
+  --glow-accent: none;
+  --grad-signal: linear-gradient(90deg, var(--brand-700), var(--brand-700));
+  --shadow-cta: none;
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.06);
+  --border-glass: var(--border-subtle);
+
   --brand-500: #3568f4;
   --brand-700: #1e48c8;
   --brand-900: #14296e;
@@ -88,6 +95,23 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --glow-brand: radial-gradient(
+      700px 420px at 50% 0%,
+      rgb(53 104 244 / 0.38),
+      transparent 70%
+    );
+    --glow-accent: radial-gradient(
+      500px 300px at 80% 60%,
+      rgb(16 185 129 / 0.14),
+      transparent 70%
+    );
+    --grad-signal: linear-gradient(90deg, #8fb0ff 0%, #6ee7b7 100%);
+    --shadow-cta:
+      0 8px 24px rgb(53 104 244 / 0.45), inset 0 0 0 1px rgb(255 255 255 / 0.12);
+    --shadow-card:
+      inset 0 1px 0 rgb(255 255 255 / 0.06), 0 20px 60px rgb(0 0 0 / 0.35);
+    --border-glass: rgb(148 170 255 / 0.14);
+
     --brand-500: oklch(0.685 0.168 265);
     --brand-700: oklch(0.76 0.15 265);
     --brand-900: oklch(0.585 0.195 265);
@@ -101,12 +125,12 @@
     --ink-700: oklch(0.875 0.01 264);
     --ink-900: oklch(0.97 0.006 264);
 
-    --surface-base: oklch(0.205 0.014 264);
-    --surface-muted: oklch(0.168 0.011 264);
-    --surface-subtle: oklch(0.258 0.016 264);
+    --surface-base: oklch(0.205 0.055 266);
+    --surface-muted: oklch(0.165 0.045 266);
+    --surface-subtle: oklch(0.255 0.06 266);
 
-    --border-subtle: oklch(0.292 0.016 264);
-    --border-strong: oklch(0.372 0.02 264);
+    --border-subtle: oklch(0.3 0.055 266);
+    --border-strong: oklch(0.385 0.065 266);
 
     --feedback-danger: oklch(0.64 0.19 25);
 

@@ -36,18 +36,63 @@
          getSignals in background.js) — so no button here could have triggered a
          paid fetch even if we had built one. The button was dropped for having
          nothing to do, not for being dangerous. -->
+    <!-- WS-EXT-PANEL-POLISH-2 A — 🔴 ONE STICKY UNIT, NOT THREE STICKY
+         SIBLINGS. The header and the tab bar both have to stay on screen while
+         the content under them scrolls, and the obvious spelling — `sticky` on
+         each, with the tab bar offset by the header's height — needs that
+         height written down somewhere. There is already one hand-copy of it in
+         this design (the literal inside `.shell`'s `min-height` calc), and the
+         header's height has ALREADY changed — WS-EXT-1.10-COPY-HEAD put a
+         fourth button in it, and WS-EXT-1.10.1-FINAL widened `.head`'s vertical
+         padding and moved the literal. The number is not repeated here on
+         purpose: this paragraph carried it, and that change made it false with
+         nothing to catch it. A wrapper has no offset to copy and nothing to keep in
+         step.
+
+         🔴 AND IT IS WHY `.connectbox` CANNOT BE COVERED. The connect panel sits
+         BETWEEN the header and the tabs; with two independent sticky siblings it
+         is the element that scrolls under them. Inside the unit it travels with
+         them, which is the case the dispatch named. -->
+    <div class="topbar">
     <header class="head">
       <span class="mark">TriRank</span>
       <span class="host" id="host">—</span>
     </header>
 
+    <!-- WS-EXT-1.10-AUTH A — the connect panel and the one header note, both
+         filled by sidepanel.js. It is EMPTY here and hidden by default for the
+         same reason the tabs and the rail are empty: the content is built in one
+         file, and a second copy in this markup is a copy nothing compares
+         against the first.
+
+         🔴 IT IS A CONTAINER, NOT A DIALOG. No <dialog>, no overlay, no focus
+         trap: a key paste is not a modal decision and the panel behind it stays
+         readable and usable the whole time. The same element also carries the
+         one line the header shows when a stored key was refused, which is why
+         it can be visible while the form itself is closed. -->
+    <div class="connectbox" id="connectbox" hidden></div>
+
+    <!-- WS-EXT-1.9-PANEL A4 — the five top tabs, filled by renderTabs in
+         sidepanel.js from TABS there. It is empty in the markup for the same
+         reason the rail is: the roster is one list in one file, and a second
+         copy here would be a list nothing compares against the first. -->
+    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+    </div>
+
     <div class="shell">
-      <!-- Four groups of dimensions, built by sidepanel.js from GROUPS there.
-           This said "18 dimensions" until WS-EXT-PAGESPEED-BLOCK added a
-           nineteenth; the number is gone rather than bumped, for the reason
-           written above GROUPS. AI visibility is the DEFAULT screen: this
-           product's claim is AI visibility, so it is what the panel opens on.
-           Summary sits above it in the rail without taking that place. -->
+      <!-- The dimensions of the ACTIVE tab, built by sidepanel.js from TABS
+           there. It said "four groups … from GROUPS" until WS-EXT-1.9-PANEL A4
+           put five tabs above it; the rail now renders one tab's groups, and
+           `GROUPS` is derived from `TABS` rather than written twice.
+
+           An earlier version of this comment said "18 dimensions" and was made
+           false by WS-EXT-PAGESPEED-BLOCK adding a nineteenth. The number is
+           gone rather than bumped, for the reason written above TABS.
+
+           AI visibility is still the DEFAULT screen: this product's claim is AI
+           visibility, so it is what the panel opens on. Overview is the first
+           TAB without taking that place — the same arrangement Summary had as
+           the first group. -->
       <nav class="rail" id="rail" aria-label="Dimensions"></nav>
       <main class="content" id="content" tabindex="-1"></main>
     </div>

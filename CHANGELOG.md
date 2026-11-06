@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0 — 2026-11-06
+
+- Private monitored questions/history are restricted to the signed-in owner; a paid tier is not ownership. Public audit and third-party cached readings remain separate.
+- Dashboard and next-action links retain the inspected site.
+- Slow responses from a previous page cannot overwrite the current page. Read-only API lookups time out, without automatic retries.
+- Crawler tests serialize User-Agent overrides across panels. Print snapshots exclude credentials and are consumed once.
+- Inspection context explains browser reads, stored checks and Global monitoring cadence. Narrow panels give evidence full width; keyboard focus, both themes and reduced motion remain supported.
+
+This is a packaged release description, not a claim of Chrome Web Store approval. Backend changes must be live before submission.
+
+
 Every packaged build of the extension, in order.
 
 ⚠️ **What each entry can and cannot tell you.** These entries are derived from
@@ -8,6 +19,47 @@ version but a description of what changed for only the most recent one. Rather
 than reconstruct the older descriptions from memory, the entries below carry
 what was actually recorded. An entry with no description is not a build with no
 changes — it is a build whose changes were never written down.
+
+## 1.10.2 — packed 2026-09-03 · 315,307 bytes
+
+**Word density** now counts phrases of four and five words as well as one, two
+and three, and puts each length behind its own tab instead of stacking all of
+them into one list marked with `1·` / `2·` / `3·` prefixes. Each row shows three
+numbers — how many times the term occurs, the total the panel divided by, and
+the density — so the percentage can be checked rather than taken. The stop-word
+rule at the new lengths is the one already written down for the old ones: a
+phrase is dropped only when every word in it is a stop word.
+
+⚠️ Four- and five-word phrases are measured in the panel only. The stored audit
+counts up to three, so those two tabs have no second reading to be compared
+against, and the screen says so where it shows them.
+
+**Citation rate over time** stopped drawing all fourteen `cited/total` labels at
+once. At the width this panel actually opens at, fourteen of them overlapped
+into an unreadable row. The pair now appears for one bar at a time, on hover,
+keyboard focus or a click, and is also carried in each bar's tooltip; the first
+and last dates stay visible so the axis still reads at a glance. The pair was
+kept as a pair rather than replaced by a percentage, because "1 of 2" and
+"50 of 100" are the same percentage and not the same finding.
+
+**Top keywords** shows ten rows with a "Show all" control beneath, rather than
+the whole list. Typing in the filter box searches the whole list, not the ten.
+
+🔴 The longer list needs a server-side change that is not in this archive.
+The keyword rows come from a stored snapshot, so this build shows more of them
+only for domains fetched after that change ships; a domain still inside its
+cache window keeps the shorter list it was stored with.
+
+Packed 2026-09-03, not submitted. 1.10.1 is with the Chrome Web Store and this
+build stays local until that review resolves.
+
+⚠️ **1.9.0, 1.10.0 and 1.10.1 have no entries here.** This file's opening line
+says it lists every packaged build in order, and for those three it does not —
+they were packed and recorded in `extension/README.md` under "Release builds"
+without a changelog entry being written. Rather than reconstruct three
+descriptions from memory, which is the thing the note at the top of this file
+warns against, the gap is named. That table is the complete list; this file is
+the complete list of builds whose changes were written down.
 
 ## 1.8.2 — packed 2026-08-28 · 203,309 bytes
 

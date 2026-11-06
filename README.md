@@ -1,147 +1,81 @@
-# TriRank SEO & AEO — AI Visibility Checker
+# TriRank — AI visibility and page inspection
 
-A Chrome side panel that shows what AI engines already know about the site
-you are on, and tests whether AI crawlers can actually reach it.
+A Chrome side panel for inspecting the page you are viewing, checking dated
+TriRank measurements, and opening the right next step for your own site.
 
-## Install
+[Install from the Chrome Web Store](https://chromewebstore.google.com/detail/iiklpdoichgjgeonbacgknhaielfiple)
 
-From the Chrome Web Store:
-<https://chromewebstore.google.com/detail/iiklpdoichgjgeonbacgknhaielfiple>
+Or load this folder unpacked at `chrome://extensions` with Developer mode on.
+Manifest V3, no build step, no dependencies; minimum Chrome version 116.
+`manifest.json` identifies these source files. A packaged version is not
+necessarily approved or publicly available: check [CHANGELOG.md](CHANGELOG.md)
+and the store listing separately.
 
-Or load this repository unpacked:
+## Measurements stay separate
 
-1. Open `chrome://extensions` and enable **Developer mode**
-2. Click **Load unpacked** and select this folder
-3. Open any website and click the TriRank icon — the side panel opens on that
-   page and reads it straight away. There is no popup and nothing to press
+- **AI visibility:** a dated, saved four-engine brand-check score. An incomplete
+  set has no score. It is not your current seven-engine monitoring coverage.
+- **Your monitoring:** signed-in site owners can read their own saved Global
+  questions, history, cited pages and source evidence within their plan limits.
+  A subscription does not authorize reading another customer's questions.
+  Dashboard and action links retain the selected site.
+- **Page inspection:** headings, schema, images, links, hreflang, social markup,
+  robots directives and text structure read in the browser. A current-page
+  reading is not a server fetch of the homepage.
+- **Crawler access:** an optional browser-origin request using a published
+  crawler User-Agent, alongside robots declarations. It cannot establish what
+  a real vendor crawler from its own IP sees, or prove indexing/recommendations.
+- **External signals:** stored Ahrefs DR, backlinks, registry information,
+  Similarweb estimates and available performance readings, each with its source
+  and date. Estimates are not analytics from the site's own account.
 
-Manifest V3, no build step and no dependencies: these are plain files that
-Chrome loads as they are. Minimum Chrome version 116.
+Missing measurements stay unavailable, failed AI checks remain unknown, and a
+measured zero remains zero. Opening the panel does not generate content or start
+paid AI checks. A traffic-estimate refresh is a separate explicit action with
+server-enforced limits. Navigation invalidates pending old-page responses.
 
-**Which version this is.** `manifest.json` carries the version of the code in
-this repository, and [CHANGELOG.md](CHANGELOG.md) records every packaged build.
-That version is not always the one the Chrome Web Store is serving: a build is
-packaged here first and submitted afterwards, and review takes as long as it
-takes, so this branch can be one release ahead of the store. Compare the
-`version` in `manifest.json` against the version shown on the store listing to
-see which case you are in.
+The navigation groups are Overview, AI visibility, Crawler access, Structure
+and SEO basics. Narrow panels move dimension navigation above the evidence
+column. Light/dark themes, keyboard focus, zoom and reduced motion are supported.
 
-## What it checks
+## Requests and credentials
 
-The panel's rail has four groups.
+The service worker is the network boundary. There is no always-on content script.
 
-**Summary**
+- A scan reads current-page structure locally. It may request the viewed
+  origin's robots.txt, llms.txt, declared sitemaps and one generated unknown URL.
+  Unknown-URL checks are cached per origin for ten minutes. The site operator
+  can see these requests. Page content is not sent to TriRank.
+- Panel lookups send the **domain**, not the page path/query/content, to
+  `https://trirankai.com/api/signals/<domain>` and `/api/site-cache/<domain>`.
+  These read saved data and never trigger a vendor probe on a cache miss.
+- These requests include your existing TriRank session if Chrome attaches it.
+  An optional TriRank API key is sent as an authorization header. `/api/me` and,
+  when available, `/api/me/avatar` supply the account corner. The extension does
+  not read cookies or ask for your password.
+- Signing out explicitly posts to `/api/auth/sign-out`. Explicitly refreshing
+  an estimate posts to `/api/site-refresh/<domain>` with server-side quotas.
+  No other action silently performs that refresh.
+- Crawler tests require your click and permission for the current origin.
+  They send requests directly from your browser, never a TriRank server. They
+  omit your cookies for the viewed site and are serialized across panels so a
+  User-Agent override cannot overlap another test. No automatic retries.
 
-- **Overview** — how the site is doing across everything below
+## Storage and permissions
 
-**AI visibility**
+Local storage holds theme, zoom, the optional API key, a capped successful-read
+counter and dismissal of the rating invitation. Disconnect removes the key.
+No browsing history is synchronized to other devices. Session storage holds
+current-tab handoff and short-lived probe results. An explicit Print action also
+holds a report snapshot, **without credentials or account profile**, until the
+print view consumes it or Chrome closes. Copy/Print are local, user-requested
+exports and can include your private monitoring results; review before sharing.
 
-- **AI visibility** — what TriRank has already recorded about this domain being
-  cited by AI engines. This is the screen the panel opens on
-- **Structure readiness** — whether the page is shaped the way AI answers tend
-  to draw from
-- **Crawler access** — what AI crawlers get when they ask for this page. Runs
-  only when you press its button
+Permissions are `activeTab`, `scripting`, `sidePanel`, `storage`, and
+`declarativeNetRequestWithHostAccess`, with TriRank host access and optional
+HTTP/HTTPS origin access requested when you run crawler tests. Version 2.0 does
+not add permissions, analytics SDKs, remote executable code or automatic AI spend.
 
-**External (cached)**
-
-These four are read from what TriRank has already stored from third-party
-vendors. They are kept in their own group, rather than mixed in with the panel's
-own readings, so it is always clear which is which.
-
-- **Domain rating** — the cached vendor domain rating
-- **Backlinks** — the cached backlink figures
-- **Traffic estimate** — the cached traffic estimate
-- **Measured page** — cached page-performance and rendered-page readings
-
-**Site basics**
-
-- **SEO checks** — the per-check list for this page
-- **Issue list** — the checks that did not pass, gathered in one place
-- **Heading levels** — the headings, their levels and their order
-- **Word density** — the words the page's text actually leans on
-- **Images** — the images and their `alt` and `title` text
-- **Links** — the links on the page and where they point
-- **Structured data** — the JSON-LD blocks, and where the page declares an FAQ,
-  whether each question also appears in the visible text
-- **hreflang** — the page's `hreflang` annotations
-- **Page declarations** — what the page declares about itself to something that
-  is not a reader: Open Graph and Twitter cards, the favicon, the analytics tag
-- **Robots & sitemap** — the page's robots directives, its declared sitemaps
-  and whether an `llms.txt` is published
-- **Unknown URLs** — how the origin answers a request for an address that does
-  not exist
-- **Whois** — the cached registration record for the domain
-
-A stored check from a TriRank audit may appear next to this panel's own live
-reading of the same named thing. When it does, neither side is graded against
-the other and the difference is left visible: the two were read at different
-times and at different stages of rendering.
-
-## What it sends
-
-Nothing it reads from the page ever leaves your device. What goes out is
-exactly this and nothing else.
-
-**Automatic on every scan, to the site you are viewing — four requests, under
-your own browser's name:**
-
-1. `robots.txt`
-2. `llms.txt`
-3. the sitemaps
-4. **one** `GET` to a path that is generated fresh each time and cannot exist —
-   `/__trirank-unknown-url-probe-` followed by eight random characters. The
-   site's operator will see this as a 404 in their access log, for a path nobody
-   has ever linked to, and the path names us so they can tell who asked. The
-   same site is not probed again for **ten minutes**
-
-**Automatic when the panel opens, to TriRank — two requests, the domain name and
-nothing else:**
-
-5. `GET /api/signals/<domain>`
-6. `GET /api/site-cache/<domain>`
-
-No path, no query string, no page content and no identifier for you. Both
-requests omit credentials, so **no cookies are sent** — including any TriRank
-cookie you may hold from being signed in on the website. Both endpoints answer
-only from what is already stored; they never start a new measurement.
-
-**Only after you press the button — the crawler reachability test:**
-
-7. For each AI crawler whose operator publishes a User-Agent string, one request
-   for the current page **identifying itself as that crawler**. This is the one
-   part of the extension that requests something under another party's name, and
-   those requests appear in that site's logs as coming from an AI crawler. **If
-   you run this on a site you do not operate, its operator will see them.** Your
-   cookies never ride along; a crawler that `robots.txt` has already turned away
-   is not impersonated; and no User-Agent is ever invented — a crawler whose
-   operator publishes no string is reported from `robots.txt` only, stated
-   plainly as not tested. The test is never triggered automatically, and the same
-   page is not re-tested within ten minutes
-
-It has no account and no sign-in. There is no analytics, telemetry, crash
-reporting or usage tracking of any kind, and no remote code: everything it runs
-ships inside the package.
-
-## Privacy
-
-The full policy, including exactly what the panel reads from a page and how long
-anything is stored: <https://trirankai.com/privacy>
-
-## Methodology
-
-How the checks are defined and scored: <https://trirankai.com/methodology>
-
-## License
-
-Licensed under the PolyForm Noncommercial License 1.0.0 — see [LICENSE](LICENSE).
-Any noncommercial purpose is a permitted purpose; commercial use is not granted
-by this license.
-
-SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
-
-Copyright TriRank.
-
-## Versions
-
-See [CHANGELOG.md](CHANGELOG.md).
+[Privacy policy](https://trirankai.com/privacy) ·
+[How measurements work](https://trirankai.com/methodology) ·
+[Support](https://trirankai.com/contact)

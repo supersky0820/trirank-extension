@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "AI विज़िबिलिटी चेकर और GEO ऑडिट — TriRank",
+    "description": "Chrome Web Store listing title. Manifest limit: 75 characters. Retranslated from the en message at blob 335c5c6 (1.9.0), which put what it does before the brand name — this locale keeps that order rather than reverting to brand-first."
+  },
+  "extShortName": {
+    "message": "TriRank",
+    "description": "Brand name. Identical in every locale by decision, not by omission — the en file states this and the key is repeated here so the sameness is on the record."
+  },
+  "extDescription": {
+    "message": "क्या ChatGPT, Claude, Gemini, Perplexity साइट का हवाला देते हैं? सर्वर HTML की रेंडर पेज से तुलना करें, AI क्रॉलर एक्सेस जाँचें।",
+    "description": "Chrome Web Store listing summary. Manifest limit: 132 characters. Retranslated from the en message at blob 335c5c6 (1.9.0). It names three things the panel can be opened and checked against, and this locale names the same three in the same order: whether the four engines cite a site, server HTML against the rendered page, and AI crawler access."
+  }
+}

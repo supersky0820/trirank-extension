@@ -26,6 +26,14 @@ import { blanketBlocked, parseRobots, resolve } from './robots.js';
 // extension has no other backend, and an overridable base is a dev-only branch
 // that has no business in a Web Store build.
 const API_BASE = 'https://trirankai.com';
+const LOOKUP_TIMEOUT_MS = 15000;
+const badgeEpochs = new Map();
+let probeQueue = Promise.resolve();
+function queueCrawlerProbe(url) {
+  const job = probeQueue.then(() => probeCrawlers(url));
+  probeQueue = job.catch(() => undefined);
+  return job;
+}
 
 // One session rule id, reused: probes run strictly sequentially so only one
 // User-Agent override is ever installed at a time.
@@ -110,13 +118,77 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  * construction — a miss is a state, never a probe — so skipping the HTTP cache
  * makes them run their D1 SELECTs again and cannot make them fetch a vendor.
  */
-async function getSignals(host) {
+/**
+ * WS-EXT-1.10-AUTH B — the key rides in from the panel, and it is never held here.
+ *
+ * 🔴 THE WORKER STAYS OFF DISK. The key the user pastes is written by the panel
+ * and read by the panel; this file receives it as one argument per call and
+ * forgets it when the call returns. That is not tidiness — `check-ext-disclosure`
+ * D2b asserts this file writes NOTHING to local storage, because a credential
+ * appearing HERE would be a second, longer-lived copy of it in a context the
+ * privacy section does not describe. One copy, one owner, one place to clear it.
+ *
+ * 🔴 AND IT CHANGES NO DESTINATION. Same two URLs as before, same origin, same
+ * cache posture. `Authorization` is a request header, not a new place a request
+ * goes, which is why `check-ext-disclosure` D1a is untouched by this batch: the
+ * set of things this extension talks to is exactly what it was.
+ *
+ * An absent key is not an error state and does not short-circuit anything —
+ * the endpoint answers anonymously with `authError` in the body, so the panel
+ * gets its three-tier reply either way and never has to branch on "connected"
+ * before it can ask a question.
+ */
+function authHeaders(key) {
+  return typeof key === 'string' && key.trim()
+    ? { authorization: `Bearer ${key.trim()}` }
+    : undefined;
+}
+
+/**
+ * WS-EXT-1.10-SESSION A2 — 🔴 `'include'` ON EXACTLY TWO CALLS, AND THE OTHER
+ * FIVE STAY `'omit'`.
+ *
+ * The two below go to `trirankai.com`, which is us. The other five —
+ * `readSameOrigin`, `probeOne`, `fetchRobots` — go to THE SITE THE USER IS
+ * LOOKING AT, and their `'omit'` is a published promise: "your own session with
+ * that site is never sent out under a crawler's name". Nothing in this batch
+ * touches them, and a future edit that unifies the seven for tidiness would
+ * break that sentence while every gate in this repo stayed green.
+ *
+ * 🔴 MEASURED, NOT ASSUMED, AND THE MEASUREMENT WENT AGAINST THE OBVIOUS READ.
+ * The expectation was that a `SameSite=Lax` session cookie — better-auth's
+ * default, and this app sets no override — would NOT ride on a cross-origin
+ * request from an extension worker. It does. In a real Chromium with this
+ * extension's shape loaded unpacked, against a non-localhost host so the
+ * localhost special case could not explain it, `Lax`, `Strict` and attribute-less
+ * cookies were all attached; `credentials:'omit'` attached none, which is what
+ * makes that a reading and not a guess. The causal variable is the HOST
+ * PERMISSION: an identical extension without one could not reach the origin at
+ * all. Chrome treats a permitted host as first-party to the extension.
+ *
+ * ⚠️ SO `'omit'` WAS DOING REAL WORK, AND THE DEFAULT IS NOT SAFE. The same run
+ * showed `'same-origin'` — which is fetch's default when the option is left off
+ * — attaching every cookie too. The anonymity this extension had until today was
+ * not a property of being an extension; it was that one word. Deleting the
+ * option anywhere in this file silently re-enables credentials.
+ */
+async function getSignals(host, key) {
   const url = `${API_BASE}/api/signals/${encodeURIComponent(host)}`;
   const res = await fetch(url, {
-    credentials: 'omit',
+    credentials: 'include',
     cache: 'no-store',
+    headers: authHeaders(key),
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
   });
-  if (res.status === 429) return { error: 'rate_limited' };
+  if (res.status === 429) {
+    const body = await res.json().catch(() => ({}));
+    return {
+      error: 'rate_limited',
+      tier: body.tier,
+      quota: body.quota,
+      limit: body.limit,
+    };
+  }
   if (!res.ok) return { error: `http_${res.status}` };
   return { data: await res.json() };
 }
@@ -131,12 +203,233 @@ async function getSignals(host) {
  * endpoint whose stale copy was actually observed, and the two share one cache
  * posture, so they get one answer.
  */
-async function getSiteCache(host) {
+/**
+ * WS-EXT-1.10-FIX-ACCOUNT B — end the website session from inside the panel.
+ *
+ * 🔴 EVERY PART OF THIS WAS MEASURED AGAINST THE RUNNING SITE, because three
+ * separate things had to be true and none of them is guessable:
+ *
+ *   · THE PATH. better-auth is mounted at `src/app/api/auth/[...all]`, so the
+ *     endpoint is `/api/auth/sign-out` (POST). Confirmed live rather than by
+ *     reading the router: the response carries three `Max-Age=0` Set-Cookie
+ *     headers — `__Secure-better-auth.session_token`, `.session_data` and
+ *     `.dont_remember` — which is the real sign-out path executing, not an
+ *     idempotent no-op answering `{"success":true}` to anything.
+ *
+ *   · NO ORIGIN / CSRF GATE STANDS IN THE WAY. Posted from four different
+ *     Origins, including `chrome-extension://…` and a hostile one, the endpoint
+ *     answered 200 to all four. ⚠️ Those probes carried NO session cookie — this
+ *     harness cannot hold a real one and forging one is a red line — so what is
+ *     established is that the request is not rejected on Origin, not that a
+ *     live session would also survive the check. If PM's manual run comes back
+ *     with "Invalid origin", that is the untested half and the fix is
+ *     `trustedOrigins` on the server, not a workaround here.
+ *
+ *   · CORS DOES NOT APPLY, AND THAT MATTERED. Unlike `/api/signals`, this
+ *     endpoint sends NO `Access-Control-Allow-Origin` — so an ordinary page
+ *     could not make this call. An extension worker holding host permission
+ *     can: measured in a real Chromium against a mock that deliberately omits
+ *     the header, POST + `content-type: application/json` + credentials went
+ *     through with no preflight ever reaching the server, while the identical
+ *     call from a normal cross-origin page came back "Failed to fetch". The
+ *     host permission is doing that, and it is one we have held since 1.0.0.
+ *
+ * 🔴 THE CLEARING COOKIES ARE THE POINT AND THIS WORKER NEVER TOUCHES THEM. The
+ * response's Set-Cookie headers are applied by the browser's cookie store; this
+ * function reads nothing out of them, and the extension holds no `cookies`
+ * permission that would let it. All it reports back is whether the request
+ * succeeded, and the panel then re-asks the ordinary lookup — which is the only
+ * thing that can say whether a session still exists.
+ */
+async function signOut() {
+  const res = await fetch(`${API_BASE}/api/auth/sign-out`, {
+    method: 'POST',
+    credentials: 'include',
+    cache: 'no-store',
+    headers: { 'content-type': 'application/json' },
+    body: '{}',
+  });
+  if (!res.ok) return { error: `http_${res.status}` };
+  return { data: { ok: true } };
+}
+
+/**
+ * WS-EXT-1.10-AVATAR — who is signed in, asked once when the panel opens.
+ *
+ * 🔴 IT IS A SEPARATE QUESTION FROM `getSignals`, WHICH IS WHY IT IS A SEPARATE
+ * CALL. "What is this account" does not depend on which domain the user happens
+ * to be looking at, and the panel must be able to draw the header before any
+ * site lookup returns — a header that waits for `/api/signals` would show an
+ * anonymous avatar to a signed-in user for the length of a D1 read.
+ *
+ * ⚠️ THE ENDPOINT DOES NOT EXIST IN PRODUCTION YET (404, measured), and this
+ * build ships anyway. A 404 is reported as an error, the panel keeps its
+ * anonymous state, and nothing on screen claims otherwise — the same posture the
+ * tier chip has had since it was added ahead of its server.
+ */
+async function getMe(key) {
+  const url = `${API_BASE}/api/me`;
+  const res = await fetch(url, {
+    credentials: 'include',
+    cache: 'no-store',
+    headers: authHeaders(key),
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
+  if (!res.ok) return { error: `http_${res.status}` };
+  return { data: await res.json() };
+}
+
+/**
+ * The avatar, relayed as a data URL.
+ *
+ * 🔴 IT IS FETCHED HERE AND NOT SET AS AN `<img src>` IN THE PANEL, and that is
+ * not a style choice — it is the only arrangement that keeps a published
+ * sentence true. `check-ext-disclosure` D1b counts calls to `fetch()` in
+ * sidepanel.js and requires zero, and the claim it supports is "the panel makes
+ * no request at all". An `<img src="https://trirankai.com/...">` is a request
+ * the panel makes and is not a call to `fetch()` — so that gate would have
+ * stayed green, at its stated expected value, while the sentence it exists to
+ * protect became false. The number holds and the promise breaks: exactly the
+ * failure this repo keeps finding. Routing the bytes through here leaves both
+ * true.
+ *
+ * ⚠️ AND NOTE HOW THIS PARAGRAPH SPELLS THAT PATTERN. It says `fetch()`, with
+ * the parentheses closed, because D1a extracts request targets by looking for
+ * that name followed by an open parenthesis and a backtick string — and the
+ * first draft of this comment wrote it exactly that way. The gate then derived
+ * THREE destinations out of this prose and failed on all three. A comment in one
+ * file is inside another file's scan set; see the note in CLAUDE.md about a
+ * pattern's scope being wider than its intent.
+ *
+ * 🔴 A CAP, BECAUSE A DATA URL CROSSES A MESSAGE BOUNDARY. The image is base64'd
+ * and handed to the panel, so an unbounded response would be an unbounded
+ * string copied between contexts. 256 KB is far above any avatar a provider
+ * serves and far below anything that would hurt; past it we report no picture,
+ * which is a state the panel already draws.
+ *
+ * ⚠️ THE CONTENT-TYPE IS RE-CHECKED HERE EVEN THOUGH THE ENDPOINT ALLOW-LISTS
+ * IT. That endpoint's own note says it relays only raster types and answers 404
+ * for anything else — this is not distrust of it, it is that a data URL carries
+ * its type in the string, and building one from an unchecked header would let a
+ * future server change decide what this extension renders.
+ */
+const AVATAR_MAX_BYTES = 256 * 1024;
+const AVATAR_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+  'image/avif',
+];
+
+async function getAvatar(key) {
+  const url = `${API_BASE}/api/me/avatar`;
+  const res = await fetch(url, {
+    credentials: 'include',
+    cache: 'no-store',
+    headers: authHeaders(key),
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
+  if (!res.ok) return { error: `http_${res.status}` };
+  const type = (res.headers.get('content-type') ?? '').split(';')[0].trim();
+  if (!AVATAR_TYPES.includes(type)) return { error: 'unsupported_type' };
+  const buf = await res.arrayBuffer();
+  if (buf.byteLength > AVATAR_MAX_BYTES) return { error: 'too_large' };
+  const bytes = new Uint8Array(buf);
+  let bin = '';
+  // In chunks: String.fromCharCode.apply on a whole avatar overflows the
+  // argument list on some sizes, and the failure is a RangeError rather than a
+  // wrong picture.
+  for (let i = 0; i < bytes.length; i += 0x8000) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  }
+  return { data: { dataUrl: `data:${type};base64,${btoa(bin)}` } };
+}
+
+async function getSiteCache(host, key) {
   const url = `${API_BASE}/api/site-cache/${encodeURIComponent(host)}`;
-  const res = await fetch(url, { credentials: 'omit', cache: 'no-store' });
+  const res = await fetch(url, {
+    // 'include' for the reason written above getSignals. Same origin, same
+    // posture; the two of ours move together or the tier is reported by one
+    // screen and not the next.
+    credentials: 'include',
+    cache: 'no-store',
+    headers: authHeaders(key),
+    signal: AbortSignal.timeout(LOOKUP_TIMEOUT_MS),
+  });
   if (res.status === 429) return { error: 'rate_limited' };
   if (!res.ok) return { error: `http_${res.status}` };
   return { data: await res.json() };
+}
+
+/**
+ * WS-EXT-SERP-OVERLAY 件二 — the one request the user pays for by pressing a
+ * button.
+ *
+ * `POST /api/site-refresh/<domain>`. It sits beside `getSiteCache` above and is
+ * its opposite: that one is strict zero-spend and fires because the panel
+ * opened, this one spends real money and fires because a person clicked. The
+ * server route's own header calls that distinction "the wall the whole dispatch
+ * rests on", and the reason it is a POST rather than a GET is that a link
+ * prefetch, a speculative preload and a retried navigation all issue GETs on
+ * their own — which would turn "the user asked" back into "the page loaded"
+ * without a line of code changing here.
+ *
+ * 🔴 IT REFRESHES THE SIMILARWEB TRAFFIC ESTIMATE AND NOTHING ELSE. Not the
+ * audit, not the AI-citation reading, not DR. That is why the panel's button
+ * for it lives inside the Traffic screen rather than in the header: a global
+ * refresh control would tell a reader that pressing it updates whatever they
+ * are currently looking at, and on five of the six screens that would be false.
+ *
+ * 🔴 THE WHOLE BODY IS RETURNED ON EVERY STATUS, WHICH IS WHERE THIS DEPARTS
+ * FROM `getSignals` AND `getSiteCache` DIRECTLY ABOVE. Those two collapse a 429
+ * into `{ error: 'rate_limited' }` and throw the body away, which is right for
+ * them — a reader of a free lookup has nothing to do with the number. Here the
+ * body is the answer: `limit` says WHICH ceiling stopped this call, and the
+ * panel has to tell a paid caller with 29 refreshes left that our site-wide
+ * bill breaker tripped rather than that they are out of allowance. Copying the
+ * shape above would have made that sentence unwritable.
+ *
+ * 🔴 A 200 IS NOT A SUCCESS, AND THIS FUNCTION DOES NOT DECIDE WHICH IT IS. A
+ * failed vendor run comes back 200 with `reason:'fetch-failed'`, and a call the
+ * server judged unnecessary comes back 200 with the number untouched — so
+ * `res.ok` answers a question nobody asked. What did or did not happen is in
+ * `refreshed`, which the route derives by comparing the stored row's own
+ * `fetchedAt` against the instant the request started, precisely because
+ * "we reached the success branch" can be true of a request whose cache write
+ * failed. This worker hands the body up unread and the panel branches on that
+ * field.
+ *
+ * `credentials: 'include'` for the reason written above `getSignals`, and it is
+ * load-bearing here in a way it is not there: an anonymous caller's allowance is
+ * zero, so without the cookie every press answers 401 no matter who is signed
+ * in on trirankai.com.
+ */
+async function refreshTraffic(domain, key) {
+  const url = `${API_BASE}/api/site-refresh/${encodeURIComponent(domain)}`;
+  const res = await fetch(url, {
+    method: 'POST',
+    credentials: 'include',
+    cache: 'no-store',
+    headers: {
+      'content-type': 'application/json',
+      ...(authHeaders(key) ?? {}),
+    },
+    body: '{}',
+  });
+  // 🔴 Parsed before any status test. Every documented status this route returns
+  // — 200, 400, 401 and both 429s — carries a JSON body the panel needs, so a
+  // status-first branch would discard the thing that distinguishes the four
+  // failure states from each other. Only an unparseable response is an error
+  // this worker names itself, and it names the status so the panel is not left
+  // saying "something went wrong" about a 502 it could have quoted.
+  let body = null;
+  try {
+    body = await res.json();
+  } catch {
+    return { error: `http_${res.status}` };
+  }
+  return { data: { ...body, httpStatus: res.status } };
 }
 
 // --- page scan (WS-EXT-PANEL batch 2) --------------------------------------
@@ -1096,7 +1389,17 @@ async function collectOutline(unknownPath) {
   // same n-gram admission rules (a unigram must be 2+ chars and not a stop
   // word; an n-gram is dropped only when EVERY token in it is one), same
   // rounding (2 decimals), same tie-break (count desc, then term asc), same
-  // caps (20 unigrams, 12 each for bi/tri).
+  // caps (20 unigrams, 12 each for n-grams).
+  //
+  // ⚠️ WS-POLISH-0903 — ONE THING HERE IS NO LONGER THE SERVER'S, AND IT IS THE
+  // RANGE OF n. This scan produces n = 1..5; the server produces n = 1..3
+  // (src/diagnose/fetch.ts, src/lib/text-density.ts). Every RULE above still
+  // holds at every length — the admission rule is stated per-token and the
+  // denominator is `totalWords` at all lengths, so a 5-gram here is counted the
+  // way a trigram is — but "copied literally" now describes the rules and not
+  // the list of outputs. Nothing goes red if the server later grows n = 4, 5
+  // and disagrees with this file about them; that is the drift this paragraph
+  // exists to make visible.
   const STOPWORDS = new Set([
     'the',
     'a',
@@ -1209,29 +1512,45 @@ async function collectOutline(unknownPath) {
       .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'en'))
       .slice(0, n)
       .map(([term, count]) => ({ term, count, densityPct: pct(count) }));
+  // WS-POLISH-0903 — n = 2..5 in ONE loop, where n = 2 and n = 3 used to be two
+  // hand-written branches.
+  //
+  // 🔴 THE STOP-WORD RULE IS NOT AN ANALOGY, IT IS THE RULE ALREADY WRITTEN
+  // DOWN. `keywordDensitySchema` in src/diagnose/schema.ts states it as "an
+  // n-gram is dropped only when EVERY token is a stopword" — a sentence with no
+  // 3 in it. The two old branches were that sentence spelled out twice, at the
+  // only two lengths that existed; `span.every` is the same sentence with the
+  // length left open, so 4 and 5 are the rule applied rather than a new rule
+  // invented. Rewriting it this way is also what keeps the four lengths from
+  // drifting: there is now one place where "which n-grams count" is decided.
+  //
+  // ⚠️ THE SERVER STOPS AT 3 AND THIS IS THE ASYMMETRY THAT COMES WITH THAT.
+  // src/diagnose/fetch.ts and src/lib/text-density.ts both build unigrams /
+  // bigrams / trigrams and nothing else, so `fourgrams` and `fivegrams` exist
+  // ONLY in this live client scan. The density screen's own header promises the
+  // two paths report the same number for the same text; that promise is now
+  // true for n ≤ 3 and has nothing to compare at n = 4, 5, and the screen says
+  // so rather than leaving the sentence to cover lengths it cannot.
+  //
+  // The denominator does NOT change with n: `pct` divides by `totalWords` for
+  // every length, which is what the stored audit does at n ≤ 3 and is the
+  // reason a 4-gram density here is comparable to a unigram density beside it.
+  const NGRAM_MAX = 5;
   const uni = new Map();
-  const bi = new Map();
-  const tri = new Map();
+  const grams = new Map();
+  for (let n = 2; n <= NGRAM_MAX; n++) grams.set(n, new Map());
   for (let i = 0; i < words.length; i++) {
     const w = words[i];
     if (w.length >= 2 && !STOPWORDS.has(w)) uni.set(w, (uni.get(w) ?? 0) + 1);
-    if (
-      i + 1 < words.length &&
-      !(STOPWORDS.has(w) && STOPWORDS.has(words[i + 1]))
-    ) {
-      const g = `${w} ${words[i + 1]}`;
-      bi.set(g, (bi.get(g) ?? 0) + 1);
-    }
-    if (
-      i + 2 < words.length &&
-      !(
-        STOPWORDS.has(w) &&
-        STOPWORDS.has(words[i + 1]) &&
-        STOPWORDS.has(words[i + 2])
-      )
-    ) {
-      const g = `${w} ${words[i + 1]} ${words[i + 2]}`;
-      tri.set(g, (tri.get(g) ?? 0) + 1);
+    for (let n = 2; n <= NGRAM_MAX; n++) {
+      // `i + n > words.length` is the old `i + 1 < words.length` (n = 2) and
+      // `i + 2 < words.length` (n = 3) written once: both say the window fits.
+      if (i + n > words.length) break;
+      const span = words.slice(i, i + n);
+      if (span.every((t) => STOPWORDS.has(t))) continue;
+      const g = span.join(' ');
+      const m = grams.get(n);
+      m.set(g, (m.get(g) ?? 0) + 1);
     }
   }
 
@@ -1247,8 +1566,10 @@ async function collectOutline(unknownPath) {
   const keywords = {
     totalWords,
     unigrams: topOf(uni, TOP_UNIGRAMS),
-    bigrams: topOf(bi, TOP_NGRAMS),
-    trigrams: topOf(tri, TOP_NGRAMS),
+    bigrams: topOf(grams.get(2), TOP_NGRAMS),
+    trigrams: topOf(grams.get(3), TOP_NGRAMS),
+    fourgrams: topOf(grams.get(4), TOP_NGRAMS),
+    fivegrams: topOf(grams.get(5), TOP_NGRAMS),
     clientOnly: {
       cjkShare:
         letterChars > 0 ? Math.round((cjkChars / letterChars) * 1000) / 10 : 0,
@@ -1289,9 +1610,10 @@ async function collectOutline(unknownPath) {
   // WS-EXT-ENRICH A1 — 🔴 THERE IS NO robots.txt AGENT PARSER HERE ANY MORE.
   //
   // There used to be one, inlined right at this spot, and it was a SECOND
-  // implementation with a SECOND token table: nine crawlers and longest-match
-  // path resolution in extension/robots.js for the Crawler access screen, four
-  // tokens and blanket-`Disallow: /` only for the Robots & sitemap screen. One
+  // implementation with a SECOND token table: the panel's own crawler roster and
+  // longest-match path resolution in extension/robots.js for the Crawler access
+  // screen, four tokens and blanket-`Disallow: /` only for the Robots & sitemap
+  // screen. One
   // robots.txt, two screens, two answers, and nothing anywhere that could go
   // red when they disagreed.
   //
@@ -1336,9 +1658,12 @@ async function collectOutline(unknownPath) {
   // socket that accepts and never answers left `fetch` pending past six seconds
   // with nothing on screen to say so. The panel showed "Reading the page…" on a
   // DISABLED button, forever, and never reached the sentence it already has for
-  // exactly this ("The scan did not complete. That is our failure, not a
-  // finding about the site.") — that sentence only runs once the promise
-  // settles, so a hang was the one failure the panel could not describe.
+  // exactly this (SCAN_ERROR.failed in extension/sidepanel.js, whose text is
+  // `scanErrorFailed` in extension/_locales/) — that sentence only runs once the
+  // promise settles, so a hang was the one failure the panel could not describe.
+  // 🔴 The sentence is NAMED rather than quoted here on purpose: it moved into
+  // _locales in WS-EXT-TRUTH-BATCH, and a verbatim copy of it in a second file
+  // is a copy nothing compares against the first.
   //
   // A timeout needs NO new state here. AbortSignal.timeout rejects, the catch
   // below already turns any rejection into `{ok:false, status:null}`, and that
@@ -1613,8 +1938,8 @@ async function collectOutline(unknownPath) {
     // neither exists inside an injected function (see readSitemapDirectives
     // above). `aiBotBlocked` keeps the SERVER'S question — four tokens, blanket
     // block — because it is paired against a stored check that asks exactly
-    // that; `pageAccess` is the panel's own reading, all nine tokens resolved
-    // against this page's path.
+    // that; `pageAccess` is the panel's own reading, every token in
+    // extension/crawlers.js resolved against this page's path.
     aiBotBlocked: null,
     pageAccess: null,
     // 🔴 declaredCount is the robots file's own figure and is NEVER capped.
@@ -1691,6 +2016,15 @@ async function collectOutline(unknownPath) {
   // each other have to be counted the same way, or the comparison measures the
   // two counters.
   let delivered = null;
+  // WS-EXT-1.9-PANEL A2 — the parsed delivered document and its normalised text
+  // are hoisted out of the `try` below because a SECOND reading needs them, and
+  // it is the same reading: `delivered.words` answers "how much did the server
+  // send", the Agent/Human comparison answers "which of the words in front of
+  // you did it send". Re-parsing the same 300,000 characters a second time to
+  // ask the second question would be two parses of one response, and the two
+  // could then disagree about what the delivered body says.
+  let deliveredDoc = null;
+  let deliveredText = null;
   if (deliveredRes.ok && deliveredRes.text) {
     try {
       const doc = new DOMParser().parseFromString(
@@ -1708,6 +2042,8 @@ async function collectOutline(unknownPath) {
       const dText = (dBody ? dBody.textContent || '' : '')
         .replace(/\s+/g, ' ')
         .trim();
+      deliveredDoc = doc;
+      deliveredText = dText;
       delivered = {
         ok: true,
         status: deliveredRes.status,
@@ -1740,6 +2076,142 @@ async function collectOutline(unknownPath) {
       status: deliveredRes.status,
       error: deliveredRes.error,
       xRobotsTag: deliveredRes.xRobotsTag ?? null,
+    };
+  }
+
+  // WS-EXT-1.9-PANEL A2 — Agent view vs Human view.
+  //
+  // 🔴 NO NEW REQUEST, AND THAT IS LOAD-BEARING RATHER THAN AN OPTIMISATION.
+  // The delivered HTML this compares against is `deliveredRes`, the read
+  // `readSameOrigin(location.href, true)` already performed for
+  // `checkServerRendered`. Adding a second fetch here would add a destination
+  // the privacy policy enumerates and `scripts/check-ext-disclosure.ts` D1a
+  // derives — a new egress for a screen that needs no new bytes.
+  //
+  // 🔴 IT CARRIES THIS BROWSER'S OWN User-Agent, NOT A CRAWLER'S, and the UI
+  // has to say so in those words. `readSameOrigin` sets no UA header; the only
+  // path in this extension that presents a crawler identity is `probeOne`, and
+  // that one discards the body. So this measures "what the server sends without
+  // JavaScript", NOT "what a bot is served" — a site that varies its output by
+  // User-Agent is not being tested here, and `navigator.userAgent` is carried
+  // back so the screen can print the identity the request actually used instead
+  // of describing it.
+  //
+  // 🔴 THE STRIPPING AND THE TOKENIZER ARE THE ONES ABOVE, ON BOTH SIDES. The
+  // rendered side reuses `body` — the clone the density block already stripped
+  // of script/style/noscript/textarea/svg — and `text`; the delivered side
+  // reuses `deliveredText`, stripped by the same list in the same order. A
+  // comparison whose two sides were counted differently measures the two
+  // counters, which is the defect `delivered.words` was written to avoid.
+  //
+  // 🔴 TEXT DOES CROSS BACK HERE, WHICH THE BLOCK ABOVE DELIBERATELY REFUSES,
+  // and the difference is what is being claimed. There, the HTML would have
+  // been raw material for a measurement made on this side; here the list of
+  // blocks the server did not send IS the measurement — a count of them with
+  // no text would be a number nobody could check. It is bounded twice
+  // (AH_MAX_BLOCKS entries, AH_BLOCK_CHARS characters each) and the count of
+  // what was cut rides with it, so the screen never presents a capped list as
+  // a complete one.
+  const AH_MAX_BLOCKS = 20;
+  const AH_BLOCK_CHARS = 200;
+  const AH_BLOCK_SELECTOR =
+    'p, li, h1, h2, h3, h4, h5, h6, td, th, blockquote, figcaption, dd, dt, summary';
+  let agentHuman = null;
+  try {
+    if (deliveredText === null) {
+      agentHuman = {
+        ok: false,
+        status: deliveredRes.status ?? null,
+        error: deliveredRes.error ?? delivered?.error ?? null,
+        ua: typeof navigator === 'undefined' ? null : navigator.userAgent,
+      };
+    } else {
+      // 🔴 A MULTISET INTERSECTION, NOT A SET ONE. A page that renders the same
+      // 30 words 40 times would score 100% against a server body containing
+      // them once, and "the server sent all of this" is exactly the claim that
+      // would be false. Counting min(occurrences) on both sides makes a word
+      // the server sent twice and the browser shows fifty times contribute two.
+      const tokenize = (t) => t.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+      const humanWords = tokenize(text);
+      const agentWords = tokenize(deliveredText);
+      const agentCounts = new Map();
+      for (const w of agentWords)
+        agentCounts.set(w, (agentCounts.get(w) || 0) + 1);
+      let shared = 0;
+      const spend = new Map(agentCounts);
+      for (const w of humanWords) {
+        const left = spend.get(w) || 0;
+        if (left > 0) {
+          spend.set(w, left - 1);
+          shared += 1;
+        }
+      }
+      // 🔴 The denominator is the RENDERED word count, and the direction is the
+      // question. "What share of what you can see did the server send" has an
+      // answer a reader can act on; dividing by the server's count instead
+      // would report a server that sends MORE than the browser renders as
+      // incomplete, which is a different page and not a finding.
+      const overlapPct =
+        humanWords.length > 0
+          ? Math.round((shared / humanWords.length) * 1000) / 10
+          : null;
+
+      // Blocks: the units a reader would name if asked what is missing. Matching
+      // is done against the delivered body's normalised text rather than against
+      // a parallel block list, because a server that ships the same sentence
+      // inside a different element still shipped the sentence.
+      const norm = (t) => (t || '').replace(/\s+/g, ' ').trim();
+      const agentHay = ` ${deliveredText.toLowerCase()} `;
+      const missingBlocks = [];
+      let missingBlockCount = 0;
+      let missingBlockWords = 0;
+      const seen = new Set();
+      const blocks = body ? body.querySelectorAll(AH_BLOCK_SELECTOR) : [];
+      for (const b of blocks) {
+        const t = norm(b.textContent);
+        // Two words is the floor: a one-word cell ("Yes", a price) matches
+        // somewhere in almost any body by accident, so listing or clearing it
+        // says nothing either way.
+        if (t.length < 12 || tokenize(t).length < 2) continue;
+        const k = t.toLowerCase();
+        if (seen.has(k)) continue;
+        seen.add(k);
+        if (agentHay.includes(k)) continue;
+        missingBlockCount += 1;
+        missingBlockWords += tokenize(t).length;
+        if (missingBlocks.length < AH_MAX_BLOCKS) {
+          missingBlocks.push(t.slice(0, AH_BLOCK_CHARS));
+        }
+      }
+      agentHuman = {
+        ok: true,
+        status: deliveredRes.status ?? null,
+        error: null,
+        ua: typeof navigator === 'undefined' ? null : navigator.userAgent,
+        agentWords: agentWords.length,
+        humanWords: humanWords.length,
+        sharedWords: shared,
+        overlapPct,
+        missingBlocks,
+        missingBlockCount,
+        missingBlockWords,
+        blocksListed: missingBlocks.length,
+        blockChars: AH_BLOCK_CHARS,
+        // Carried from the read cap, not re-derived: a delivered body cut at
+        // 300,000 characters makes the overlap a FLOOR and the missing-block
+        // list an over-count, and the screen has to say so rather than print
+        // either as a measurement.
+        truncated: deliveredRes.truncated === true,
+      };
+    }
+  } catch (e) {
+    // Our failure to compare, never a finding about the page — the same posture
+    // every other read in this function takes.
+    agentHuman = {
+      ok: false,
+      status: deliveredRes.status ?? null,
+      error: String(e?.name ?? e).slice(0, 120),
+      ua: typeof navigator === 'undefined' ? null : navigator.userAgent,
     };
   }
 
@@ -1951,6 +2423,190 @@ async function collectOutline(unknownPath) {
     }
   }
 
+  // ---- serverInputs (WS-TIDY-6) -------------------------------------------
+  //
+  // 🔴 THESE EXIST SO THE PANEL CAN APPLY THE SERVER'S OWN RULES TO THE LIVE
+  // READING, AND FOR NOTHING ELSE. Four checks in the GEO dimension had no
+  // SERVER_RULE mirror because this payload did not carry the input the
+  // server's rule reads — recorded as debt in scripts/check-server-rule-parity.ts
+  // with the field each one was missing. This block is that debt, paid. No
+  // screen renders any of it; the Overview comparison is the only consumer.
+  //
+  // 🔴 AND NOTHING ABOVE THIS BLOCK CHANGED, WHICH WAS THE POINT. The obvious
+  // route was to narrow `QUESTION_WORDS` to the server's fourteen so
+  // `questionHeads` could be mirrored directly. That regex is shared with
+  // `faqQuestionish` and feeds the question-heading count on two other screens,
+  // and it also accepts a full-width CJK question mark the server does not — so
+  // narrowing it would have made this extension WORSE at reading Chinese pages
+  // in order to match a server rule that arguably has a gap. A separate,
+  // server-shaped reading costs one field and changes no existing number.
+  const SRV_LEAD_CHARS = 1200;
+  const SRV_LEAD_WORDS = 150;
+  const SRV_SENTENCE_WORDS = 8;
+  // Copied from src/diagnose/geo-checklist.ts: fourteen interrogatives, ASCII
+  // question mark only. Deliberately NOT the `QUESTION_WORDS` above it.
+  const SRV_QUESTION_WORDS =
+    /^(who|what|when|where|why|how|which|can|do|does|is|are|should|will)\b/i;
+
+  const srvLead = text.slice(0, SRV_LEAD_CHARS);
+  const srvAnswerFirst = srvLead
+    .split(/\s+/)
+    .slice(0, SRV_LEAD_WORDS)
+    .join(' ')
+    .split(/(?<=\.)\s+/)
+    .some(
+      (sentence) =>
+        sentence.trim().split(/\s+/).length >= SRV_SENTENCE_WORDS &&
+        sentence.trim().endsWith('.')
+    );
+
+  // The server counts VISIBLE-TEXT PARAGRAPHS carrying a digit, which is not
+  // the numeral-token count `numerals` above — "5 tips" and "grew 40% in 2025"
+  // are one paragraph each to this and one versus two to that. Same name, same
+  // unit, or the Overview would report a disagreement that is ours.
+  let srvNumericParagraphs = 0;
+  for (const el of document.querySelectorAll('p')) {
+    const t = (el.textContent || '').replace(/\s+/g, ' ').trim();
+    if (t && /\d/.test(t)) srvNumericParagraphs += 1;
+  }
+
+  let srvQuestionHeads = 0;
+  for (const n of nodes) {
+    const lvl = Number(n.tagName[1]);
+    if (lvl !== 2 && lvl !== 3) continue;
+    const t = (n.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!t) continue;
+    if (/\?\s*$/.test(t) || SRV_QUESTION_WORDS.test(t)) srvQuestionHeads += 1;
+  }
+
+  // ⚠️ The server tests `rel=author` with a regex over the RAW HTML, so it also
+  // matches a rel on an element that is not a link, and matches `rel="me author"`.
+  // `[rel~="author"]` is the DOM's own space-separated-token match: it covers the
+  // multi-value case and does NOT match a rel that merely contains the letters.
+  // The two can differ on malformed markup, and that difference is a reading
+  // difference — which is the thing the Overview exists to show.
+  const srvRelAuthor = !!document.querySelector('[rel~="author"]');
+  // Person/Organization carrying a name, mirroring the server's substring test
+  // rather than parsing: those blocks are frequently invalid JSON in the wild.
+  const srvLdHtml = [
+    ...document.querySelectorAll('script[type="application/ld+json"]'),
+  ]
+    .map((el) => el.textContent || '')
+    .join(' ');
+  const srvAuthorLd =
+    /"@type"\s*:\s*"(?:Person|Organization)"[\s\S]{0,400}?"name"\s*:/i.test(
+      srvLdHtml
+    ) ||
+    /"name"\s*:[\s\S]{0,400}?"@type"\s*:\s*"(?:Person|Organization)"/i.test(
+      srvLdHtml
+    );
+
+  // ---- WS-EXT-MIRROR-SETTLE — four more, for the five calibrated GEO rules --
+  //
+  // 🔴 SAME SHAPE AS THE BLOCK ABOVE AND FOR THE SAME REASON: each is computed
+  // with the SERVER's algorithm out of src/diagnose/fetch.ts, not with the
+  // nearest reading this payload already carries. The near-misses were measured
+  // before this block was written, and every one of them would have been a
+  // mirror that agrees on the status set and disagrees on the page:
+  //   · `pageShape.subheads` skips no headings but has no collection window,
+  //     while the server stops after MAX_HEADINGS non-empty headings of ANY
+  //     level. A page whose first sixty headings are h4 reads 0 there and its
+  //     real count here.
+  //   · `pageShape.lists` / `pageShape.tables` exclude nav/header/footer/aside,
+  //     take li >= 2 rather than 3, count `:scope > li` rather than every `<li`
+  //     in the block, and take table rows >= 2 rather than >= 1. Four
+  //     differences, none of which A1 or A2 can see.
+  //   · `keywords.totalWords` tokenises on /[\p{L}\p{N}]+/u, so
+  //     `state-of-the-art` is four words there and one to the server. At a cut
+  //     point of 1263 that is a systematic offset, not a rounding difference.
+  // Nothing above this block changed — the existing fields keep feeding the
+  // screens that already read them, exactly as WS-TIDY-6 left them.
+  //
+  // ⚠️ WHAT STAYS DIFFERENT, AND IT IS THE POINT OF THE COMPARISON: the server
+  // reads delivered HTML with a regex, this reads the live DOM after JavaScript.
+  // Malformed or exotic markup can put the two trees in different shapes, and
+  // that difference is a READING difference — the thing the Overview exists to
+  // show. What this block removes is the other kind: a difference that is ours.
+  const SRV_MAX_HEADINGS = 60;
+  const SRV_LIST_ITEMS_PER_BLOCK = 3;
+  const SRV_DEFINITION_SCAN_STEP = 10;
+  const SRV_DEFINITION_SCAN_LIMIT = 2000;
+  // Copied from DEFINITIONAL_PHRASE in src/diagnose/fetch.ts.
+  const SRV_DEFINITIONAL_PHRASE =
+    /\b(?:is|are)\s+(?:a|an|the)\b|\brefers?\s+to\b|\bmeans\b|\bis\s+defined\s+as\b/i;
+
+  // The server collects headings of every level in document order, skipping the
+  // ones whose text is empty, and STOPS at MAX_HEADINGS — then counts h2/h3
+  // among what it collected. The window is the whole difference from
+  // `subheads` above, so it is reproduced rather than approximated.
+  let srvSectionHeadings = 0;
+  let srvHeadingsSeen = 0;
+  for (const n of nodes) {
+    if (srvHeadingsSeen >= SRV_MAX_HEADINGS) break;
+    const t = (n.textContent || '').replace(/\s+/g, ' ').trim();
+    if (!t) continue;
+    srvHeadingsSeen += 1;
+    const lvl = Number(n.tagName[1]);
+    if (lvl === 2 || lvl === 3) srvSectionHeadings += 1;
+  }
+
+  // 🔴 TOP-LEVEL LISTS ONLY, AND THAT IS A TRANSLATION OF THE SERVER'S REGEX
+  // RATHER THAN A RULE OF OUR OWN. Its pattern is NON-GREEDY
+  // (`<(ul|ol)\b[^>]*>([\s\S]*?)</\1\s*>`), so on a nested list the outer
+  // match ends at the INNER list's closing tag: the inner list is consumed
+  // inside the outer block and is never matched on its own, and every `<li` of
+  // both is counted once, in one block. Counting each ul/ol element here would
+  // report two blocks where the server reports one. Same argument for tables.
+  const srvTopLevel = (el, sel) => !el.parentElement?.closest(sel);
+  let srvListOrTableBlocks = 0;
+  for (const l of document.querySelectorAll('ul, ol')) {
+    if (!srvTopLevel(l, 'ul, ol')) continue;
+    if (l.querySelectorAll('li').length >= SRV_LIST_ITEMS_PER_BLOCK) {
+      srvListOrTableBlocks += 1;
+    }
+  }
+  for (const t of document.querySelectorAll('table')) {
+    if (!srvTopLevel(t, 'table')) continue;
+    if (t.querySelector('tr')) srvListOrTableBlocks += 1;
+  }
+
+  // `text` is already whitespace-collapsed and trimmed, so this is the server's
+  // `split(/\s+/).filter(Boolean)` over the same shape of string.
+  const srvWords = text.split(/\s+/).filter(Boolean);
+
+  // 🔴 A FINITE SENTINEL, NOT `Infinity`, AND NOT `null`. The server records
+  // `Infinity` when no definitional phrase is found. Neither survives this
+  // payload: JSON has no Infinity, and a `null` arriving at the mirror's
+  // `<= 460` compares as ZERO — `null <= 460` is true — so "this page never
+  // says what it is" would grade PASS. One past the scan limit is outside every
+  // threshold the rule can carry and cannot invert, whatever serialiser sits in
+  // between.
+  const SRV_DEFINITION_NOT_FOUND = SRV_DEFINITION_SCAN_LIMIT + 1;
+  let srvDefinitionalPhraseAt = SRV_DEFINITION_NOT_FOUND;
+  for (
+    let i = SRV_DEFINITION_SCAN_STEP;
+    i <= Math.min(srvWords.length, SRV_DEFINITION_SCAN_LIMIT);
+    i += SRV_DEFINITION_SCAN_STEP
+  ) {
+    if (SRV_DEFINITIONAL_PHRASE.test(srvWords.slice(0, i).join(' '))) {
+      srvDefinitionalPhraseAt = i;
+      break;
+    }
+  }
+
+  const serverInputs = {
+    answerFirst: srvAnswerFirst,
+    qaStructure: srvQuestionHeads > 0,
+    authorEntity: srvAuthorLd || srvRelAuthor,
+    numericParagraphs: srvNumericParagraphs,
+    leadText: srvLead,
+    // WS-EXT-MIRROR-SETTLE — the four the five calibrated rules read.
+    sectionHeadings: srvSectionHeadings,
+    listOrTableBlocks: srvListOrTableBlocks,
+    wordCount: srvWords.length,
+    definitionalPhraseAt: srvDefinitionalPhraseAt,
+  };
+
   const pageShape = {
     nav,
     sections,
@@ -2010,6 +2666,8 @@ async function collectOutline(unknownPath) {
     head,
     entity,
     pageShape,
+    // WS-TIDY-6 — the server's own rule inputs; see the block that builds them.
+    serverInputs,
     schema,
     social,
     images,
@@ -2020,6 +2678,10 @@ async function collectOutline(unknownPath) {
     sitemap,
     llms,
     delivered,
+    // WS-EXT-1.9-PANEL A2 — see the block that builds it. Never null: an
+    // unreadable delivered body yields `{ok:false}` with the reason, because a
+    // null here and a page with nothing missing are the same shape on screen.
+    agentHuman,
     // WS-EXT-UNKNOWN-URL — null when the worker held a fresh reading and told us
     // not to ask. `null` here is "not read on this scan", never "the site has no
     // answer"; the panel keys its not-measured wording off it and off `status`.
@@ -2287,6 +2949,21 @@ async function probeCrawlers(url) {
   const robotsKnown = groups !== null || robots.status !== null;
 
   const results = [];
+  // WS-EXT-1.10.6-ROSTER — 🔴 A NOTE FOR WHOEVER GIVES THE NEW ROWS A `ua`, AND
+  // NOTHING HERE CHANGED IN 1.10.6. This loop is SEQUENTIAL with PROBE_GAP_MS
+  // between requests, and that was sized when five rows could be sent. The
+  // roster went from nine tokens to twenty-three in 1.10.6 at ZERO request cost,
+  // because every added row has `ua: null` and leaves through the `no_ua` branch
+  // below before any fetch — measured, not assumed: TESTABLE still holds the
+  // same five ids.
+  //
+  // ⚠️ TRANSCRIBING User-Agents for the rest is what turns that into a problem,
+  // and the cost is worth knowing BEFORE the roster is grown rather than after
+  // the panel feels slow. With all twenty-one UA-bearing crawlers sendable:
+  // twenty gaps of PROBE_GAP_MS is about six seconds of pure waiting, and a site
+  // that black-holes requests costs up to PROBE_TIMEOUT_MS EACH — twenty-one of
+  // those is three and a half minutes with the panel showing nothing. That
+  // version needs batching or concurrency here; it cannot just add the strings.
   for (const crawler of CRAWLERS) {
     const robotsState = !robotsKnown
       ? 'unknown'
@@ -2388,14 +3065,174 @@ chrome.action.onClicked.addListener((tab) => {
   });
 });
 
+// --- the DR badge on the toolbar icon ---------------------------------------
+
+/**
+ * WS-EXT-1.10.5 — the number on the extension icon.
+ *
+ * 🔴 THIS BADGE IS A MEMORY OF WHAT YOU LOOKED AT, NOT AN AMBIENT READOUT. It
+ * appears on a tab only after the side panel has been opened on it and the
+ * `getSignals` reply has come back; a tab whose panel was never opened carries
+ * nothing. That is the design and not a fault. The alternative wanted the
+ * "tabs" permission so this worker could read every address the reader visits,
+ * which puts "Read your browsing history" on the install dialog in order to
+ * decorate an icon — PM ruled that trade down. If you arrived here because "the
+ * badge is missing on most tabs", this paragraph is the answer, not a bug.
+ *
+ * 🔴 ZERO NEW SPEND, AND STRUCTURALLY SO RATHER THAN CAREFULLY SO. The number is
+ * read off the reply to a `getSignals` call the panel was making anyway —
+ * `authority.dr`, the same field the panel's own DR row renders — so nothing is
+ * issued from here: no second quota to burn, no endpoint to abuse. The route
+ * that would have been convenient is deliberately NOT used: `/api/badge/dr/
+ * <domain>` answers in SVG, and every call writes a badge-reach row whose whole
+ * purpose is to answer "who embedded our badge on their site"
+ * (src/lib/badge-usage.ts). Polling it per tab switch would cost no money and
+ * would corrupt that reading, which is worse than costing money.
+ *
+ * 🔴 THREE STATES, THREE BRANCHES, DELIBERATELY NOT MERGED into "show it if we
+ * have one". Two of them put nothing on the icon and are still not the same
+ * thing:
+ *   measured      → the number, INCLUDING "0". A DR of 0 is a real reading
+ *                   (insuraitools.com is 0), so it shows as 0 and never as
+ *                   blank — blank is what "nobody has measured this" looks
+ *                   like, and red line 3 is that we never present one as the
+ *                   other. Chrome's documented clear is the EMPTY STRING, so
+ *                   "0" is a value and not an erasure.
+ *   not_measured  → cleared. The server answered, and its answer was that
+ *                   nothing has measured this domain.
+ *   no reply      → untouched. We never asked, or the ask failed. Whatever the
+ *                   badge holds is still about the document in front of the
+ *                   reader — a navigation would already have cleared it, see
+ *                   the listener below — so blanking it here would throw away a
+ *                   true reading because one later request had a bad minute.
+ * There is NO expired state, and that is a ruling rather than an omission:
+ * /api/badge/dr/<domain> carries a PM decision that DR gets no staleness cap
+ * (Ahrefs refreshes weekly; a six-day-old reading is honest), and inventing one
+ * here would be a second answer to a question that already has one.
+ *
+ * 🔴 THE COLOURS ARE LIGHT-THEME LITERALS, NOT VARIABLES. Chrome's badge takes a
+ * colour value and not CSS, so it cannot follow `extension/tokens.css` the way
+ * the panel does. `#6EE7B7` is `--accent-300` and `#0F172A` is `--ink-900` AS
+ * THEY RESOLVE IN THE LIGHT THEME ONLY — both tokens are redefined in that
+ * file's dark block, and this badge will not follow them there. Do not read
+ * "it uses ink-900" as "it follows the theme".
+ *
+ * WHY THIS PAIR, MEASURED RATHER THAN CHOSEN BY EYE. The icon is the restrained
+ * blue and the badge is the one accent (design doctrine §48); the badge carries
+ * a metric reading, which is the place the accent rule allows green. The
+ * contrast that counts is against what the badge SITS ON — the icon, 4.89:1 —
+ * not against the toolbar beside it (1.37:1). The first ruling for this badge
+ * was `--ink-900`, withdrawn because ink-900 on the icon's own `--brand-700` is
+ * 2.39:1: two dark colours, and the badge read as a hole punched in the icon.
+ */
+const BADGE_BG = '#6EE7B7'; // --accent-300, light-theme literal — see above
+const BADGE_FG = '#0F172A'; // --ink-900, light-theme literal — see above
+
+async function setDrBadge(tabId, reply) {
+  // ③a There is no tab to badge. The panel sends `tabId: null` when it is
+  // describing a page it could not resolve to a tab, and a panel build older
+  // than this one sends no field at all. Neither is a reason to touch an icon.
+  if (typeof tabId !== 'number') return;
+
+  const authority = reply?.data?.authority;
+
+  // ③b No answer arrived — a network error, a rate limit, or a reply without
+  // the block. Leave the badge exactly as it is; see the third state above.
+  if (!authority) return;
+
+  try {
+    // ① A reading.
+    if (authority.state === 'measured' && typeof authority.dr === 'number') {
+      await chrome.action.setBadgeBackgroundColor({ tabId, color: BADGE_BG });
+      await chrome.action.setBadgeTextColor({ tabId, color: BADGE_FG });
+      await chrome.action.setBadgeText({ tabId, text: String(authority.dr) });
+      return;
+    }
+    // ② The server says nothing has measured this domain.
+    if (authority.state === 'not_measured') {
+      await chrome.action.setBadgeText({ tabId, text: '' });
+      return;
+    }
+    // Not one of the two states this build knows. It is NOT a fourth state: it
+    // is the same refusal as ②, kept as its own branch so that deleting ② can
+    // never be hidden by falling through to here.
+    await chrome.action.setBadgeText({ tabId, text: '' });
+  } catch (e) {
+    // The tab closed while the reply was in flight. The badge is decoration and
+    // never breaks the answer the panel is waiting for.
+    console.debug('TriRank: badge not set', e);
+  }
+}
+
+/**
+ * WS-EXT-1.10.5 — clearing the badge when that tab goes somewhere else.
+ *
+ * 🔴 CHROME DOES NOT DO THIS FOR US. The documented reset for a tab-specific
+ * badge is "Automatically resets when the tab is closed" — navigation is not on
+ * that list. Without this listener a reader who looks up one site and then types
+ * a different address into the same tab keeps the first site's DR on the icon,
+ * now labelling a domain it was never about.
+ *
+ * 🔴 `'loading'` AND NOT `'complete'`, AND THE ORDERING IS THE WHOLE REASON. The
+ * badge is written when the `getSignals` reply arrives, which is AFTER the
+ * document finished loading; clearing on `'complete'` would therefore race the
+ * value we just wrote and blank it. `'loading'` fires as a new navigation
+ * STARTS, which is exactly the moment the old reading stops being about what
+ * the reader is looking at.
+ *
+ * ⚠️ SAME-DOCUMENT NAVIGATION IS NOT COVERED, AND THIS DOES NOT PRETEND IT IS. A
+ * pushState hop to a different host emits a url change with no `'loading'`, so a
+ * badge can outlive it. The panel has the same blind spot and names it
+ * (`SAME_DOCUMENT_GRACE_MS` in sidepanel.js). Closing it needs the new url, and
+ * the url needs a host grant or the "tabs" permission — the trade recorded as
+ * refused at the top of this section.
+ *
+ * Navigation also advances an in-memory generation. A pending lookup from
+ * the previous document may still resolve, but cannot restore its old badge.
+ * Nothing is persisted; tab removal releases the generation entry.
+ *
+ * `tabs.onUpdated` fires WITHOUT the "tabs" permission — measured in Chrome 147
+ * against this exact permission set, and written up at the onUpdated handler in
+ * sidepanel.js. The event is filtered to `{status}` and carries no url, which is
+ * all this listener needs and all it should be able to see.
+ */
+chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  if (changeInfo.status !== 'loading') return;
+  badgeEpochs.set(tabId, (badgeEpochs.get(tabId) ?? 0) + 1);
+  // Swallowed for the same reason as the catch above: the tab may already be
+  // gone, and a badge that could not be cleared is not an error anyone can act
+  // on.
+  chrome.action.setBadgeText({ tabId, text: '' }).catch(() => {});
+});
+
 // --- message plumbing ------------------------------------------------------
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   const run = async () => {
-    if (msg.type === 'getSignals') return getSignals(msg.host);
-    if (msg.type === 'getSiteCache') return getSiteCache(msg.host);
+    if (msg.type === 'getSignals') {
+      const epoch = badgeEpochs.get(msg.tabId) ?? 0;
+      const reply = await getSignals(msg.host, msg.key);
+      // The badge is a side effect of answering this one message. The reply is
+      // the only place the DR exists, and `msg.tabId` is the only way this
+      // worker learns which tab the panel is describing: a side panel is not a
+      // tab, so `_sender.tab` is undefined here and cannot supply it.
+      if ((badgeEpochs.get(msg.tabId) ?? 0) === epoch) {
+        await setDrBadge(msg.tabId, reply);
+      }
+      return reply;
+    }
+    if (msg.type === 'getSiteCache') return getSiteCache(msg.host, msg.key);
+    // WS-EXT-SERP-OVERLAY 件二 — the only message on this router that costs
+    // money, and the only one the panel sends because a person pressed
+    // something rather than because a panel opened. It is deliberately NOT
+    // folded into 'getSiteCache': one message that sometimes spends would make
+    // the spending invisible at every call site.
+    if (msg.type === 'refreshTraffic') return refreshTraffic(msg.host, msg.key);
+    if (msg.type === 'signOut') return signOut();
+    if (msg.type === 'getMe') return getMe(msg.key);
+    if (msg.type === 'getAvatar') return getAvatar(msg.key);
     if (msg.type === 'scanPage') return scanPage(msg.tabId, msg.url);
-    if (msg.type === 'probeCrawlers') return probeCrawlers(msg.url);
+    if (msg.type === 'probeCrawlers') return queueCrawlerProbe(msg.url);
     if (msg.type === 'peekProbe') {
       const key = `probe::${msg.url}`;
       const hit = (await chrome.storage.session.get(key))[key];
@@ -2410,3 +3247,5 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   );
   return true; // keep the channel open for the async reply
 });
+
+chrome.tabs.onRemoved.addListener((tabId) => badgeEpochs.delete(tabId));

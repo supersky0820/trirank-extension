@@ -1,0 +1,3561 @@
+{
+  "extName": {
+    "message": "AI 可见性检查器与 GEO 审计 — TriRank",
+    "description": "Chrome 应用商店列表标题。上限 75 字符，本串 27。WS-EXT-1.9-PANEL B8：品牌名移到末尾，开头先说这个扩展做什么。"
+  },
+  "extShortName": {
+    "message": "TriRank",
+    "description": "空间不足时显示的短名。上限 12 字符（不是 132，那是 description 的上限）。品牌名，各语言一致，是决定不是遗漏。"
+  },
+  "extDescription": {
+    "message": "看 ChatGPT、Claude、Gemini、Perplexity 有没有引用一个网站，对比服务器 HTML 与渲染后页面，并用真实请求实测 AI 爬虫能否访问。",
+    "description": "商店列表摘要。上限 132 字符。镜像英文版的三半，不加码：引用读数来自已存的检查；服务器 HTML 与渲染后页面的对比是面板的 Agent vs Human 屏，两侧同一地址、同一浏览器、只差有没有跑 JavaScript；爬虫可达性是当场用各厂商公布的 User-Agent 发真实请求测的。"
+  },
+  "whyWhy": {
+    "message": "为什么"
+  },
+  "qtQueries": {
+    "message": "查询词"
+  },
+  "qtCountShown": {
+    "message": "$1 $2 · 显示 $3 条"
+  },
+  "qtShownHereCard": {
+    "message": "此处未列出 —— 这张卡把它的查询词额度花在了上面那些主机上"
+  },
+  "readingReading": {
+    "message": "读取中…"
+  },
+  "aeoAIVisibility": {
+    "message": "AI 可见性"
+  },
+  "nothingReadYet": {
+    "message": "尚无读数"
+  },
+  "aeoWeightedCitationScore": {
+    "message": "已保存的品牌检查分数"
+  },
+  "aeoWhatAiEngines": {
+    "message": "这是 AI 引擎实际引用的内容，按各引擎的转介份额加权 —— 不是就绪度估计。结构就绪度是下一个维度。"
+  },
+  "citedPagesStoredCitationNames": {
+    "message": "尚无已存储的引用点到本域名的任何页面。"
+  },
+  "citRateDayWindowConclusion": {
+    "message": "窗口内还没有哪一天得出结论，因此没有可绘制的比率。"
+  },
+  "coOccOtherHostCited": {
+    "message": "窗口内没有其它主机与本域名一同被引用。"
+  },
+  "selfPosStoredAnswerPlaced": {
+    "message": "尚无已存储的答复把本域名的页面放到过某个位次上。"
+  },
+  "brandShareWatchlist": {
+    "message": "不在你的关注列表中"
+  },
+  "brandShareOnlyFoldWeekly": {
+    "message": "我们只为有人在关注的域名折算每周品牌份额，所以这个域名两边都没有存储。"
+  },
+  "brandShareTrackedBrandCited": {
+    "message": "已追踪 —— 本周没有品牌被引用"
+  },
+  "cardShowAll": {
+    "message": "显示全部 $1 条"
+  },
+  "histSumPointsOnRecord": {
+    "message": "在册的历史点 $1 个"
+  },
+  "histEngineHistory": {
+    "message": "引擎历史"
+  },
+  "histTimeline": {
+    "message": "时间线"
+  },
+  "citDetailPerEngine": {
+    "message": "按引擎 · $1"
+  },
+  "citDetailDateUnderScore": {
+    "message": "分数下方的日期是这四次读数中最早的那一个，不是四次一起跑的那天 —— 分数至少有那么新，其中一部分可能更新。"
+  },
+  "citDetailStalenessDays": {
+    "message": "一次读数在 $1 天后停止计入：该引擎回到未答复状态，而当新鲜读数少于四个时，根本不显示分数。这件事发生不需要网站有任何改变。"
+  },
+  "citDetailNothingRefreshesReading": {
+    "message": "没有任何东西按计划刷新这个读数。它之所以存在，是因为有人跑了免费诊断或免费 AI 可见性检查，而更新的读数只有在有人再跑一次时才会出现。每周监控（如果你设置过）在站点上单独追踪，不会更新这个读数。"
+  },
+  "chkBrandBrandNameConsistency": {
+    "message": "品牌名一致性"
+  },
+  "chkBrandEngineDecideWhich": {
+    "message": "引擎必须先判定这个网站**是**哪个实体，才能把一条答复归属给你。它会调和页面声明的那些名称；只有一个声明就没什么可调和的，一个都没有就没什么可归属的。"
+  },
+  "chkBrandTwoNamesOne": {
+    "message": "同一个网站两个名字，会在 AI 引擎据以立论的系统里把它拆成两个实体，于是支持引用你的证据有一半挂在了没人问起的那个名字上。"
+  },
+  "chkSameAsSameAsEntityLinks": {
+    "message": "sameAs 实体链接"
+  },
+  "chkSameAsSameAsFieldKnowledge": {
+    "message": "sameAs 是知识图谱用来把一个网站绑定到已知实体（Wikipedia、Wikidata、LinkedIn、GitHub）的那个字段。它是一个页面能做出的、关于身份的最直接的机器可读声明，也是 AI 立论时真正会去解析的那一个。"
+  },
+  "chkSameAsSameAsFieldKnowledge2": {
+    "message": "sameAs 是知识图谱用来把一个网站绑定到已知实体（Wikipedia、Wikidata、LinkedIn、GitHub）的那个字段。没有它，引擎知道你的名字，却无从确认你就是它已经了解的那个东西。"
+  },
+  "chkAuthorDateAuthorDateMarkup": {
+    "message": "作者与日期标记"
+  },
+  "chkAuthorDatePagesArticlesEngine": {
+    "message": "在**确实是**文章的页面上，引擎在两个候选来源之间权衡时，会偏向那个它能归属到某个人、并能放进时间里的。"
+  },
+  "chkAuthorDateEngineWeighingTwo": {
+    "message": "引擎在两个候选来源之间权衡时，会偏向那个它能归属到某个人、并能放进时间里的。没有署名、没有日期的文字，是它最容易略过的东西。"
+  },
+  "chkFreshContentFreshness": {
+    "message": "内容新鲜度"
+  },
+  "chkFreshAnythingUserCould": {
+    "message": "对于用户可能问及「现在」的任何事情，引擎偏向它能标定日期的来源。没有日期的页面不会被判为陈旧 —— 只是更难为引用它给出理由。"
+  },
+  "chkFreshAnythingUserCould2": {
+    "message": "对于用户可能问及「现在」的任何事情，引擎偏向它能标定日期、而且日期还近的来源。一个几年前的声明日期，是转向别人的理由。"
+  },
+  "chkHttpsHTTPS": {
+    "message": "HTTPS"
+  },
+  "chkHttpsInsecurePagesDemoted": {
+    "message": "不安全的页面会被那些构建索引（AI 答复据以立论）的爬虫降权或丢弃，而浏览器拦截混合内容，可能让爬虫读到一个用户从未看到的页面。"
+  },
+  "chkUrlShapeURLShape": {
+    "message": "URL 形态"
+  },
+  "chkUrlShapeWhenAiAnswer": {
+    "message": "当 AI 答复引用你时，它把这串字符展示给读者。一个能说出自己主题的 URL，就是「有人会点的引用」与「被一眼扫过的引用」之间的差别。"
+  },
+  "chkStandingContactPrivacyTerms": {
+    "message": "联系、隐私与条款页"
+  },
+  "chkStandingThesePagesReader": {
+    "message": "这些是读者用来判断一个网站是不是真实经营的页面，而同样的缺席，在一个正在权衡要不要把你的名字放在答复背后的模型看来，读起来也是一样的。"
+  },
+  "chkQHeadQuestionShapedHeadings": {
+    "message": "问句式标题"
+  },
+  "chkQHeadHeadingPhrasedQuestion": {
+    "message": "写成用户会问的那个问题的标题，正是检索系统会摘走的那一段。我们只能在测试覆盖的语言里检测到这一点。"
+  },
+  "chkQHeadHeadingPhrasedQuestion2": {
+    "message": "写成用户会问的那个问题的标题，正是检索系统摘走并加以归属的那一段。"
+  },
+  "chkQHeadAIAnswersAssembled": {
+    "message": "AI 答复是由已经在回答某个问题的段落拼装出来的。写成问句的小标题让它下面那段可以原样摘走；写成标签式的，则要模型自己去重建那段是干什么用的。"
+  },
+  "chkStructListsTables": {
+    "message": "列表与表格"
+  },
+  "chkStructListTableAlready": {
+    "message": "列表或表格本身就已经是答复被给出时的形状，所以可以整块摘走。同样的事实写在段落里，就得先拆开再重组，而模型重组得很糟。"
+  },
+  "chkSsrServerRenderedContent": {
+    "message": "服务端渲染内容"
+  },
+  "chkSsrEngineDoesRun": {
+    "message": "不跑 JavaScript 的引擎只看得到服务器发出来的东西。要测这一点就得再问服务器一次，而这一次我们没能做到。"
+  },
+  "chkSsrReadPageS": {
+    "message": "从这个页面自己的地址再读了一次，不跑它的 JavaScript。除此之外每个变量都被固定住 —— 同一来源、同一浏览器、同一时刻 —— 所以这里的差距就是页面在你面前、而非在别处把自己搭起来。它带的是你的 User-Agent，不是爬虫的，所以对机器人做不同渲染的网站并没有被测到。"
+  },
+  "fixFix": {
+    "message": "修复"
+  },
+  "fixWhat": {
+    "message": "是什么 · "
+  },
+  "fixWhy": {
+    "message": "为什么 · "
+  },
+  "fixHow": {
+    "message": "怎么做 · "
+  },
+  "ovScoresOnlyOneRun": {
+    "message": "三者之中只有 AI 可见性必须跑一次才有：它向 $1 提出一个关于这个网站的真实问题，并记录其中哪些引用了它。打开这个面板不会启动那件事 —— 在你开口之前，这里什么都不花，而上面那张 AI 可见性卡片就是开口的地方。"
+  },
+  "ovScoresTheseThreeDifferent": {
+    "message": "这是三把不同的尺子，不是同一个数的三种视图。AI 可见性是引擎有没有真的引用你 —— 唯一在测量结果的那把。GEO 结构与 SEO 基础是页面有没有被建成可被引用、可被找到，那是前提，不是结果。一个网站可以建得完美，却没有任何人引用。"
+  },
+  "ovCompareWhatSawVs": {
+    "message": "我们看到的 vs 你的浏览器看到的"
+  },
+  "ovCompareStillReadingStored": {
+    "message": "仍在读取已存储的诊断。"
+  },
+  "ovCompareNothingCompareYet": {
+    "message": "还没有可比对的东西 —— 这个域名没有已存储的诊断。跑一次免费诊断，这里就会填上。"
+  },
+  "ovCompareStoredAuditAbove": {
+    "message": "已存储的诊断在上面，带日期、带分数 —— 但这次查询回来时没有带上它的逐项清单，所以没有东西可以把两份读数对起来。这是我们这一端的问题，不是诊断缺失。"
+  },
+  "ovCompareDifferentPage": {
+    "message": "已存储的检查跑在 $1 上，而你在另一个页面。把两者拿来比，会把两个页面之间的差异报成同一个页面从两侧看的差异，那不是同一个断言。打开 $2 查看比对。"
+  },
+  "ovCompareCheckStoredAudit": {
+    "message": "已存储的诊断里没有哪一项检查带着我们能施加到实时页面上的规则。"
+  },
+  "ovCompareCheck": {
+    "message": "检查项"
+  },
+  "ovCompareFetch": {
+    "message": "我们的抓取"
+  },
+  "ovComparePage": {
+    "message": "这个页面"
+  },
+  "ovTallyEveryVerdict": {
+    "message": "本面板中的每一条判定 · $1"
+  },
+  "ovHeadlineChecksPassedAudit": {
+    "message": "按诊断自己的权重计的通过项"
+  },
+  "ovEnginesPageDomainCited": {
+    "message": "在我们记录的那次答复里，本域名没有任何页面被引用。"
+  },
+  "ovEnginesCount": {
+    "message": "引擎 · $1"
+  },
+  "ovEnginesReadingRecordsWhich": {
+    "message": "这个读数记录的是哪些引擎引用了该域名，不是哪个页面。"
+  },
+  "ovEnginesGeminiHereAio": {
+    "message": "这里的 Gemini 指的是 `aio` 系列：Gemini 加上 Google 搜索立论。它不是 Google 结果页上的 AI Overview 区块，那是这个读数并不覆盖的另一个界面。"
+  },
+  "ovFixFirstCount": {
+    "message": "先修这些 · $1"
+  },
+  "ovFixFirstOrderedSeverityWorst": {
+    "message": "按严重度排序，最差的在前。严重度是我们的判断，衡量一项检查维持现状时读者损失多少 —— 它不是诊断的计分权重，而 Issue list 屏按后者的顺序排列同一批检查。"
+  },
+  "ovOverview": {
+    "message": "总览"
+  },
+  "ovPrintSavePdf": {
+    "message": "打印 / 存为 PDF"
+  },
+  "ovFailingCheckList": {
+    "message": "没有未通过的检查可列。"
+  },
+  "ovTopGapsCount": {
+    "message": "已存储诊断中的主要缺口 · $1"
+  },
+  "ovGapsShownOfTotal": {
+    "message": "显示本次诊断发现的 $2 个缺口中的 $1 个。其余在付费计划里；这一屏上其它每一个读数，无论你是否已连接都是一样的。"
+  },
+  "ovFailingShownOfTotal": {
+    "message": "显示 $2 项未通过检查中的前 $1 项 —— 我们的查询最多只送这么多。Issue list 屏有全部，按诊断给每一项的权重排序。"
+  },
+  "notBuiltBuiltYet": {
+    "message": "尚未建成"
+  },
+  "notBuiltWillShow": {
+    "message": "这一屏将显示 $1。它在这个构建里没有接上，所以什么都不显示，而不是给出一个空结果。"
+  },
+  "toolsFreeToolsChange": {
+    "message": "能改变这一项的免费工具"
+  },
+  "trafficStatStoredEstimate": {
+    "message": "不在已存储的估算中"
+  },
+  "refreshOutRefreshDidReach": {
+    "message": "这次刷新没有到达我们"
+  },
+  "refreshOutCouldNotComplete": {
+    "message": "我们没能完成那次请求（$1）。没有花费任何东西，下面的估算也没有变 —— 这是我们这一端的问题，不是关于这个域名的判断。"
+  },
+  "refreshOutSignRefresh": {
+    "message": "登录后才能刷新"
+  },
+  "refreshOutRefreshingEstimateBuys": {
+    "message": "刷新一次估算是向 Similarweb 买一次新读数，所以它记在账户上。在这个浏览器里登录 trirankai.com 就够了 —— 面板里没有额外步骤 —— 或者从账户角落连接一个 API key。"
+  },
+  "refreshOutEverythingElseScreen": {
+    "message": "这一屏上其它所有东西不需要账户也能读。没有花费任何东西。"
+  },
+  "refreshOutTodaySRefreshes": {
+    "message": "今天的刷新次数已用完"
+  },
+  "refreshOutOwnDailyAllowance": {
+    "message": "这是你自己每天购买 Similarweb 新读数的额度。下面的已存储估算照常显示，而且和你按下之前是同一个 —— 这次按下没有花费任何东西。"
+  },
+  "refreshOutDailyRefreshBudget": {
+    "message": "我们今天的刷新预算已经花完"
+  },
+  "refreshOutSiteWideCap": {
+    "message": "这是对 TriRank 一天内在 Similarweb 上花费的站点级上限，不是你的额度 —— 你的没有被动过，下面的数字也这么说。它是我们这一侧刻意设的天花板；显示的估算没有变，这次按下也没有花费任何东西。"
+  },
+  "refreshOutUnexpectedAnswer": {
+    "message": "意料之外的答复"
+  },
+  "refreshOutSimilarwebDidAnswer": {
+    "message": "Similarweb 没有答复"
+  },
+  "refreshOutAskedNewReading": {
+    "message": "我们请求了一次新读数而那次运行失败了，所以下面的数字是原本就已存储的那些。我们不缓存失败，所以稍后再按是一次真正的重试，而不是重复这个答复。"
+  },
+  "refreshOutUpdated": {
+    "message": "已更新"
+  },
+  "refreshOutNothingFetchAllowance": {
+    "message": "没有可取的东西 —— 你的额度未被动用"
+  },
+  "refreshOutDidNotGo": {
+    "message": "我们没有向 Similarweb 请求新读数，因为$1。下面的数字是已存储的那些，这次按下没有让你花费任何东西。"
+  },
+  "refreshOutNewerFiguresShow": {
+    "message": "没有更新的数字可显示"
+  },
+  "refreshingLabel": {
+    "message": "刷新中…"
+  },
+  "trafficTrafficEstimate": {
+    "message": "流量估算"
+  },
+  "trafficEverythingScreen": {
+    "message": "这一屏上的一切都是"
+  },
+  "trafficSiteSAnalytics": {
+    "message": "，不是这个网站的分析数据。它由一个样本盘建模得出；这里没有任何人测量过一次访问。这个产品作为实测出售的数字在 AI 可见性与爬虫可达性两屏。"
+  },
+  "trafficSimilarwebSEstimate": {
+    "message": "Similarweb 的估算"
+  },
+  "trafficEstimateCanShow": {
+    "message": "没有我们能展示的估算"
+  },
+  "trafficSimilarwebUsableFigures": {
+    "message": "我们的缓存里没有 Similarweb 对这个域名的可用数字。那是他们样本盘的一处空白，不是「流量为零」的测量结果 —— 一个真的没有访客的站点，和一个他们样本盘从未见过的站点，从这里看长得一模一样，所以两者我们都不印数字。"
+  },
+  "trafficChannelSplitStored": {
+    "message": "已存储的估算里没有渠道拆分 —— Similarweb 没有为这个域名报告过。不是一个没有渠道的网站。"
+  },
+  "trafficRegionalSplitStored": {
+    "message": "已存储的估算里没有地区拆分。不是一个没有地区的网站。"
+  },
+  "trafficMonthlyTrend": {
+    "message": "月度趋势"
+  },
+  "trafficMonthlyFigures": {
+    "message": "这是估算到达本面板时携带的 $1 个月度数字，从 $2 到 $3。"
+  },
+  "trafficLookingTopKeywords": {
+    "message": "在找热门关键词？它们在 Backlinks 屏，不在这一屏：它们来自 DataForSEO 索引，不来自这份 Similarweb 估算，把它们放在这里等于把一家厂商的数据归到另一家厂商名下。"
+  },
+  "trafficNothingReFetches": {
+    "message": "没有任何东西按计划重新抓取 Similarweb。这份估算是在一次免费诊断运行时写下的；在下一次诊断运行、或你按下下面那个按钮之前，它就保持原样。"
+  },
+  "refreshBtnBuyNewerEstimate": {
+    "message": "购买更新的估算"
+  },
+  "refreshBtnPressingAsksSimilarweb": {
+    "message": "按下这个会向 Similarweb 请求一次这个域名的新读数，并"
+  },
+  "refreshBtnChangesNumbersScreen": {
+    "message": "。它只改变这一屏上的数字 —— 诊断、AI 可见性与 Domain Rating 读数不会重跑。如果我们判断已存储的估算已经是当前的，就不会发出请求，也不会消耗任何东西。"
+  },
+  "refreshBtnUsesOneDaily": {
+    "message": "用掉你每日刷新次数中的一次"
+  },
+  "panelPointPage": {
+    "message": "把它对准一个页面"
+  },
+  "panelWaitingPage": {
+    "message": "等待页面"
+  },
+  "panelClickTrirankIcon": {
+    "message": "在你想读的网站上点击 TriRank 图标。面板会在你浏览时保持打开，但它只能看到你交给它的那个页面 —— 它没有权限监视你的浏览。"
+  },
+  "rateRateWebStore": {
+    "message": "去 Web Store 评分 →"
+  },
+  "rateCloseDoAsk": {
+    "message": "关闭，且不再询问"
+  },
+  "rateGettingUseOut": {
+    "message": "这个面板对你有用吗？一个评分会有帮助。"
+  },
+  "staleShowingHost": {
+    "message": "正在显示 $1 —— 你此后已经跳转过。"
+  },
+  "staleChromeWithdrawsAccess": {
+    "message": "标签页一跳转，Chrome 就收回我们对它的访问权，所以我们读不到新页面，连它的地址都看不到。点击 TriRank 图标来读你现在所在的页面。"
+  },
+  "connectKeyAcceptedReconnect": {
+    "message": "key 未被接受 —— 请重新连接。下面的一切都是匿名读数。"
+  },
+  "connectDisconnect": {
+    "message": "断开连接"
+  },
+  "connectConnectedTrirankApi": {
+    "message": "已用 TriRank API key 连接。它优先于你在 trirankai.com 上的任何会话。断开连接会从这个浏览器里删除该 key。"
+  },
+  "connectSignedInTier": {
+    "message": "已在 trirankai.com 登录 · $1"
+  },
+  "connectSignOutTrirankai": {
+    "message": "在 trirankai.com 登出 →"
+  },
+  "connectCouldSignOut": {
+    "message": "此刻未能登出 —— 那是我们的请求失败了，不是你的会话结束了。"
+  },
+  "connectTriRankApiKey": {
+    "message": "TriRank API key"
+  },
+  "connectConnect": {
+    "message": "连接"
+  },
+  "connectGetKey": {
+    "message": "获取一个 key →"
+  },
+  "connectSign": {
+    "message": "登录"
+  },
+  "connectPasteApiKey": {
+    "message": "或粘贴一个 API key"
+  },
+  "connectBrowserWhereSigned": {
+    "message": "用于你没有登录的浏览器。key 优先于会话。"
+  },
+  "connectOptionalPanelWorks": {
+    "message": "可选。面板没有账户也能用 —— 登录会提高每日查询上限，并让它能报告你在哪个计划上。"
+  },
+  "refreshWentHadEstimateStored": {
+    "message": "我们没有为这个域名存储过估算"
+  },
+  "refreshWentStoredEstimateOlder": {
+    "message": "已存储的估算比可得的最新月份还旧"
+  },
+  "refreshWentStoredEstimateCarried": {
+    "message": "已存储的估算没有带月份且已经过期"
+  },
+  "refreshWentStoredEstimateDue": {
+    "message": "已存储的估算到了该复查的时候"
+  },
+  "refreshNoGoStoredEstimateAlready": {
+    "message": "已存储的估算已经是 Similarweb 发布的最新月份"
+  },
+  "refreshNoGoAskedRecentlySimilarweb": {
+    "message": "我们最近问过，而 Similarweb 对这个域名没有任何东西；我们会等一等再问"
+  },
+  "refreshNoGoRecentAttemptDomain": {
+    "message": "这个域名最近的一次尝试失败了，所以我们先按住，不急着再花一次"
+  },
+  "readingLookingUpHost": {
+    "message": "正在为 $2 查找 $1。这一屏上还没有任何东西算作发现。"
+  },
+  "readingLookingUp": {
+    "message": "正在查找 $1。这一屏上还没有任何东西算作发现。"
+  },
+  "readingSubjAiCitation": {
+    "message": "已存储的 AI 引用检查"
+  },
+  "readingSubjGeoStructure": {
+    "message": "已存储的 GEO 结构分"
+  },
+  "readingSubjEverything": {
+    "message": "我们存储的一切"
+  },
+  "readingSubjSeoAudit": {
+    "message": "已存储的 SEO 诊断"
+  },
+  "readingSubjAuditChecks": {
+    "message": "已存储诊断的各项检查"
+  },
+  "readingSubjDomainRating": {
+    "message": "已存储的 Domain Rating"
+  },
+  "readingSubjBothWays": {
+    "message": "这个页面的两种读法"
+  },
+  "readingSubjRegistry": {
+    "message": "已存储的注册局记录"
+  },
+  "readingSubjSimilarweb": {
+    "message": "已存储的 Similarweb 估算"
+  },
+  "readingSubjPageMeasurements": {
+    "message": "已存储的页面测量值"
+  },
+  "readingSubjBacklinkSnapshot": {
+    "message": "已存储的外链快照"
+  },
+  "notBuiltSubjDimension": {
+    "message": "这个维度，从你所在的页面读取"
+  },
+  "ovCompareAgreeSome": {
+    "message": "$2 项检查中有 $1 项在两份读数上结果相同；$3 项不同。两边用的都是诊断自己的规则 —— 唯一的差别是各自能看到什么。一项在我们这边失败、在这里通过的检查，是页面在浏览器里自我搭建的常见特征：我们的抓取拿到的是外壳，你的浏览器跑了 JavaScript。"
+  },
+  "ovCompareAgreeAll": {
+    "message": "$2 项检查中有 $1 项在两份读数上结果相同。引擎抓到的页面与你正在看的页面是一致的。"
+  },
+  "ovTallyCountedBoth": {
+    "message": "统计自已存储的诊断与这个页面的实时读数。这是计数，不是分数：这里没有任何东西被加权、平均或换算成等级。"
+  },
+  "ovTallyCountedStored": {
+    "message": "仅统计自已存储的诊断 —— 这个页面还没有实时读数。这是计数，不是分数：这里没有任何东西被加权、平均或换算成等级。"
+  },
+  "ovTallyCountedLive": {
+    "message": "仅统计自这个页面的实时读数 —— 这个域名没有已存储的诊断。这是计数，不是分数：这里没有任何东西被加权、平均或换算成等级。"
+  },
+  "refreshQuotaCurrentPlan": {
+    "message": "当前"
+  },
+  "refreshQuotaUsed": {
+    "message": "今天在 $3 计划上已用 $2 次刷新中的 $1 次"
+  },
+  "refreshQuotaUsedResets": {
+    "message": "今天在 $3 计划上已用 $2 次刷新中的 $1 次 · $4 重置"
+  },
+  "refreshOutUpdatedBecause": {
+    "message": "回来了一次新读数，下面的数字就是它 —— 我们之所以去问，是因为$1。"
+  },
+  "refreshOutUpdatedPlain": {
+    "message": "回来了一次新读数，下面的数字就是它。"
+  },
+  "refreshOutStaleWent": {
+    "message": "请求完成了，我们也确实去了 Similarweb（$1），但下面的已存储估算并不比你按下之前更新。"
+  },
+  "refreshOutStalePlain": {
+    "message": "请求完成了，但下面的已存储估算并不比你按下之前更新。"
+  },
+  "trafficSourceMonth": {
+    "message": "来源：$1 · $2 的估算 · $3 读取"
+  },
+  "trafficSource": {
+    "message": "来源：$1 · $2 读取"
+  },
+  "trafficUnknownDate": {
+    "message": "日期未知"
+  },
+  "sourceLineSourceMeasured": {
+    "message": "来源：$1 · $2 实测"
+  },
+  "sourceLineMeasurementStored": {
+    "message": "没有存储任何测量值"
+  },
+  "scoreCardRunFreeAudit": {
+    "message": "跑一次免费诊断来填上这里。"
+  },
+  "aeoVeHitToday": {
+    "message": "你已经用完今天的查询上限。它明天重置 —— 这一点并不暗示关于这个网站的任何事。"
+  },
+  "aeoCouldnTReach": {
+    "message": "此刻联系不上 TriRank。这说明不了关于这个网站的任何事；是我们的查询失败了。"
+  },
+  "citedPagesLastDays": {
+    "message": "最近 $1 天内。"
+  },
+  "brandShareTrackDomain": {
+    "message": "追踪这个域名 →"
+  },
+  "chkSameAsPageCarriesOrganization": {
+    "message": "这个页面没有 Organization、Person 或 WebSite 节点，所以这里没有任何东西在声明这个网站是谁 —— 因此 sameAs 也无处安放。"
+  },
+  "chkAuthorDatePageDoesDeclare": {
+    "message": "这个页面没有把自己声明为文章，也没有作者或日期标记。那些是文章上才该有的，所以这里没有把任何东西算作缺失。"
+  },
+  "chkFreshReadablePublishedModified": {
+    "message": "这个页面上没有可读的发布或修改日期，所以它的年龄无法测量。这与「页面很旧」不是一回事。"
+  },
+  "chkQHeadHeadingTextCjk": {
+    "message": "标题文本中有 $1% 是 CJK。我们的测试是一份英文疑问词表加一个问号，在这里什么都找不到，并会把那报成一处缺席。我们宁可不测，也不报一个假的。"
+  },
+  "chkQHeadPageH2H3": {
+    "message": "这个页面没有 H2 或 H3 标题，所以没有可看的小标题集合。"
+  },
+  "chkQHeadH2H3Headings": {
+    "message": "$2 个 H2/H3 标题中有 $1 个写成了问句（$3%）。"
+  },
+  "ovComparePageMovedLost": {
+    "message": "页面已经跳走，我们对它的访问权也失去了，所以此刻没有可比对的实时读数。请在你所在的页面上点击 TriRank 图标。"
+  },
+  "ovCompareLiveReadingPage": {
+    "message": "这个页面还没有实时读数。"
+  },
+  "ovHeadlineNothingBeenRead": {
+    "message": "这个域名还没有读过任何东西，所以这些计数统计的是空。"
+  },
+  "ovHeadlineCountedOverChecks": {
+    "message": "统计自 $1 项检查。另有 $2 项没有通过但被标为 Info —— 缺少面包屑或 Twitter card 在很多网站上是正当选择 —— 还有 $3 项完全无法测量，那是我们的限制而不是一处发现。严重度是我们的判断，逐项写在 extension/check-meta.js 里；它不是诊断的计分权重。"
+  },
+  "trafficLastBarSame": {
+    "message": "最后一根柱子与上方的月访问量是同一个数字 —— 这份估算把它最新的月份报为那个头条数字。"
+  },
+  "trafficLastBarMonthly": {
+    "message": "最后一根柱子与上方的月访问量不是同一个数字。Similarweb 把那个头条数字与这个序列分开发送，而对这个域名，两者并不一致。"
+  },
+  "trafficOnlyOneMonthly": {
+    "message": "这个域名只有一个月度数字到达本面板，属于 $1。它更早的序列不会到达这里。"
+  },
+  "trafficOnlyOneMonthly2": {
+    "message": "这个域名只有一个月度数字到达本面板，而且它没有带月份标签，所以没有可以放到时间线上的东西。"
+  },
+  "notBuiltScreenDimension": {
+    "message": "维度"
+  },
+  "headerCopied": {
+    "message": "已复制"
+  },
+  "headerCopyMarkdown": {
+    "message": "复制为 Markdown"
+  },
+  "headerAccount": {
+    "message": "账户"
+  },
+  "connectSigningOut": {
+    "message": "登出中…"
+  },
+  "connectSignOut": {
+    "message": "登出"
+  },
+  "chkFreshDetailDay": {
+    "message": "最后一次声明的变更 $1 —— $2 天前。"
+  },
+  "chkFreshDetailDays": {
+    "message": "最后一次声明的变更 $1 —— $2 天前。"
+  },
+  "chkFreshDetailDayPublished": {
+    "message": "最后一次声明的变更 $1 —— $2 天前（发布日期；没有声明修改日期）。"
+  },
+  "chkFreshDetailDaysPublished": {
+    "message": "最后一次声明的变更 $1 —— $2 天前（发布日期；没有声明修改日期）。"
+  },
+  "chkStandingDetailLinksTo": {
+    "message": "链接到：$1。"
+  },
+  "chkStandingDetailNoLinks": {
+    "message": "没有链接到其中任何一个。"
+  },
+  "chkStandingDetailNotLinked": {
+    "message": "本页未链接到：$1。"
+  },
+  "chkStandingDetailTail": {
+    "message": "关于 / 编辑方针链接不在这里重复 —— 它是上面的「编辑方针 / 方法论」检查。两侧现在都会跳过页内 #锚点、mailto: 与 tel: 链接，所以那三种形态本身不再会让两者出现分歧。"
+  },
+  "refreshOutUnexpectedHttp": {
+    "message": "服务器答复的形态是本面板不认识的（HTTP $1）。下面的估算没有变。"
+  },
+  "refreshOutUnexpectedPlain": {
+    "message": "服务器答复的形态是本面板不认识的。下面的估算没有变。"
+  },
+  "chkSsrDetailAllPresent": {
+    "message": "送达的 HTML 里已经带有 title、一个 H1 和一段 meta description。"
+  },
+  "chkSsrDetailSome": {
+    "message": "送达的 HTML 里带有 $1，但没有 $2。"
+  },
+  "chkSsrDetailNone": {
+    "message": "送达的 HTML 里 title、H1 与 meta description 一个都没有。"
+  },
+  "chkSsrDetailCutNote": {
+    "message": "我们在 300,000 字符处停止读取那个响应，所以那两个数都是下限而非总数：送达的 HTML 至少有那么多，可能更多。这个限制是我们的，不是这个页面做错了什么。"
+  },
+  "chkSsrBodyWord": {
+    "message": "它的正文有 $1 个词，而你正在看的页面有 $2 个 —— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyWords": {
+    "message": "它的正文有 $1 个词，而你正在看的页面有 $2 个 —— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyWordShare": {
+    "message": "它的正文有 $1 个词，而你正在看的页面有 $2 个（$3%）—— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyWordsShare": {
+    "message": "它的正文有 $1 个词，而你正在看的页面有 $2 个（$3%）—— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyAtLeastWord": {
+    "message": "它的正文至少有 $1 个词，而你正在看的页面有 $2 个 —— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyAtLeastWords": {
+    "message": "它的正文至少有 $1 个词，而你正在看的页面有 $2 个 —— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyAtLeastWordShare": {
+    "message": "它的正文至少有 $1 个词，而你正在看的页面有 $2 个（至少 $3%）—— 只报告，不评分：不存在正确的比例。"
+  },
+  "chkSsrBodyAtLeastWordsShare": {
+    "message": "它的正文至少有 $1 个词，而你正在看的页面有 $2 个（至少 $3%）—— 只报告，不评分：不存在正确的比例。"
+  },
+  "aeoAICitationCheck": {
+    "message": "这个域名还没有已存储的 AI 引用检查。免费诊断会跑这个分数所需要的每一个引擎。"
+  },
+  "citedPagesSameEngineCited": {
+    "message": "那与「没有引擎引用你」不是一回事。我们只对有人在追踪的查询词保有记录行，所以一个没人追踪的域名，两边都没有存储。"
+  },
+  "coOccSourceType": {
+    "message": "来源类型：$1"
+  },
+  "coOccShownHere": {
+    "message": "$1 —— 此处未列出"
+  },
+  "histSumAllHistoryRecord": {
+    "message": "在册的全部历史。"
+  },
+  "citDetailEngineReturnedReading": {
+    "message": "这个引擎还没有返回读数，所以这一组不完整，也不显示分数。"
+  },
+  "citDetailEngineAnsweredVerdict": {
+    "message": "这个引擎已答复。它的判定会在四个都答复后显示。"
+  },
+  "chkBrandOnlyOneName": {
+    "message": "这个页面上只声明了一个名称（$1：“$2”）。要有第二个声明，才谈得上一致或不一致。"
+  },
+  "chkBrandPageDeclaresSite": {
+    "message": "这个页面没有声明网站或组织名称 —— 既没有 og:site_name，Organization/WebSite 节点上也没有 name。"
+  },
+  "chkSameAsEntityDeclaredSameas": {
+    "message": "声明了一个实体，但没有任何 sameAs 链接指向已知的资料页。"
+  },
+  "chkAuthorDateAuthorDeclared": {
+    "message": "没有声明作者"
+  },
+  "chkAuthorDatePublished": {
+    "message": "发布于 $1"
+  },
+  "chkAuthorDateModified": {
+    "message": "修改于 $1"
+  },
+  "chkAuthorDatePublishedModifiedDate": {
+    "message": "没有发布或修改日期"
+  },
+  "chkHttpsServedOverHttps": {
+    "message": "通过 HTTPS 提供。"
+  },
+  "chkHttpsServedOverPlain": {
+    "message": "通过明文 HTTP 提供。任何指向 http:// 形式的 canonical、og:url 或 sitemap 条目，在索引看来也会把这个页面一分为二。"
+  },
+  "chkUrlShapeShortLowerCase": {
+    "message": "$1 —— 短、小写、连字符分隔、没有查询串。"
+  },
+  "chkStructListsTablesBody": {
+    "message": "正文里没有列表或表格。导航菜单不计 —— 菜单是标记，不是读者能从中得到什么的结构。"
+  },
+  "chkSsrCouldReRead": {
+    "message": "我们没能重新读取这个页面自己的 HTML（$1）。那是我们的请求失败了，不是关于这个页面的一处发现。"
+  },
+  "ovScoresCheckNow": {
+    "message": "立即检查 →"
+  },
+  "ovScoresNothingProbedDomain": {
+    "message": "面板的快速检查还没在这个域名上跑过"
+  },
+  "ovScoresCited": {
+    "message": "被 $1 引用"
+  },
+  "ovScoresGEOStructure": {
+    "message": "GEO 结构"
+  },
+  "ovScoresStoredAudit": {
+    "message": "来自已存储的诊断"
+  },
+  "ovScoresMeasuredYet": {
+    "message": "尚未测量"
+  },
+  "ovScoresSEOBasics": {
+    "message": "SEO 基础"
+  },
+  "ovTallyPass": {
+    "message": "通过"
+  },
+  "ovTallyPartial": {
+    "message": "部分"
+  },
+  "ovTallyFail": {
+    "message": "未通过"
+  },
+  "ovTallyMeasured": {
+    "message": "未测量"
+  },
+  "entryRunFreeAudit": {
+    "message": "跑一次免费诊断 →"
+  },
+  "entryFullReport": {
+    "message": "完整报告 →"
+  },
+  "entryHowScore": {
+    "message": "我们如何评分 →"
+  },
+  "ownedRankings": {
+    "message": "你的排名 →"
+  },
+  "ownedKeywords": {
+    "message": "你的关键词 →"
+  },
+  "ownedAIVisibility": {
+    "message": "你的 AI 可见性 →"
+  },
+  "ownedVsRivals": {
+    "message": "你 vs 你的对手 →"
+  },
+  "ownedReports": {
+    "message": "你的报告 →"
+  },
+  "trafficMonthlyVisits": {
+    "message": "月访问量"
+  },
+  "trafficBounceRate": {
+    "message": "跳出率"
+  },
+  "trafficPagesPerVisit": {
+    "message": "每次访问页数"
+  },
+  "trafficTimeSite": {
+    "message": "停留时长"
+  },
+  "trafficGlobalRank": {
+    "message": "全球排名"
+  },
+  "trafficCountryRank": {
+    "message": "国家排名"
+  },
+  "trafficWhereVisitsCome": {
+    "message": "访问来自哪里"
+  },
+  "trafficTopRegions": {
+    "message": "主要地区"
+  },
+  "dotReadingPageNow": {
+    "message": "正在读取页面"
+  },
+  "dotLookingUpNow": {
+    "message": "正在查找"
+  },
+  "dotCouldLookUp": {
+    "message": "我们没能查到这一项"
+  },
+  "dotPageBefore": {
+    "message": "来自你之前所在的页面"
+  },
+  "dotWeHaveText": {
+    "message": "我们有这一项"
+  },
+  "dotRunYetOpen": {
+    "message": "尚未运行 —— 展开这一行来运行它"
+  },
+  "dotReadingPage": {
+    "message": "没有这个页面的读数"
+  },
+  "dotNothingStoredDomain": {
+    "message": "这个域名没有存储任何东西"
+  },
+  "chkStructDetailOneOne": {
+    "message": "导航之外有 $1 个列表（$2 项）和 $3 个表格（$4 行）。"
+  },
+  "chkStructDetailOneMany": {
+    "message": "导航之外有 $1 个列表（$2 项）和 $3 个表格（$4 行）。"
+  },
+  "chkStructDetailManyOne": {
+    "message": "导航之外有 $1 个列表（$2 项）和 $3 个表格（$4 行）。"
+  },
+  "chkStructDetailManyMany": {
+    "message": "导航之外有 $1 个列表（$2 项）和 $3 个表格（$4 行）。"
+  },
+  "aeoNotEveryEngine": {
+    "message": "还不是每个引擎都答复了。一组不完整并不等于分数低，所以在它完整之前不显示数字。"
+  },
+  "aeoNotEveryEngineMissing": {
+    "message": "还不是每个引擎都答复了 —— 仍缺 $1。一组不完整并不等于分数低，所以在它完整之前不显示数字。"
+  },
+  "enginesLineNotEvery": {
+    "message": "$1 个引擎中并非每个都答复了 —— 没有分数"
+  },
+  "enginesLineAnswered": {
+    "message": "$2 个引擎中有 $1 个答复了 —— 没有分数"
+  },
+  "chkSsrRereadAnsweredNothing": {
+    "message": "重新读取这个页面自己的 HTML 时没有得到答复，所以没有东西可以拿来与渲染后的页面比对。"
+  },
+  "chkSsrRereadAnswered": {
+    "message": "重新读取这个页面自己的 HTML 得到的答复是 $1，所以没有东西可以拿来与渲染后的页面比对。"
+  },
+  "chkSameAsPerNode": {
+    "message": "每节点"
+  },
+  "chkSameAsHeadOne": {
+    "message": "$1 个 sameAs 链接：$2"
+  },
+  "chkSameAsHeadMany": {
+    "message": "$1 个 sameAs 链接：$2"
+  },
+  "chkSameAsHeadOneDroppedOne": {
+    "message": "$1 个 sameAs 链接（至少 —— 另有 $2 个越过 $3 上限，从未被读取）：$4"
+  },
+  "chkSameAsHeadOneDroppedMany": {
+    "message": "$1 个 sameAs 链接（至少 —— 另有 $2 个越过 $3 上限，从未被读取）：$4"
+  },
+  "chkSameAsHeadManyDroppedOne": {
+    "message": "$1 个 sameAs 链接（至少 —— 另有 $2 个越过 $3 上限，从未被读取）：$4"
+  },
+  "chkSameAsHeadManyDroppedMany": {
+    "message": "$1 个 sameAs 链接（至少 —— 另有 $2 个越过 $3 上限，从未被读取）：$4"
+  },
+  "chkSameAsTail": {
+    "message": "显示 $2 个中的前 $1 个 —— 上面的计数是对全部计的；这份列表不是。"
+  },
+  "chkAuthorDatePerNode": {
+    "message": "每节点"
+  },
+  "chkAuthorDateAuthors": {
+    "message": "作者：$1"
+  },
+  "chkAuthorDateAuthorsMore": {
+    "message": "作者：$1，本页另有 $2 位"
+  },
+  "chkAuthorDateAuthorsDroppedOne": {
+    "message": "作者：$1（至少 —— 另有 $2 个名字越过 $3 上限，从未被读取）"
+  },
+  "chkAuthorDateAuthorsDroppedMany": {
+    "message": "作者：$1（至少 —— 另有 $2 个名字越过 $3 上限，从未被读取）"
+  },
+  "chkAuthorDateAuthorsMoreDroppedOne": {
+    "message": "作者：$1，本页另有 $2 位（至少 —— 另有 $3 个名字越过 $4 上限，从未被读取）"
+  },
+  "chkAuthorDateAuthorsMoreDroppedMany": {
+    "message": "作者：$1，本页另有 $2 位（至少 —— 另有 $3 个名字越过 $4 上限，从未被读取）"
+  },
+  "scanStaleReReadFromHere": {
+    "message": "无法从这里重读此页 —— 标签页一跳转，Chrome 就收回了我们对它的访问权。在新页面上点击 TriRank 图标，面板就会读取它。",
+    "description": "WS-EXT-I18N-BATCH-A。标签页跳转后代替「重新读取」按钮显示：重读必定失败，所以直接说明只能走工具栏图标，而不是给一个明知会返回 no_access 的按钮。"
+  },
+  "scanReadingPage": {
+    "message": "正在读取页面…"
+  },
+  "tableCaptionShownOfTotal": {
+    "message": "$1 · $3 条中的 $2 条",
+    "description": "WS-EXT-I18N-BATCH-A。替换顺序（面板传入的顺序）：$1 = 表格标题，$2 = 匹配筛选的行数，$3 = 总行数。仅在两个数不同时渲染 —— 未筛选时是 标题 · 总数，不含词语，仍走模板。"
+  },
+  "tableFilterPlaceholder": {
+    "message": "筛选…",
+    "description": "WS-EXT-I18N-BATCH-A。超过约 20 行的表格自带的搜索框占位符。它经 input.placeholder 赋值，scripts/check-ext-i18n.ts 看不到（它只数 setAttribute 与 textContent，不数直接属性赋值），所以本键已搬迁但不计入任何登记数。"
+  },
+  "tableCopyCount": {
+    "message": "复制 $1 条",
+    "description": "WS-EXT-I18N-BATCH-A。$1 = 当前显示的行数（筛选后的，不是总数）。"
+  },
+  "tableCopiedCount": {
+    "message": "已复制 $1 条",
+    "description": "WS-EXT-I18N-BATCH-A。$1 = 已复制的行数。点击后替换按钮自身的文字。"
+  },
+  "tableNothingMatchesFilter": {
+    "message": "没有内容匹配该筛选条件。"
+  },
+  "tableNothingToList": {
+    "message": "没有可列出的内容。"
+  },
+  "scanReadThisPageAgain": {
+    "message": "重新读取此页",
+    "description": "WS-EXT-I18N-BATCH-A。由 pageScreenHead 传入的重读按钮文字。另有五处调用点仍把这句写死为字面量，计在它们各自的屏上（clientCheckUnavailable、screenHeadings、screenAgentView ×3）；那是后续批次，应当指向本键而不是各自新建一个。"
+  },
+  "scanFooterSourceRead": {
+    "message": "来源：你浏览器中的这个页面 · $1 读取",
+    "description": "WS-EXT-I18N-BATCH-A。$1 = 读取该页面的本地时间。screenHeadings 内联了一份逐字节相同的句子，计在该屏上，本单不搬。"
+  },
+  "blAuditNotScored": {
+    "message": "审计不给外链打分——它把这项标为「需连接」，因为 Worker 无法核验链接索引。这些是带日期的存量数字，不计入任何评分。",
+    "description": "Shown under both backlink views. Explains why backlinks carry no grade."
+  },
+  "blReferringDomains": {
+    "message": "引用域",
+    "description": "Heading for the referring-domain list when nothing is stored yet."
+  },
+  "blRdMissing": {
+    "message": "我们没有查过哪些站点链接到这里。这是我们缓存里的缺口，不说明这个域名任何问题——上面的计数来自一次查询，来源列表来自另一次查询，而后者还没有为这个域名跑过。填上它的是网站上的免费外链检查器；本面板只读已经存下来的数据。",
+    "description": "Shown when the referring-domain lookup has never been run for this domain."
+  },
+  "blSourceOnly": {
+    "message": "来源：$1",
+    "description": "$1 the data source. Used when no measurement date is stored."
+  },
+  "blRdSeparator": {
+    "message": "上面的计数和这份列表是两次独立查询，各自带着下方的日期。在真实域名上，这两个日期——以及它们下面的数字——不会一致。",
+    "description": "Sits between the counts card and the referring-domain list."
+  },
+  "blTopReferringDomains": {
+    "message": "Top 引用域 · $1",
+    "description": "$1 how many rows are listed."
+  },
+  "blRdRankNote": {
+    "message": "Rank 是 DataForSEO 自己给链接来源域打的 0–100 分，也是这些行的排序依据；0 表示该域名不向这里传递任何 rank——那是这个量表的最低值，不是我们数据的缺口。Links 是它指向这里的链接数。Rank 不是 Ahrefs Domain Rating：两者是不同索引、不同量表，因此不能与「域名权重」屏上的 DR 并排解读。",
+    "description": "Explains the Rank and Links columns of the referring-domain table."
+  },
+  "blColRank": {
+    "message": "Rank",
+    "description": "Column header: the linking domain's rank."
+  },
+  "blColLinks": {
+    "message": "Links",
+    "description": "Column header: how many links that domain sends here."
+  },
+  "blColReferringDomain": {
+    "message": "引用域",
+    "description": "Column header: the domain that links here."
+  },
+  "blRdCappedNote": {
+    "message": "按 rank 排序，只取 rank 最高的十条。并列的行——而且多数并列在 0——彼此之间保持索引自己的顺序，这一点屏幕上无法呈现。不足十行说明这就是那次查询找到的全部引用域；满十行说明上限可能还压着更多。无论哪种，这些都是某一次存量查询在上方日期返回的行，不是实时列表。逐条链接的细节——页面标题、锚文本、目标地址——不在这次查询里；它来自另一个接口，显示在上面的「Top 外部链接」中。",
+    "description": "Explains the ordering and the ten-row cap on the referring-domain list."
+  },
+  "blFirstSeen": {
+    "message": "DataForSEO 于 $1 首次收录这个域名。这说明的是该索引观察了多久，而不是站点获取链接有多久——这里的数字比其他工具小，可能是索引开始得晚，而不是链接缺失。",
+    "description": "$1 the date the vendor first indexed the domain, as YYYY-MM-DD."
+  },
+  "blTopBacklinks": {
+    "message": "Top 外部链接",
+    "description": "Heading for the per-link list when nothing is stored yet."
+  },
+  "blRowsMissing": {
+    "message": "我们没有存下这个域名的逐条链接——只有上面的计数和来源域列表。这是我们缓存里的缺口，不说明这个域名任何问题。填上它的是网站上的免费外链检查器；本面板只读已经存下来的数据。",
+    "description": "Shown when the per-link lookup has never been stored for this domain."
+  },
+  "blRankLabel": {
+    "message": "rank",
+    "description": "Lower-case label printed before a rank digit inside a row; not a column header."
+  },
+  "blTopBacklinksCount": {
+    "message": "Top 外部链接 · $1",
+    "description": "$1 how many rows are listed."
+  },
+  "blRepeatNote": {
+    "message": "同一个域名可以出现多次：那是不同页面上的不同链接，不是重复。",
+    "description": "Explains why one domain can hold several rows."
+  },
+  "blRowsRankNote": {
+    "message": "Rank 是 DataForSEO 自己给链接来源域打的 0–100 分，也是这些行的排序依据。它不是 Ahrefs Domain Rating——不同索引、不同量表——因此不能与「域名权重」屏上的 DR 并排解读。",
+    "description": "Explains the rank shown on each backlink row."
+  },
+  "blFollowNote": {
+    "message": "$1 表示该链接传递排名信号；$2 表示它被标记为不传递。两种标记都没有的链接，是存量数据没有说明的那一类，这与 $2 不是一回事。",
+    "description": "$1 the dofollow word, $2 the nofollow word; both come from the panel's own vocabulary."
+  },
+  "blRowsCappedNote": {
+    "message": "按来源域的 rank 排序，只取 rank 最高的二十条。不足二十行说明这就是那次查询找到的全部链接；满二十行说明上限可能还压着更多。无论哪种，这些都是某一次存量查询在下方日期返回的行，不是实时列表。",
+    "description": "Explains the ordering and the twenty-row cap on the per-link list."
+  },
+  "blUrlNote": {
+    "message": "目标地址按链接实际指向的样子原样显示，包含链接来源站点自己加上的任何跟踪参数。",
+    "description": "Explains that target URLs are not cleaned up."
+  },
+  "blRowsSourceLine": {
+    "message": "来源：$1 · 测量于 $2 · 活链接 · 含子域名",
+    "description": "$1 the data source, $2 the date it was measured."
+  },
+  "blNoAnchorText": {
+    "message": "（无锚文本）",
+    "description": "Shown in place of anchor text when the stored row carried none."
+  },
+  "scanErrorNoAccess": {
+    "message": "Chrome 现在不让我们读这个页面。这项权限从你点击 TriRank 图标那一刻起生效，到你跳转页面为止——在本页再点一次图标，扫描就能跑起来。",
+    "description": "WS-EXT-TRUTH-BATCH. One of the five scan failures, reached through the SCAN_ERROR key table in extension/sidepanel.js. no_access: the tab grant has lapsed."
+  },
+  "scanErrorNoTab": {
+    "message": "我们没有可读的标签页。请在你想扫描的页面上点击 TriRank 图标。",
+    "description": "WS-EXT-TRUTH-BATCH. One of the five scan failures, reached through the SCAN_ERROR key table in extension/sidepanel.js. no_tab: there is no tab to read."
+  },
+  "scanErrorRestricted": {
+    "message": "Chrome 禁止扩展读取它自己的页面（chrome://、应用商店）。这个页面没有任何问题——只是我们不被允许进入。",
+    "description": "WS-EXT-TRUTH-BATCH. One of the five scan failures, reached through the SCAN_ERROR key table in extension/sidepanel.js. restricted: a chrome:// or Web Store page."
+  },
+  "scanErrorNoResult": {
+    "message": "页面没有返回任何可读内容。这是我们这边的失败，不是关于这个站点的发现。",
+    "description": "WS-EXT-TRUTH-BATCH. One of the five scan failures, reached through the SCAN_ERROR key table in extension/sidepanel.js. no_result: the scan ran and came back empty."
+  },
+  "scanErrorFailed": {
+    "message": "扫描没有完成。这是我们这边的失败，不是关于这个站点的发现。",
+    "description": "WS-EXT-TRUTH-BATCH. One of the five scan failures, reached through the SCAN_ERROR key table in extension/sidepanel.js. failed: the catch-all, and the fallback when the worker names a reason this table does not carry."
+  },
+  "chkLiveTagSameFile": {
+    "message": "同一个文件，我们抓的",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Tag on a live reading row where the thing read is a site-wide file, so our fetch and the browser read the same address."
+  },
+  "chkLiveTagThisPage": {
+    "message": "此刻这个页面",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Tag on a live reading row read from the page in the browser right now."
+  },
+  "chkMeasuredSameAddress": {
+    "message": "在同一个地址上测得，取的是服务器交付的原样，JavaScript 尚未运行。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Provenance line under a check list when the reader is on the audited address."
+  },
+  "chkMeasuredOnPath": {
+    "message": "在 $1 上测得，取的是服务器交付的原样，JavaScript 尚未运行——不是你正在看的这个页面。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Provenance line under a check list when the audited address is known and is not the page in front of the reader. $1 the audited path."
+  },
+  "chkMeasuredOnHomepage": {
+    "message": "在首页上测得，取的是服务器交付的原样，JavaScript 尚未运行——不是你正在看的这个页面。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Provenance line under a check list when no audited URL is stored, so the homepage is what was measured."
+  },
+  "chkPairSamePage": {
+    "message": "带第二行的条目是同一项检查，刚刚在你浏览器里从这个页面重读了一次。我们那次跑在 JavaScript 之前、而且是更早的一天，所以两者可以不一致而双方都没错——这种差异通常就是站点在浏览器里自我构建的结果。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Said once under the check list when the reader is on the audited page, to establish that a second line is the same check read a second way."
+  },
+  "chkPairOtherPage": {
+    "message": "这里只有站点级文件被读了两遍。其余检查跑在 $1 上，而你在另一个页面，所以对本页做实时读取并不是同一项检查，因此不予显示。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Said once under the check list when the reader is NOT on the audited page. $1 the audited path."
+  },
+  "chkPairSiteFilesOnly": {
+    "message": "这里显示的实时读取针对的是站点根目录下的文件，无论你在站内哪一页它们都一样。我们那次是从自己的服务器抓的，这次读取来自你的浏览器，所以出现差异意味着站点对两者给出的答复不同。",
+    "description": "WS-EXT-TRUTH-BATCH, shared layer. Said once under the check list when no audited URL is stored, so only site-root files are paired."
+  },
+  "crawlerPurposeTraining": {
+    "message": "模型训练",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Heading for the crawlers whose vendor states the crawl feeds training."
+  },
+  "crawlerPurposeSearch": {
+    "message": "搜索索引",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Heading for the crawlers whose vendor states the crawl builds a search index."
+  },
+  "crawlerPurposeAssistant": {
+    "message": "用户触发的抓取",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Heading for the crawlers fetched because a person asked, at the moment they asked."
+  },
+  "crawlerPurposeUnstated": {
+    "message": "厂商未说明用途",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Heading for the rows whose vendor has stated no purpose. Deliberately not one of the three stated buckets."
+  },
+  "crawlerPurposeTrainingNote": {
+    "message": "这些抓取用于模型训练。Google-Extended 被归在这里，是因为 Google 说它管训练；但同一份文档又给了它对 grounding 的管辖权——在提示时把搜索索引里的内容送给模型——那是一个搜索形态的行为，却挂在一个训练形态的令牌下。它并不严丝合缝地属于这一组，这里也不假装它属于。",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Printed under the training group on the Crawler access screen."
+  },
+  "crawlerPurposeSearchNote": {
+    "message": "这些抓取构建的索引决定了你会不会被展示。拒绝其中之一，就是把自己从那个索引里移出去。",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Printed under the search group on the Crawler access screen."
+  },
+  "crawlerPurposeAssistantNote": {
+    "message": "这些抓取发生在有人提问的那一刻，因为有人问了。拒绝其中之一，意味着指名你这个页面的用户会被告知它读不到。",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Printed under the assistant group on the Crawler access screen."
+  },
+  "crawlerPurposeUnstatedNote": {
+    "message": "对这些抓取，厂商没有说明用途，或者说过它不属于任何特定产品。我们只报告 robots.txt 里的声明，到此为止，不按名字看起来像什么去给它们归类。",
+    "description": "WS-EXT-TRUTH-BATCH, crawler purpose vocabulary — shared by the Robots & sitemap screen and the Crawler access screen. Printed under the unstated group on the Crawler access screen, and quoted inside the purpose-grouping note on the Robots & sitemap screen."
+  },
+  "rbSnippetNosnippet": {
+    "message": "不得为本页展示文本摘要。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. What the nosnippet directive does."
+  },
+  "rbSnippetNoarchive": {
+    "message": "不得提供缓存副本。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. What the noarchive directive does."
+  },
+  "rbSnippetMaxZero": {
+    "message": "摘要长度为零——效果等同于 nosnippet。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. What max-snippet:0 does."
+  },
+  "rbSnippetMaxCapped": {
+    "message": "摘要上限为 $1 个字符。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. What a positive max-snippet does. $1 the character cap."
+  },
+  "rbSnippetNoImagePreview": {
+    "message": "不得在本页旁展示图片预览。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. What max-image-preview:none does."
+  },
+  "rbTitle": {
+    "message": "Robots 与站点地图",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Screen title."
+  },
+  "rbIntro": {
+    "message": "读取页面时从本站抓取的 robots.txt 与 sitemap.xml——同源，所以不会额外索要权限。下面的判定规则来自审计：robots.txt 可达即通过，站点地图既要有应答、又要长得像站点地图。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Screen intro."
+  },
+  "rbRobotsReachable": {
+    "message": "robots.txt 可达。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when robots.txt answered."
+  },
+  "rbRobotsFetchError": {
+    "message": "我们从这里读不到 robots.txt（$1）。那是我们这次请求失败了，不能证明文件不存在——打开 $2 自己看一眼。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when OUR fetch of robots.txt failed. $1 the fetch error, $2 the address to open."
+  },
+  "rbRobotsNone": {
+    "message": "没有找到可达的 robots.txt。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when robots.txt answered with no usable status."
+  },
+  "rbRobotsNoneStatus": {
+    "message": "没有找到可达的 robots.txt（HTTP $1）。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Same verdict with a status to report. $1 the HTTP status."
+  },
+  "rbSitemapValid": {
+    "message": "在默认路径上找到了有效的 sitemap.xml。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when sitemap.xml answered and looks like a sitemap."
+  },
+  "rbSitemapSoft200": {
+    "message": "/sitemap.xml 上确实有东西应答，但它不是站点地图——既没有 <urlset> 也没有 <sitemapindex>。这样的软 200 在每一个爬虫看来都等于「没有站点地图」。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when something answers at the default path but is not a sitemap."
+  },
+  "rbSitemapFetchError": {
+    "message": "我们从这里读不到 sitemap.xml（$1）。那是我们这次请求失败了，不能证明文件不存在——打开 $2 自己看一眼。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when OUR fetch of sitemap.xml failed. $1 the fetch error, $2 the address to open."
+  },
+  "rbSitemapNone": {
+    "message": "默认路径上没有有效的 sitemap.xml。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when the default path holds no valid sitemap."
+  },
+  "rbSitemapNoneStatus": {
+    "message": "默认路径上没有有效的 sitemap.xml（HTTP $1）。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Same verdict with a status to report. $1 the HTTP status."
+  },
+  "rbBlocked": {
+    "message": "robots.txt 在 $3 上挡住了 $2 个 AI 爬虫中的 $1 个：$4。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when at least one AI crawler is blocked. $1 how many are blocked, $2 how many are in our list, $3 the resolved path, $4 the blocked crawler names."
+  },
+  "rbNoneBlocked": {
+    "message": "robots.txt 没有在 $1 上挡住我们名册里的任何一个 AI 爬虫。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Verdict when none is blocked. $1 the resolved path."
+  },
+  "rbResolvedFor": {
+    "message": "这是针对 $1 解析出来的——只是这一个地址，不是整个站点。在这里被放行的爬虫，在别处仍可能被挡，反之亦然。最长匹配的规则胜出，同分时 Allow 胜出；没有自己分组的爬虫落到 * 组。爬虫访问那一屏对同一个文件套用同一条规则，所以两屏不可能互相矛盾。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Scope of the answer, said once. $1 the resolved path."
+  },
+  "rbByPurpose": {
+    "message": "按抓取的用途分",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Caption of the purpose-grouping card."
+  },
+  "rbAllAllowed": {
+    "message": "$1 个全部放行",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. A purpose group with nothing blocked. $1 how many rows are in the group."
+  },
+  "rbSomeBlocked": {
+    "message": "$2 个中挡了 $1 个——$3",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. A purpose group with some rows blocked. $1 how many blocked, $2 group size, $3 the blocked names."
+  },
+  "rbPurposeNote": {
+    "message": "厂商说明了自己爬虫的用途时，分组依据的就是那份说明，而不是我们对名字的理解。$1 Google-Extended 计入模型训练，同时也管着 grounding——在提示时把搜索索引里的内容供给 Gemini——所以那一行同时属于上面两行。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Note under the purpose-grouping card. $1 the sentence crawlers.js owns about rows whose vendor stated no purpose."
+  },
+  "rbDirectivesTitle": {
+    "message": "本页上的 robots 指令",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Caption of the page-level directives card."
+  },
+  "rbMetaTag": {
+    "message": "<meta name=\"robots\" content=\"$1\">",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. The page’s robots meta tag, printed as written. $1 the raw content attribute. Identical in every locale: it is the reader’s own markup, not copy."
+  },
+  "rbNoMetaTag": {
+    "message": "本页没有 robots meta 标签。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when the page carries no robots meta tag."
+  },
+  "rbXRobots": {
+    "message": "X-Robots-Tag：$1",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. The response header, printed as sent. $1 the raw header value."
+  },
+  "rbNoXRobots": {
+    "message": "没有 X-Robots-Tag 响应头。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when the re-read completed and carried no such header."
+  },
+  "rbXRobotsNotRead": {
+    "message": "X-Robots-Tag 未读到——对本页的重读没有完成，所以这个响应头是未知，而不是不存在。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when the re-read failed, so absence cannot be claimed."
+  },
+  "rbBothChannels": {
+    "message": "两个通道都设了。两者不一致时，爬虫取其中更严格的那个——我们把它们原样打印，而不替你解析出结论，因为那个结论会是「我们对你配置的理解」被当成「你的配置」呈现出来。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when both the meta tag and the header are present."
+  },
+  "rbNeitherRestricts": {
+    "message": "两个通道都没有限制摘要、预览或缓存。可索引性本身在 SEO 检查那一屏里查，这里不重复。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when neither channel carries a reportable directive."
+  },
+  "rbMayBeIntended": {
+    "message": "这些也许正是你想要的——一篇不许被引述的付费文章就是故意这么设的。它们的作用写在上面；是否出于本意，由你来说。一个无法展示你的摘要的 AI 答复，点名你的理由也就少了一分。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when at least one restricting directive is present. Says what the directives do and leaves intent to the reader."
+  },
+  "rbTruncated": {
+    "message": "这份 robots.txt 比我们读到的更长——我们在 300,000 个字符处停下了。下面从它算出来的每一个数，包括声明的站点地图总数，都是下限而不是总数。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when robots.txt was cut at the read cap, so every count derived from it is a floor."
+  },
+  "rbDeclaredCaption": {
+    "message": "robots.txt 中声明 · $1",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Caption of the declared-sitemap table. $1 the UNCAPPED count the robots file declares, not how many rows are shown."
+  },
+  "rbTagNotRead": {
+    "message": "未请求",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Row tag: this declared sitemap was never requested."
+  },
+  "rbTagBad": {
+    "message": "无法解析",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Row tag: the declared sitemap line could not be parsed."
+  },
+  "rbTagOther": {
+    "message": "其他主机",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Row tag: the sitemap is declared on a different host, which this origin may not read."
+  },
+  "rbTagOk": {
+    "message": "有效",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Row tag: requested, same origin, valid."
+  },
+  "rbTagFail": {
+    "message": "无效",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Row tag: requested, same origin, not valid."
+  },
+  "rbReqFailed": {
+    "message": "我们的请求失败了（$1）",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Why a requested sitemap row has no verdict. $1 the error."
+  },
+  "rbHttpStatus": {
+    "message": "HTTP $1",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. The status a requested sitemap answered with. $1 the status code."
+  },
+  "rbNoResponse": {
+    "message": "无应答",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Shown when a requested sitemap neither answered nor named an error."
+  },
+  "rbRequestedNote": {
+    "message": "我们请求了 $2 个中的 $1 个。「其他主机」的意思是这份站点地图声明在另一个主机上——通常是 CDN。页面自己的源不被允许读取它，所以我们对它不作任何方向的报告。那是这项检查所在位置的限制，不是关于那份站点地图的发现。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Note under the declared-sitemap table. $1 how many we requested, $2 how many are declared."
+  },
+  "rbRequestedNoteNotReadFew": {
+    "message": "我们请求了 $2 个中的 $1 个。「其他主机」的意思是这份站点地图声明在另一个主机上——通常是 CDN。页面自己的源不被允许读取它，所以我们对它不作任何方向的报告。那是这项检查所在位置的限制，不是关于那份站点地图的发现。「未请求」的意思是我们从来没有去要过它：本面板在最前面几条之后就停下了，所以那些行对那些站点地图是否存在什么都没说。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Same note, plus the NOT READ clause, for the case where nothing was requested. $1 how many we requested, $2 how many are declared."
+  },
+  "rbRequestedNoteNotReadN": {
+    "message": "我们请求了 $2 个中的 $1 个。「其他主机」的意思是这份站点地图声明在另一个主机上——通常是 CDN。页面自己的源不被允许读取它，所以我们对它不作任何方向的报告。那是这项检查所在位置的限制，不是关于那份站点地图的发现。「未请求」的意思是我们从来没有去要过它：本面板在最前面 $1 条之后就停下了，所以那些行对那些站点地图是否存在什么都没说。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Same note, plus the NOT READ clause naming how many were read. $1 how many we requested, $2 how many are declared."
+  },
+  "rbNoSitemapLine": {
+    "message": "没有 Sitemap: 行",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Caption shown when robots.txt is reachable but declares no sitemap."
+  },
+  "rbNoSitemapLineBody": {
+    "message": "robots.txt 没有指向任何站点地图。爬虫仍可以按惯例找到 /sitemap.xml，但没有任何东西声明它。",
+    "description": "WS-EXT-TRUTH-BATCH, Robots & sitemap screen. Body shown when robots.txt is reachable but declares no sitemap."
+  },
+  "psTitle": {
+    "message": "已测量的页面",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Screen title, and the heading of the card shown when nothing is stored."
+  },
+  "psDisclosurePre": {
+    "message": "这些读数针对的是本域名的",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. First of THREE parts of one sentence split around a bold span — psDisclosurePre + psDisclosureBold + psDisclosurePost. Translate the three together; the bold word must land where the target language puts it."
+  },
+  "psDisclosureBold": {
+    "message": "首页",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. The bolded word inside the disclosure sentence. See psDisclosurePre."
+  },
+  "psDisclosurePost": {
+    "message": "，由 DataForSEO 在一次免费审计中测得——不是你正在看的这个页面，也不是本面板测的。这一屏上没有任何内容读自你的浏览器。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Third of three parts. See psDisclosurePre."
+  },
+  "psNoneStored": {
+    "message": "还没有人为这个域名跑过页面测量。免费审计会跑一次并存下来；本面板只读已经存在的东西，从不自己发起测量。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Shown when neither the Lighthouse run nor the rendered read is stored."
+  },
+  "psSource": {
+    "message": "来源：$1",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Footer naming the source when no measurement is stored. $1 the source, or psNotStored."
+  },
+  "psNotStored": {
+    "message": "未存储",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Substituted into psSource when neither half names a source."
+  },
+  "psNoLighthouse": {
+    "message": "没有存储的 Lighthouse 运行",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Label of the dashed card standing in for a missing Lighthouse run."
+  },
+  "psNoLighthouseBody": {
+    "message": "这个域名下面的渲染读取是有的，但 Lighthouse 运行没有。它们是两次独立的厂商调用，任何一次都可能单独缺失。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Body of the dashed card standing in for a missing Lighthouse run."
+  },
+  "psNoInstant": {
+    "message": "没有存储的渲染读取",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Label of the dashed card standing in for a missing rendered read."
+  },
+  "psNoInstantBody": {
+    "message": "这个域名上面的 Lighthouse 运行是有的，但渲染读取没有。它们是两次独立的厂商调用，任何一次都可能单独缺失。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Body of the dashed card standing in for a missing rendered read."
+  },
+  "psCategoryNoScore": {
+    "message": "这一类没有产出分数",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Meta line on a category card whose score is absent — distinct from a score of 0."
+  },
+  "psNotMeasured": {
+    "message": "未测量",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Default meta line on a figure card whose value is absent. NOT the same as 0."
+  },
+  "psNotReportedByEndpoint": {
+    "message": "未测量——这个端点不报告它",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Meta line on the broken-links and broken-resources cards: the gap is the endpoint’s, not the site’s."
+  },
+  "psLighthouseCategories": {
+    "message": "Lighthouse 分类",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Caption above the category cards."
+  },
+  "psSeoCategoryWithheld": {
+    "message": "Lighthouse 还会给一个「SEO」分类打分。这里不显示它，也不会把它送到本面板：它数的是机械性的文档检查，而本栏里的 SEO 检查那一屏用的是我们自己的评分标准。同一屏上两把不同的尺子顶着同一个名字，比其中一把缺席更糟。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Says why four categories and not five."
+  },
+  "psLabTimings": {
+    "message": "实验室计时",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Caption above the lab timing rows."
+  },
+  "psLabRunNote": {
+    "message": "这是一次实验室运行，不是现场数据，也不是 Core Web Vitals 那一组。它测得 LCP 和 CLS，但测不了 INP——那一项需要真实用户交互——而且下面六项里有三项根本不属于 Core Web Vitals。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Why this heading deliberately does not say “Core Web Vitals”."
+  },
+  "psAgenticBrowsing": {
+    "message": "智能体浏览",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Both the Lighthouse category label and the caption above the agentic rows — the same name for the same thing."
+  },
+  "psAgenticNoneApplicable": {
+    "message": "这些检查在本页上一项都跑不了，所以没有比率可报。那不等于得了零分。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Shown when no agentic audit was applicable."
+  },
+  "psAgenticRatio": {
+    "message": "适用的 $2 项检查中通过了 $1 项。不适用或没有跑起来的检查，不在这个分数的任何一半里。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. The agentic pass ratio. $1 how many passed, $2 how many were applicable. A ratio, never a percentage."
+  },
+  "psWebmcpNote": {
+    "message": "那三项 webmcp 检查需要 Chrome 150 或更新的版本，外加一个已注册的 origin trial。产出这次运行的引擎比它旧，所以今天没有人能测它们——对这个站点、对任何站点都一样。那里的空白是我们够不着，不是本页的毛病。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Shown when the run carries the three webmcp audit ids."
+  },
+  "psEngine": {
+    "message": "引擎：$1",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Names which browser actually ran, so the note above it is checkable. $1 the user agent."
+  },
+  "psSourceMeasured": {
+    "message": "来源：$1 · 测于 $2",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Footer of the Lighthouse block and of the rendered-read block. $1 the source, $2 the date. One key on purpose: the two blocks print the same footer with their own two dates."
+  },
+  "psRenderedRead": {
+    "message": "渲染读取",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Caption above the rendered-read figures."
+  },
+  "psRenderedReadNote": {
+    "message": "这是一次在 JavaScript 运行状态下对首页的读取。网页上的完整报告会把它们摆在我们自己对原始 HTML 的读数旁边，显示两者在哪里不同；本面板只有这一侧，所以这里没有任何内容构成前后对比的发现。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. What the rendered-read half is and is not."
+  },
+  "psDomSize": {
+    "message": "DOM 体积",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psScripts": {
+    "message": "脚本数",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psBlockingScripts": {
+    "message": "阻塞渲染的脚本",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psBlockingStyles": {
+    "message": "阻塞渲染的样式表",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psBrokenLinks": {
+    "message": "失效链接",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psBrokenResources": {
+    "message": "失效资源",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Figure card label."
+  },
+  "psClickDepth": {
+    "message": "点击深度 $1——距入口的跳数。被测的是首页，所以这里读到 0 才是对的。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Click depth as a sentence rather than a card, because 0 is its ordinary correct answer. $1 the depth."
+  },
+  "psBodyTextRate": {
+    "message": "正文占渲染后文档的 $1%。只报告，不评分：没有一个正确的占比，而且这与 SEO 检查那一屏上的稀薄正文检查不是同一个单位——那一项数的是字符数，不是比率。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. $1 the body-text share as a percentage."
+  },
+  "psVendorPageScore": {
+    "message": "DataForSEO 自己给这个 URL 的页面分：$1/100。那是他们的标尺，不是我们的——它不是 SEO 检查那一屏上的 SEO 分，两者不可比。",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. $1 the vendor score. Named after its vendor every time it appears."
+  },
+  "psCatPerformance": {
+    "message": "性能",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lighthouse category label."
+  },
+  "psCatAccessibility": {
+    "message": "无障碍",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lighthouse category label."
+  },
+  "psCatBestPractices": {
+    "message": "最佳实践",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lighthouse category label."
+  },
+  "psVitalLcp": {
+    "message": "最大内容绘制 (LCP)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psVitalFcp": {
+    "message": "首次内容绘制 (FCP)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psVitalTti": {
+    "message": "可交互时间 (TTI)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psVitalSpeedIndex": {
+    "message": "速度指数 (SI)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psVitalTbt": {
+    "message": "总阻塞时间 (TBT)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psVitalCls": {
+    "message": "累积布局偏移 (CLS)",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Lab timing name."
+  },
+  "psStatePass": {
+    "message": "通过",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Agentic audit state tag."
+  },
+  "psStateFail": {
+    "message": "未通过",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Agentic audit state tag."
+  },
+  "psStateNotApplicable": {
+    "message": "不适用",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Agentic audit state tag: the audit did not apply."
+  },
+  "psStateNotMeasured": {
+    "message": "未测量",
+    "description": "WS-EXT-TRUTH-BATCH, Measured page screen. Agentic audit state tag: the audit did not run. A separate key from psNotMeasured because this one is a tag on a row and that one is a card’s meta line."
+  },
+  "lkTitle": {
+    "message": "链接",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Screen title. A separate key from blColLinks, which is a column header on the Backlinks table — same word, two roles."
+  },
+  "lkIntro": {
+    "message": "实时页面里的链接。站内/站外与 dofollow/nofollow 采用审计自己的规则（#、mailto:、tel: 以及非 http 链接跳过；比较主机时忽略 www）。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Screen intro."
+  },
+  "lkInternalLinks": {
+    "message": "站内链接",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Heading of the measured-not-graded row."
+  },
+  "lkMeasuredNotGraded": {
+    "message": "只测量，不评分",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Status word on the internal-links row: this screen counts and does not issue a verdict."
+  },
+  "lkInternalCount": {
+    "message": "本页上有 $1 个站内链接。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. $1 how many internal links are on the page."
+  },
+  "lkInternalWhy": {
+    "message": "站内链接是爬虫抵达站点其余部分的途径，也是一个页面表明哪些页面与它同属一处的方式。一个页面该有多少条，取决于它是什么页面——一个罗列整个板块的枢纽页，和板块末端的一篇文章，在数量差别很大的情况下都在做各自该做的事。没有一个正确的数字，所以这里给的是计数而不是判定。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Why the internal-links row carries no verdict."
+  },
+  "lkWhyExceeds": {
+    "message": "为什么这个数可能超过存储的审计结果",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Caption of the divergence card."
+  },
+  "lkWhyExceedsBody": {
+    "message": "这些是页面运行之后存在的链接。导航、轮播以及其他任何在浏览器里构建出来的东西都算在内，而它们都不存在于审计解析的那份 HTML 里。这里的数更大，是两条路径测的是不同时刻，不是互相矛盾。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Body of the divergence card."
+  },
+  "lkCounts": {
+    "message": "计数",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Caption of the counts card."
+  },
+  "lkCountInternal": {
+    "message": "站内链接",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Counts card row label."
+  },
+  "lkCountExternal": {
+    "message": "站外链接",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Counts card row label."
+  },
+  "lkCountTotal": {
+    "message": "总计",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Counts card row label. Counted in collectOutline’s single pass, not over the loaded rows."
+  },
+  "lkCountUnique": {
+    "message": "去重后",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Counts card row label. Keyed on the resolved absolute URL, and counted over the whole page rather than the loaded rows."
+  },
+  "lkTableCaption": {
+    "message": "链接 · $1",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Caption above the link table. $1 how many rows are loaded."
+  },
+  "lkTruncated": {
+    "message": "显示的是本页 $2 个链接中的前 $1 个。上面的计数覆盖全部；这张表不覆盖。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Shown when the loaded rows are a prefix of the page. $1 how many are loaded, $2 how many the page has."
+  },
+  "lkScopeInt": {
+    "message": "内链",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Row tag: an internal link."
+  },
+  "lkScopeExt": {
+    "message": "外链",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Row tag: an external link."
+  },
+  "lkNoAnchorText": {
+    "message": "（无锚文本）",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Shown in place of the anchor when a live link carries none — an image link, an icon, or a link with nothing to read. A separate key from blNoAnchorText, which is the stored-row case on the Backlinks screen."
+  },
+  "lkNoMatchTruncated": {
+    "message": "在已加载的行里没有这一类链接。本页的链接比这里加载的多，所以这不是关于整页的结论。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Shown when a filter matches nothing AND the table is truncated."
+  },
+  "lkNoMatch": {
+    "message": "本页上没有这一类链接。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Shown when a filter matches nothing and the table holds every link."
+  },
+  "lkFilter": {
+    "message": "筛选",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Caption of the filter card."
+  },
+  "lkAxisScope": {
+    "message": "范围",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Name of the scope filter axis."
+  },
+  "lkAxisRel": {
+    "message": "rel 属性",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Name of the rel filter axis."
+  },
+  "lkFilterAll": {
+    "message": "全部",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Filter button label for the default value on either axis. The DATA value stays \"all\"; only the label is translated."
+  },
+  "lkFilterInternal": {
+    "message": "站内",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Filter button label. The data value stays \"internal\"."
+  },
+  "lkFilterExternal": {
+    "message": "站外",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Filter button label. The data value stays \"external\"."
+  },
+  "lkFilterDofollow": {
+    "message": "DOFOLLOW",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Filter button label. Identical in every locale by decision: it names the HTML rel vocabulary, not a description of it."
+  },
+  "lkFilterNofollow": {
+    "message": "NOFOLLOW",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Filter button label. Identical in every locale by decision: it names the HTML rel vocabulary, not a description of it."
+  },
+  "lkExport": {
+    "message": "导出",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Caption of the export card."
+  },
+  "lkExportButton": {
+    "message": "导出 $1 行 · CSV",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Export button. $1 how many rows the file will hold — what the table currently shows, never more, never less."
+  },
+  "lkExportNoteTruncated": {
+    "message": "文件里装的就是这张表里的：已加载 $2 行中的 $1 行，而整页共有 $3 个链接。行数和截断都写进了文件名里，因为这句话不会跟着文件走。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Export note when the table is truncated. $1 rows in the file, $2 rows loaded, $3 links on the page."
+  },
+  "lkExportNote": {
+    "message": "文件里装的就是这张表里的：本页 $2 个链接中的 $1 个。",
+    "description": "WS-EXT-TRUTH-BATCH, Links screen. Export note when the table holds every link. $1 rows in the file, $2 links on the page."
+  },
+  "headerQuotaResets": {
+    "message": "今日已用 $2 次中的 $1 次。$3 重置。",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the tier chip when a reset time is known. $1 used, $2 limit, $3 the reset time."
+  },
+  "headerQuota": {
+    "message": "今日已用 $2 次中的 $1 次。",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the tier chip when no reset time is known. $1 used, $2 limit."
+  },
+  "headerPlanOnly": {
+    "message": "套餐：$1。",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the tier chip when no quota figures are held. $1 the plan name."
+  },
+  "headerPrintTitle": {
+    "message": "打开可打印的报告",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the print button when there is a reading to print."
+  },
+  "headerNothingToPrint": {
+    "message": "暂时没有可打印的内容",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the print button when no reading is held. Used by the header button and by the Overview screen’s own print button."
+  },
+  "headerNothingToCopy": {
+    "message": "暂时没有可复制的内容",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the copy button when no reading is held."
+  },
+  "headerCopyThisReading": {
+    "message": "把这份读数复制为 Markdown",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the copy button. A separate key from headerCopyMarkdown, which is the shorter screen-reader label on the same button."
+  },
+  "connectKeyFieldPlaceholder": {
+    "message": "粘贴你的 TriRank API key",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Placeholder in the API-key field. Separate from connectTriRankApiKey (that field’s accessible name) and from connectPasteApiKey (the fold’s summary label)."
+  },
+  "acctTitleAnon": {
+    "message": "登录或接入一个 API key",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the account slot when nobody is signed in."
+  },
+  "acctTitleKey": {
+    "message": "已用 API key 接入",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the account slot when the panel holds a key. A plan suffix may follow."
+  },
+  "acctTitleSignedIn": {
+    "message": "已登录",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Tooltip on the account slot when a session is held. A name and a plan suffix may follow."
+  },
+  "acctTitleAs": {
+    "message": "，$1",
+    "description": "WS-EXT-FINISH, panel header — shared by every screen. Name fragment appended to acctTitleSignedIn. $1 the person’s name."
+  },
+  "nounQuery": {
+    "message": "个查询",
+    "description": "WS-EXT-FINISH, grammatical-number word. A count of one takes the singular, and each noun is pluralised off ITS OWN number. Locales without grammatical number give both keys the same value, which is the right answer rather than a shortcut. Singular."
+  },
+  "nounQueries": {
+    "message": "个查询",
+    "description": "WS-EXT-FINISH, grammatical-number word. A count of one takes the singular, and each noun is pluralised off ITS OWN number. Locales without grammatical number give both keys the same value, which is the right answer rather than a shortcut. Plural."
+  },
+  "nounEngine": {
+    "message": "个引擎",
+    "description": "WS-EXT-FINISH, grammatical-number word. A count of one takes the singular, and each noun is pluralised off ITS OWN number. Locales without grammatical number give both keys the same value, which is the right answer rather than a shortcut. Singular."
+  },
+  "nounEngines": {
+    "message": "个引擎",
+    "description": "WS-EXT-FINISH, grammatical-number word. A count of one takes the singular, and each noun is pluralised off ITS OWN number. Locales without grammatical number give both keys the same value, which is the right answer rather than a shortcut. Plural."
+  },
+  "coOccLine": {
+    "message": "$1 · $2 $3 · $4 $5",
+    "description": "WS-EXT-FINISH, co-occurring hosts. One host row. $1 the host, $2 the query count, $3 its noun, $4 the engine count, $5 its noun."
+  },
+  "chkBrandTitleCarries": {
+    "message": "　页面标题带着同一个名称。",
+    "description": "WS-EXT-FINISH, brand-name consistency check. Appended when the page title contains the declared name. Begins with a space: it is appended to the sentence before it."
+  },
+  "chkBrandTitleDoesNot": {
+    "message": "　页面标题没有带那个名称——这本身不构成矛盾，标题是写给读者看的。",
+    "description": "WS-EXT-FINISH, brand-name consistency check. Appended when the page title does not contain the declared name. Begins with a space."
+  },
+  "chkBrandAgree": {
+    "message": "　两处声明一致。",
+    "description": "WS-EXT-FINISH, brand-name consistency check. Appended when the two declared names match. Begins with a space."
+  },
+  "chkBrandOverlap": {
+    "message": "　一个名称包含另一个——很接近，但它们不是同一个字符串。",
+    "description": "WS-EXT-FINISH, brand-name consistency check. Appended when one declared name contains the other. Begins with a space."
+  },
+  "chkBrandDiffer": {
+    "message": "　这是同一个站点的两个不同名称。",
+    "description": "WS-EXT-FINISH, brand-name consistency check. Appended when the two declared names differ. Begins with a space."
+  },
+  "chkUrlFaultDeep": {
+    "message": "路径深度 $1 层",
+    "description": "WS-EXT-FINISH, URL-shape check — one fault phrase, joined into a list. $1 how many segments deep the path is."
+  },
+  "chkUrlFaultUnderscores": {
+    "message": "用了下划线而不是连字符",
+    "description": "WS-EXT-FINISH, URL-shape check — one fault phrase, joined into a list. "
+  },
+  "chkUrlFaultMixedCase": {
+    "message": "大小写混用",
+    "description": "WS-EXT-FINISH, URL-shape check — one fault phrase, joined into a list. "
+  },
+  "chkUrlFaultLong": {
+    "message": "长度 $1 个字符",
+    "description": "WS-EXT-FINISH, URL-shape check — one fault phrase, joined into a list. $1 the path length."
+  },
+  "chkUrlFaultQueryString": {
+    "message": "带着查询串",
+    "description": "WS-EXT-FINISH, URL-shape check — one fault phrase, joined into a list. "
+  },
+  "trafficCovFull": {
+    "message": "Similarweb 把它自己对这个域名的覆盖标为「完整」，所以上面这些是它常规置信度的数字。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. dataCoverage = full."
+  },
+  "trafficCovSmall": {
+    "message": "Similarweb 把它标为小站点，意思是它认为自己对这个域名的估算偏薄。上面的数字仍然是它报出来的——薄的估算不等于缺失的估算，厂商真的返回了的数字我们不会抹掉。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. dataCoverage = small_site."
+  },
+  "trafficCovNoData": {
+    "message": "Similarweb 把它对这个域名的覆盖标为「无数据」，但上面仍有一些字段传了过来。把它们读作一份自称看不见这个站点的面板剩下的残余，而不是它愿意背书的测量。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. dataCoverage = no_data."
+  },
+  "trafficCovLegacySmall": {
+    "message": "这一行早于 Similarweb 的三态覆盖标签，所以我们手上只有它更早的小站点标志，而那个标志是置位的：厂商认为自己对这个域名的估算偏薄。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. No dataCoverage on the row; the older isSmall flag is true."
+  },
+  "trafficCovLegacyNotSmall": {
+    "message": "这一行早于 Similarweb 的三态覆盖标签。它更早的小站点标志没有置位，那是厂商不愿意把这个估算称作「薄」——与称它「完整」不是同一句话。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. No dataCoverage on the row; the older isSmall flag is false."
+  },
+  "trafficCovDisagree": {
+    "message": "　它的两个标签在这里不一致——覆盖标签说的是「$1」，而更早的小站点标志说的是 $2。在我们比对过的每一行上两者都是一致的，所以这一对是厂商在自相矛盾，我们不替它选一个赢家。",
+    "description": "WS-EXT-FINISH, Traffic screen — what the vendor says about its own coverage of this domain. Appended only when the vendor’s two labels stop co-varying. Begins with a space. $1 the coverage label, $2 the small-site flag."
+  },
+  "ovHeadlinePartialWhy": {
+    "message": "一组不完整的引擎读数不等于一个低分，所以在每个引擎都答复之前不显示数字。要走到那一步，这个站点本身不需要做任何改变。",
+    "description": "WS-EXT-FINISH, Overview headline. Folded under the headline when the engine set is incomplete: why there is no number."
+  },
+  "ovSeverityCritical": {
+    "message": "严重",
+    "description": "WS-EXT-FINISH, Overview headline. Severity tally cell label."
+  },
+  "ovSeverityWarning": {
+    "message": "警告",
+    "description": "WS-EXT-FINISH, Overview headline. Severity tally cell label."
+  },
+  "ovSeverityPassed": {
+    "message": "通过",
+    "description": "WS-EXT-FINISH, Overview headline. Severity tally cell label."
+  },
+  "nounQuestion": {
+    "message": "个问题",
+    "description": "WS-EXT-FINISH, grammatical-number word, pluralised off ITS OWN count. Singular."
+  },
+  "nounQuestions": {
+    "message": "个问题",
+    "description": "WS-EXT-FINISH, grammatical-number word, pluralised off ITS OWN count. Plural."
+  },
+  "verbDoes": {
+    "message": "",
+    "description": "WS-EXT-FINISH, grammatical-number word, pluralised off ITS OWN count. Singular verb. Empty in languages that do not conjugate for number — the sentence around it carries the meaning."
+  },
+  "verbDo": {
+    "message": "",
+    "description": "WS-EXT-FINISH, grammatical-number word, pluralised off ITS OWN count. Plural verb. Empty for the same reason as verbDoes."
+  },
+  "schTitle": {
+    "message": "结构化数据",
+    "description": "WS-EXT-FINISH, Structured data screen. Screen title."
+  },
+  "schIntro": {
+    "message": "实时页面里现有的 JSON-LD。类型的读法与审计一致——@type 加 @graph，不再往下——所以两条路径叫出来的 schema 是同一批。",
+    "description": "WS-EXT-FINISH, Structured data screen. Screen intro."
+  },
+  "schAllMalformedOne": {
+    "message": "　本页上全部 $1 个 JSON-LD 块都解析失败了，所以这里是有标记的——只是它不算数，对我们、对任何读它的引擎都一样。",
+    "description": "WS-EXT-FINISH, Structured data screen. Appended when every block failed to parse and there is one block. Begins with a space. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schAllMalformed": {
+    "message": "　本页上全部 $1 个 JSON-LD 块都解析失败了，所以这里是有标记的——只是它不算数，对我们、对任何读它的引擎都一样。",
+    "description": "WS-EXT-FINISH, Structured data screen. Same, plural. Begins with a space."
+  },
+  "schSomeMalformedOne": {
+    "message": "$2 个 JSON-LD 块中有 $1 个没能解析。一个不是有效 JSON 的块等同于没有 schema——对我们、对每一个读它的引擎都一样。",
+    "description": "WS-EXT-FINISH, Structured data screen. Verdict when some blocks failed to parse and there is one block. $1 how many failed, $2 how many there are. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schSomeMalformed": {
+    "message": "$2 个 JSON-LD 块中有 $1 个没能解析。一个不是有效 JSON 的块等同于没有 schema——对我们、对每一个读它的引擎都一样。",
+    "description": "WS-EXT-FINISH, Structured data screen. Same, plural."
+  },
+  "schFoundTypes": {
+    "message": "找到的 schema 类型：$1。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 the types, comma-joined."
+  },
+  "schNoJsonLd": {
+    "message": "没有可用的 JSON-LD 结构化数据。",
+    "description": "WS-EXT-FINISH, Structured data screen. A malformed-block clause may follow."
+  },
+  "schFaqFound": {
+    "message": "找到了 FAQPage schema——AI 引擎可以直接取走答案。",
+    "description": "WS-EXT-FINISH, Structured data screen. "
+  },
+  "schFaqNone": {
+    "message": "没有 FAQPage schema——答案不可被机器提取。",
+    "description": "WS-EXT-FINISH, Structured data screen. A caveat may follow."
+  },
+  "schFaqCaveat": {
+    "message": "　在它的块解析不了的情况下，从这里看不出本页是否声明了一个。",
+    "description": "WS-EXT-FINISH, Structured data screen. Appended to schFaqNone when every block failed to parse. Begins with a space."
+  },
+  "schBreadcrumbFound": {
+    "message": "存在 BreadcrumbList schema。",
+    "description": "WS-EXT-FINISH, Structured data screen. "
+  },
+  "schBreadcrumbNone": {
+    "message": "没有找到 BreadcrumbList schema。",
+    "description": "WS-EXT-FINISH, Structured data screen. A caveat may follow."
+  },
+  "schBreadcrumbCaveat": {
+    "message": "　与上面同一条保留——本页没有任何东西解析成功。",
+    "description": "WS-EXT-FINISH, Structured data screen. Appended to schBreadcrumbNone when every block failed to parse. Begins with a space."
+  },
+  "schCantCompare": {
+    "message": "无法比对：$1。那是我们的读取停在了这里，不是关于你页面的发现。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 the reason, one of schCantCompareParse / schCantCompareCap."
+  },
+  "schCantCompareParse": {
+    "message": "本页上有部分 JSON-LD 没能解析，所以我们说不出里面是否有 FAQ",
+    "description": "WS-EXT-FINISH, Structured data screen. Reason substituted into schCantCompare."
+  },
+  "schCantCompareCap": {
+    "message": "本页声明的问题多于我们读到的 $1 个",
+    "description": "WS-EXT-FINISH, Structured data screen. Reason substituted into schCantCompare. $1 the cap."
+  },
+  "schCantCompareScan": {
+    "message": "无法比对：读取本页可见文本失败（$1）。那是我们的读取停在了这里，不是关于你页面的发现。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 the error, truncated."
+  },
+  "schCantCompareTrunc": {
+    "message": "无法比对：本页的文本比我们读到的更多（我们在 $1 个文本节点处停下）。那是我们的读取停在了这里，不是关于你页面的发现。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 the text-node cap, read off the payload."
+  },
+  "schAllVisibleOne": {
+    "message": "你 FAQPage schema 里的 $1 个问题也都作为可见文本出现在本页上——引用你 schema 的引擎会找到与读者相同的文字。",
+    "description": "WS-EXT-FINISH, Structured data screen. One question. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schAllVisible": {
+    "message": "你 FAQPage schema 里的 $1 个问题也都作为可见文本出现在本页上——引用你 schema 的引擎会找到与读者相同的文字。",
+    "description": "WS-EXT-FINISH, Structured data screen. Many questions."
+  },
+  "schMissingVisible": {
+    "message": "你 FAQPage schema 里的 $2 $3 中，有 $1 个$4在本页可见文本里任何地方都找不到——描述读者看不到的内容的 schema，是每一家引擎的规范都点名的那一件事，所以要么把那些答案发布出来，要么把它们从块里去掉。只比问题；答案文本不参与比对。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 how many are missing, $2 how many there are, $3 the noun for $2, $4 the verb for $1. Two independent counts, so the noun and the verb come in as words rather than being switched inside this message."
+  },
+  "schDeclaredNotOnPage": {
+    "message": "已声明但不在页面上",
+    "description": "WS-EXT-FINISH, Structured data screen. Caption of the missing-questions table."
+  },
+  "schMicrodataFaq": {
+    "message": "本页用 microdata 标记它的问题，而这一屏读的是 JSON-LD——只吃 JSON-LD 的引擎在这里看不到 FAQ，所以同样这些问答对值得再发一份 FAQPage 块。",
+    "description": "WS-EXT-FINISH, Structured data screen. "
+  },
+  "schQaNoFaqPage": {
+    "message": "本页有问答内容，却没有声明 FAQPage JSON-LD，所以引擎只能自己推断这些问答对，而不是被直接递到手上——下面的 AI FAQ 生成器会用现有内容起草这个块。",
+    "description": "WS-EXT-FINISH, Structured data screen. "
+  },
+  "schTypesCaption": {
+    "message": "类型",
+    "description": "WS-EXT-FINISH, Structured data screen. Caption of the types table."
+  },
+  "schTreeIntro": {
+    "message": "在本页 JavaScript 运行之后读到的。存储的审计只记录每个块的 @type——它从不保留内容——所以没有任何存量可以与此比对，这里也没有任何东西是对上面那些类型的第二种意见。",
+    "description": "WS-EXT-FINISH, Structured data screen. Above the field tree."
+  },
+  "schTreeCutDepthOne": {
+    "message": "有 $1 个超过 $2 层的分支未展开",
+    "description": "WS-EXT-FINISH, Structured data screen. One branch was cut by the depth budget. $1 how many, $2 the depth limit. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schTreeCutDepth": {
+    "message": "有 $1 个超过 $2 层的分支未展开",
+    "description": "WS-EXT-FINISH, Structured data screen. Many branches cut by the depth budget."
+  },
+  "schTreeCutFieldsOne": {
+    "message": "有 $1 个超出 $2 字段预算的字段未显示",
+    "description": "WS-EXT-FINISH, Structured data screen. One field cut. $1 how many, $2 the budget. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schTreeCutFields": {
+    "message": "有 $1 个超出 $2 字段预算的字段未显示",
+    "description": "WS-EXT-FINISH, Structured data screen. Many fields cut."
+  },
+  "schTreeCutItemsOne": {
+    "message": "有 $1 个排在各自列表前 $2 个之后的数组项未显示",
+    "description": "WS-EXT-FINISH, Structured data screen. One array item cut. $1 how many, $2 the per-list cap. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schTreeCutItems": {
+    "message": "有 $1 个排在各自列表前 $2 个之后的数组项未显示",
+    "description": "WS-EXT-FINISH, Structured data screen. Many array items cut."
+  },
+  "schTreeCutValuesOne": {
+    "message": "有 $1 个值被截到 $2 个字符并以省略号结尾",
+    "description": "WS-EXT-FINISH, Structured data screen. One value truncated. $1 how many, $2 the character cap. A singular and a plural message rather than a suffix switch: a language without grammatical number gives both the same value, which is the right answer there."
+  },
+  "schTreeCutValues": {
+    "message": "有 $1 个值被截到 $2 个字符并以省略号结尾",
+    "description": "WS-EXT-FINISH, Structured data screen. Many values truncated."
+  },
+  "schTreeNotWhole": {
+    "message": "这不是本页所带内容的全部：$1。这些限制是我们自己的——一个页面的 JSON-LD 可以任意大，而我们不会把别人无限量的标记复制进面板。不在这里的部分请读页面源码。",
+    "description": "WS-EXT-FINISH, Structured data screen. $1 the clauses for the budgets that actually bit, joined with \"; \"."
+  },
+  "schTreeNothingLeftOut": {
+    "message": "没有任何东西被略去：每个块都装得进本面板的复制限额。",
+    "description": "WS-EXT-FINISH, Structured data screen. "
+  },
+  "schTreeFieldsCaption": {
+    "message": "这些块里的每个字段",
+    "description": "WS-EXT-FINISH, Structured data screen. Caption of the field tree table."
+  },
+  "schTreeBlockN": {
+    "message": "块 $1",
+    "description": "WS-EXT-FINISH, Structured data screen. Row key prefix when the page carries more than one block. $1 the block number."
+  },
+  "schTreeBlockOne": {
+    "message": "块",
+    "description": "WS-EXT-FINISH, Structured data screen. Row key prefix when the page carries exactly one block."
+  },
+  "crwDeclaredDisallow": {
+    "message": "robots.txt 不允许这个 UA",
+    "description": "WS-EXT-FINISH, Crawler access screen. Declared cell. A transcription of what the file says, never a claim about intent."
+  },
+  "crwDeclaredAllow": {
+    "message": "robots.txt 允许这个 UA",
+    "description": "WS-EXT-FINISH, Crawler access screen. Declared cell. A transcription, not a verdict about the site."
+  },
+  "crwDeclaredUnread": {
+    "message": "robots.txt 读不到",
+    "description": "WS-EXT-FINISH, Crawler access screen. Declared cell when the fetch never completed — a limit of ours, not a statement by the site."
+  },
+  "crwObsNotTested": {
+    "message": "未测试",
+    "description": "WS-EXT-FINISH, Crawler access screen. Observed cell for a row we chose not to send."
+  },
+  "crwObsNoResponseWhy": {
+    "message": "无应答（$1）",
+    "description": "WS-EXT-FINISH, Crawler access screen. Observed cell when nothing came back and the browser named a reason. $1 the reason."
+  },
+  "crwObsNoResponse": {
+    "message": "无应答",
+    "description": "WS-EXT-FINISH, Crawler access screen. Observed cell when nothing came back and no reason was reported."
+  },
+  "crwObsHttp": {
+    "message": "HTTP $1",
+    "description": "WS-EXT-FINISH, Crawler access screen. Observed cell carrying the status. $1 the status code."
+  },
+  "crwColCrawler": {
+    "message": "爬虫",
+    "description": "WS-EXT-FINISH, Crawler access screen. Table column header."
+  },
+  "crwColDeclared": {
+    "message": "声明",
+    "description": "WS-EXT-FINISH, Crawler access screen. Table column header: what robots.txt says."
+  },
+  "crwColObserved": {
+    "message": "实测",
+    "description": "WS-EXT-FINISH, Crawler access screen. Table column header: what the request came back with."
+  },
+  "crwRobotsNote": {
+    "message": "robots.txt 在本页上不允许这些爬虫中的一个或多个，所以我们没有为它们发请求——我们不冒充一个站点已经拒绝的身份。它们的「实测」格带着未测量标记，原因是这个，不是测试失败了。这里刻意没有「仍然测一次」：由谁触发这个请求，不改变这个请求本身是什么。",
+    "description": "WS-EXT-FINISH, Crawler access screen. Folded, shown when at least one row was withheld by robots.txt."
+  },
+  "crwNoRespNote": {
+    "message": "什么都没回来的情况，可能是这个站点在应答之前就拒绝了请求，也可能是我们自己的请求失败了——这些行分不出这两者。括号里的原因是浏览器报给我们的，不是站点说的。",
+    "description": "WS-EXT-FINISH, Crawler access screen. Folded, shown when at least one row got no response at all."
+  },
+  "crwIpNote": {
+    "message": "这些请求是从你的浏览器、你的 IP 发出的——不是从厂商的爬虫 IP 段。OpenAI、Anthropic 和 Perplexity 都发布了 IP 允许清单，让站点可以核验一个爬虫是不是真的。所以上面的一次拦截，可能意味着这个站点只放行厂商已核验的 IP——通常是正确的配置，真正的爬虫仍然进得来——也可能意味着它彻底拦掉了那个爬虫。这项测试分不出这两者；你的服务器日志可以。",
+    "description": "WS-EXT-FINISH, Crawler access screen. 🔴 Never folded, by a standing ruling: the moment a reader sees a block, this has to already be on screen."
+  },
+  "crwCoverage": {
+    "message": "实测了 $2 个爬虫中的 $1 个。未实测：",
+    "description": "WS-EXT-FINISH, Crawler access screen. $1 how many were live-tested, $2 how many are in the roster."
+  },
+  "crwStamp": {
+    "message": "已测 $URL$ · $TIME$$CACHED$ · robots.txt $ROBOTS$",
+    "description": "WS-EXT-FINISH, Crawler access screen. Footer. $URL$ the URL, $TIME$ the time, $CACHED$ an optional cache clause that begins with its own space, $ROBOTS$ the robots.txt status. 🔴 NAMED, NOT POSITIONAL, AND NOT A STYLE CHOICE. Two positional markers written side by side make the pair of dollar signs between them read as a named placeholder’s delimiters, so Chrome looks for a declaration that is not there and refuses to load the whole extension — the catalogue is parsed before any of it runs. A named placeholder carries its own delimiters, so two of them can sit next to each other. Anything that follows another placeholder with no separator has to be named.",
+    "placeholders": {
+      "url": {
+        "content": "$1"
+      },
+      "time": {
+        "content": "$2"
+      },
+      "cached": {
+        "content": "$3"
+      },
+      "robots": {
+        "content": "$4"
+      }
+    }
+  },
+  "crwStampCached": {
+    "message": "（缓存——同一个页面 10 分钟内不重测）",
+    "description": "WS-EXT-FINISH, Crawler access screen. Clause inside crwStamp when the reading was held. Begins with a space."
+  },
+  "crwRobotsUnreachable": {
+    "message": "不可达",
+    "description": "WS-EXT-FINISH, Crawler access screen. Substituted into crwStamp when robots.txt carried no status."
+  },
+  "crwTesting": {
+    "message": "测试中…",
+    "description": "WS-EXT-FINISH, Crawler access screen. Button label while the test runs."
+  },
+  "crwPermissionDeclined": {
+    "message": "权限被拒绝——没有它，Chrome 不会让我们读到这个站点的响应码。",
+    "description": "WS-EXT-FINISH, Crawler access screen. Shown when the origin grant was refused."
+  },
+  "crwRunTest": {
+    "message": "跑一次可达性测试",
+    "description": "WS-EXT-FINISH, Crawler access screen. Button label. Used both for the initial button and when the run finishes."
+  },
+  "crwTitle": {
+    "message": "爬虫访问",
+    "description": "WS-EXT-FINISH, Crawler access screen. Screen title."
+  },
+  "crwDisclosurePre": {
+    "message": "下面每一个爬虫，都会对本页发出一次真实请求，",
+    "description": "WS-EXT-FINISH, Crawler access screen. First of THREE parts of one sentence split around a bold span — crwDisclosurePre + crwDisclosureBold + crwDisclosurePost. Translate the three together. 🔴 Its POSITION is ruled: it must be readable before the button that sends the requests."
+  },
+  "crwDisclosureBold": {
+    "message": "从你的浏览器、你的 IP 地址发出",
+    "description": "WS-EXT-FINISH, Crawler access screen. The bolded clause. See crwDisclosurePre."
+  },
+  "crwDisclosurePost": {
+    "message": "，用的是那个爬虫公布的 User-Agent。你的 cookie 不会被发送。",
+    "description": "WS-EXT-FINISH, Crawler access screen. Third of three parts. See crwDisclosurePre."
+  },
+  "crwWaitingPrompt": {
+    "message": "等待 Chrome 的权限提示。",
+    "description": "WS-EXT-FINISH, Crawler access screen. Shown while the grant dialog is open."
+  },
+  "crwTestFailed": {
+    "message": "测试失败：$1",
+    "description": "WS-EXT-FINISH, Crawler access screen. $1 the error the worker reported."
+  },
+  "ahNoComparison": {
+    "message": "这次没有可比对的",
+    "description": "WS-EXT-FINISH, Agent/Human comparison unavailable card. Label."
+  },
+  "ahReReadFailed": {
+    "message": "我们没能重新读到本页自己的 HTML（$1）。那是我们的请求失败了，不是关于这个页面的发现。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Shown when the re-read errored. $1 the error."
+  },
+  "ahReReadAnswered": {
+    "message": "重新读取本页自己的 HTML 返回了 $1，所以没有东西可以拿来与渲染后的页面比对。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Shown when the re-read answered with an unusable status. $1 the status, or ahNothing."
+  },
+  "ahNothing": {
+    "message": "什么都没有",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Substituted into ahReReadAnswered when no status came back at all."
+  },
+  "ahTitle": {
+    "message": "机器视角 vs 人类视角",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Screen title."
+  },
+  "ahStale": {
+    "message": "在我们读到之前页面已经跳走了，所以对你现在所在的页面没有比对结果。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Shown when the tab navigated away."
+  },
+  "ahReadAgain": {
+    "message": "再读一次本页",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Scan button label on this screen."
+  },
+  "ahReadFailed": {
+    "message": "这次我们没能读到本页。这是我们这边的失败，不是关于这个站点的发现。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Shown when the scan did not produce data."
+  },
+  "ahProvenance": {
+    "message": "机器视角是本页的服务器 HTML，用 $1 从你的浏览器抓取，并在不运行它任何 JavaScript 的情况下解析。人类视角是你眼前的这份文档，在它的 JavaScript 跑过之后。两者是同一个地址，相隔几秒读到。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. 🔴 Comes before the numbers and names the User-Agent rather than characterising it. $1 the actual User-Agent string, or ahOwnUa."
+  },
+  "ahOwnUa": {
+    "message": "这个浏览器自己的 User-Agent",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Substituted into ahProvenance when the payload carried no UA string."
+  },
+  "ahWords": {
+    "message": "个词",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Unit under each column’s word count."
+  },
+  "ahColAgent": {
+    "message": "机器视角",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Column heading."
+  },
+  "ahColAgentNote": {
+    "message": "由服务器交付，在任何 JavaScript 之前。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Column note."
+  },
+  "ahColHuman": {
+    "message": "人类视角",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Column heading."
+  },
+  "ahColHumanNote": {
+    "message": "在你的浏览器里渲染，在那之后。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Column note."
+  },
+  "ahOverlapLabel": {
+    "message": "——你能看到的 $1 个词里，已经在服务器 HTML 中的比例",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. 🔴 The share and its denominator are printed together on purpose. $1 the human-side word count."
+  },
+  "ahOverlapNote": {
+    "message": "匹配上 $1 个词，两侧都计重复——服务器发了两次、页面显示五十次的词算两次。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. $1 the shared word count."
+  },
+  "ahTruncatedNote": {
+    "message": "　我们在 300,000 个字符处停止读取服务器响应，所以这个比例是下限：交付的 HTML 至少有这么多，可能更多。这个限制是我们的，不是本页做错了什么。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Appended to ahOverlapNote when the server response was cut. Begins with a space."
+  },
+  "ahEveryBlockSent": {
+    "message": "本页上的每一个文本块都已经在服务器发来的 HTML 里了。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Verdict when nothing is missing."
+  },
+  "ahMissingCaption": {
+    "message": "服务器没有发送的文本块 · $1",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. $1 how many blocks are missing."
+  },
+  "ahMissingOne": {
+    "message": "这个块在你眼前的页面上，而它的文本在服务器发来的 HTML 里任何地方都找不到，所以不运行 JavaScript 的读者看不到它。它带着 $1 个词。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. 🔴 A WHOLE SENTENCE, not the plural one with a noun swapped: number agreement runs through the entire clause here. $1 the word count."
+  },
+  "ahMissingMany": {
+    "message": "这些块在你眼前的页面上，而它们的文本在服务器发来的 HTML 里任何地方都找不到，所以不运行 JavaScript 的读者看不到它们。它们合计带着 $1 个词。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. The plural whole sentence. See ahMissingOne. $1 the word count."
+  },
+  "ahMissingCapped": {
+    "message": "显示的是 $2 个中的前 $1 个，每个截到 $3 个字符。这个上限是我们的——上面那个计数才是全集。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. $1 how many are listed, $2 how many there are, $3 the per-block character cap."
+  },
+  "ahGapNote": {
+    "message": "有落差不自动等于有缺陷：评论区或实时价格本来就该在浏览器里到达。缺的那个东西正是这个页面在讲的东西时，它才是缺陷。",
+    "description": "WS-EXT-FINISH, Agent view vs Human view screen. Closing note."
+  },
+  "imgTitle": {
+    "message": "图片",
+    "description": "WS-EXT-FINISH, Images screen. Screen title, and the caption of the image table."
+  },
+  "imgIntro": {
+    "message": "实时页面里的每一个 <img>。alt 与 title 的计法与审计一致，所以那些数字是可比的。",
+    "description": "WS-EXT-FINISH, Images screen. Screen intro."
+  },
+  "imgNone": {
+    "message": "没有可检查的图片。",
+    "description": "WS-EXT-FINISH, Images screen. Verdict when the page carries no images."
+  },
+  "imgAllAlt": {
+    "message": "所有图片都有 alt 属性。",
+    "description": "WS-EXT-FINISH, Images screen. "
+  },
+  "imgMissingAlt": {
+    "message": "$2 张图片中有 $1 张没有 alt 属性。",
+    "description": "WS-EXT-FINISH, Images screen. $1 how many lack alt, $2 how many there are."
+  },
+  "imgLazyCaption": {
+    "message": "懒加载——这里的读法不同",
+    "description": "WS-EXT-FINISH, Images screen. Caption of the lazy-loading card."
+  },
+  "imgLazyNote": {
+    "message": "存储的审计数的是交付时 src 还是占位符、等着 JavaScript 的那些图片。这一屏跑在那次替换之后，所以看不到它们，也不假装看得到。它能看到的是：$1 张标了 loading=\"lazy\"，$2 张渲染后的来源与 src 属性不同，$3 张在读取那一刻尚未加载。两屏在这里出现差异是预期之中，不是错误。",
+    "description": "WS-EXT-FINISH, Images screen. $1 lazy-marked, $2 swapped after load, $3 not loaded."
+  },
+  "imgCounts": {
+    "message": "计数",
+    "description": "WS-EXT-FINISH, Images screen. Caption of the counts card."
+  },
+  "imgCountTotal": {
+    "message": "总计",
+    "description": "WS-EXT-FINISH, Images screen. Counts card row label."
+  },
+  "imgCountAlt": {
+    "message": "有 alt",
+    "description": "WS-EXT-FINISH, Images screen. Counts card row label: how many carry an alt attribute."
+  },
+  "imgCountTitle": {
+    "message": "有 title",
+    "description": "WS-EXT-FINISH, Images screen. Counts card row label: how many carry a title attribute."
+  },
+  "imgCountUnique": {
+    "message": "去重后",
+    "description": "WS-EXT-FINISH, Images screen. Counts card row label, taken over the whole page rather than the loaded rows."
+  },
+  "imgTruncated": {
+    "message": "显示的是本页 $2 张图片中的前 $1 张。上面的计数覆盖全部；这张表不覆盖。",
+    "description": "WS-EXT-FINISH, Images screen. $1 how many are listed, $2 how many the page has."
+  },
+  "imgFlagTitle": {
+    "message": "TITLE",
+    "description": "WS-EXT-FINISH, Images screen. Row flag: this image carries a title attribute. Shown only when true."
+  },
+  "imgFlagLazy": {
+    "message": "LAZY",
+    "description": "WS-EXT-FINISH, Images screen. Row flag: loading=\"lazy\". Shown only when true."
+  },
+  "imgFlagSwap": {
+    "message": "SWAP",
+    "description": "WS-EXT-FINISH, Images screen. Row flag: the rendered source differs from the src attribute. Shown only when true."
+  },
+  "imgTagAlt": {
+    "message": "有 alt",
+    "description": "WS-EXT-FINISH, Images screen. Row tag: this image has an alt attribute."
+  },
+  "imgTagNoAlt": {
+    "message": "无 alt",
+    "description": "WS-EXT-FINISH, Images screen. Row tag: this image has no alt attribute."
+  },
+  "imgNoAltText": {
+    "message": "（无 alt 文本）",
+    "description": "WS-EXT-FINISH, Images screen. Shown in place of the alt text when the image carries none."
+  },
+  "imgNoSource": {
+    "message": "（无来源）",
+    "description": "WS-EXT-FINISH, Images screen. Shown in place of the source when the row carries neither a rendered source nor a src."
+  },
+  "hdTitle": {
+    "message": "标题层级",
+    "description": "WS-EXT-FINISH, Heading levels screen. Screen title."
+  },
+  "hdIntro": {
+    "message": "读自页面在你浏览器里渲染出来的样子——在它的 JavaScript 之后。我们服务器端的审计只看得到 JavaScript 运行前的 HTML，所以在一个自己在浏览器里构建的站点上，这份才是存在的大纲，那一份是空的。",
+    "description": "WS-EXT-FINISH, Heading levels screen. Screen intro."
+  },
+  "hdReadAgain": {
+    "message": "再读一次本页",
+    "description": "WS-EXT-FINISH, Heading levels screen. Scan button label on this screen."
+  },
+  "hdOneH1": {
+    "message": "只有一个 H1——这个页面恰好说明了一次它是什么。",
+    "description": "WS-EXT-FINISH, Heading levels screen. "
+  },
+  "hdNoH1": {
+    "message": "没有 H1。加一个用来描述这个页面。",
+    "description": "WS-EXT-FINISH, Heading levels screen. "
+  },
+  "hdManyH1": {
+    "message": "有 $1 个 H1 标签。只用一个。",
+    "description": "WS-EXT-FINISH, Heading levels screen. $1 how many H1 tags there are."
+  },
+  "hdNoSkips": {
+    "message": "没有跳级——这份大纲每次只下一层。",
+    "description": "WS-EXT-FINISH, Heading levels screen. "
+  },
+  "hdSkipsOne": {
+    "message": "有 $1 处跳级：$2。一次下降超过一层，在任何解析大纲的东西看来都像是缺了一节。",
+    "description": "WS-EXT-FINISH, Heading levels screen. $1 how many skips, $2 the skips themselves. A singular and a plural message rather than a suffix switch."
+  },
+  "hdSkips": {
+    "message": "有 $1 处跳级：$2。一次下降超过一层，在任何解析大纲的东西看来都像是缺了一节。",
+    "description": "WS-EXT-FINISH, Heading levels screen. Plural. See hdSkipsOne."
+  },
+  "hdCountByLevel": {
+    "message": "按层级计数",
+    "description": "WS-EXT-FINISH, Heading levels screen. Caption of the counts card."
+  },
+  "hdSource": {
+    "message": "来源：你浏览器里的这个页面 · 读于 $1",
+    "description": "WS-EXT-FINISH, Heading levels screen. $1 the time it was read."
+  },
+  "hdWordsUnder": {
+    "message": "每个标题下的词数",
+    "description": "WS-EXT-FINISH, Heading levels screen. Heading of the measured-not-graded row."
+  },
+  "hdMeasuredNotGraded": {
+    "message": "只测量，不评分",
+    "description": "WS-EXT-FINISH, Heading levels screen. Status word: there is no honest verdict to attach to section length."
+  },
+  "hdSectionsOne": {
+    "message": "$1 节——最短 $2、中位 $3、最长 $4 个词",
+    "description": "WS-EXT-FINISH, Heading levels screen. $1 how many sections, $2 the shortest, $3 the median, $4 the longest. An empty-heading clause may follow. A singular and a plural message rather than a suffix switch."
+  },
+  "hdSections": {
+    "message": "$1 节——最短 $2、中位 $3、最长 $4 个词",
+    "description": "WS-EXT-FINISH, Heading levels screen. Plural. See hdSectionsOne."
+  },
+  "hdEmptyHeadingsOne": {
+    "message": "。有 $1 个标题在下一个标题之前没有任何文本。",
+    "description": "WS-EXT-FINISH, Heading levels screen. Appended when exactly one heading is empty. Begins with the sentence-ending period of the clause before it. A singular and a plural message rather than a suffix switch."
+  },
+  "hdEmptyHeadings": {
+    "message": "。有 $1 个标题在下一个标题之前没有任何文本。",
+    "description": "WS-EXT-FINISH, Heading levels screen. Plural. See hdEmptyHeadingsOne."
+  },
+  "hdWordsWhy": {
+    "message": "检索系统取走的是某个标题下的那一段，不是整页。比邻居长出许多的一节，要先被砍短才能被引用；下面什么都没有的一节，给引擎的是一个后面没有答案的承诺。没有一个正确的长度，所以这里给的是计数而不是判定。",
+    "description": "WS-EXT-FINISH, Heading levels screen. "
+  },
+  "hdOutline": {
+    "message": "大纲 · $1",
+    "description": "WS-EXT-FINISH, Heading levels screen. Caption of the outline table. $1 the UNCAPPED heading count, not how many rows are shown."
+  },
+  "hdTruncated": {
+    "message": "显示的是本页 $2 个标题中的前 $1 个。上面的计数与跳级覆盖全部；这张表不覆盖。",
+    "description": "WS-EXT-FINISH, Heading levels screen. $1 how many are listed, $2 how many the page has."
+  },
+  "hdEmptyHeading": {
+    "message": "（空标题）",
+    "description": "WS-EXT-FINISH, Heading levels screen. Shown in place of the text when a heading carries none."
+  },
+  "socTitle": {
+    "message": "页面声明",
+    "description": "WS-EXT-FINISH, Page declarations screen. Screen title."
+  },
+  "socIntro": {
+    "message": "这个页面对「不是读者的东西」声明了什么。Open Graph 与 Twitter card 标签的计法与审计完全一致：每一个 og:* 属性、每一个 twitter:* 名称。",
+    "description": "WS-EXT-FINISH, Page declarations screen. Screen intro."
+  },
+  "socOgHeading": {
+    "message": "Open Graph 标签",
+    "description": "WS-EXT-FINISH, Page declarations screen. Heading of the measured-not-graded row."
+  },
+  "socMeasuredNotGraded": {
+    "message": "只测量，不评分",
+    "description": "WS-EXT-FINISH, Page declarations screen. Status word on both declaration rows: no count separates a card that renders from one that does not."
+  },
+  "socOgCount": {
+    "message": "找到 $1 个 Open Graph 标签。",
+    "description": "WS-EXT-FINISH, Page declarations screen. $1 how many were found."
+  },
+  "socOgWhy": {
+    "message": "这里数的是每一个 property 以 og: 开头的 meta 标签，不看具体是哪些。一张卡片要渲染得比一条裸链接更多，需要 og:title 和 og:image；两个 og:locale 也能到同一个数字，却什么都产生不了。到底有哪些标签，看下面的表。没有哪个计数能区分这两种情况，所以这里给的是计数而不是判定。",
+    "description": "WS-EXT-FINISH, Page declarations screen. "
+  },
+  "socTwHeading": {
+    "message": "Twitter card 标签",
+    "description": "WS-EXT-FINISH, Page declarations screen. Heading of the measured-not-graded row."
+  },
+  "socTwCount": {
+    "message": "找到 $1 个 Twitter card 标签。",
+    "description": "WS-EXT-FINISH, Page declarations screen. $1 how many were found."
+  },
+  "socTwWhy": {
+    "message": "这里数的是每一个 name 以 twitter: 开头的 meta 标签，和上一行一样不看具体是哪些。当没有对应的 twitter: 标签时，X 会去读 og: 标签，所以一个一个都没有的页面照样能生成完整卡片。本页设了其中哪些，看下面的表。",
+    "description": "WS-EXT-FINISH, Page declarations screen. "
+  },
+  "socOtherHead": {
+    "message": "head 里的其他声明",
+    "description": "WS-EXT-FINISH, Page declarations screen. Caption of the card."
+  },
+  "socFavicon": {
+    "message": "站点图标",
+    "description": "WS-EXT-FINISH, Page declarations screen. Row label."
+  },
+  "socFaviconLine": {
+    "message": "$1 → $2 · $3",
+    "description": "WS-EXT-FINISH, Page declarations screen. The favicon row. $1 the rel, $2 the href or socFaviconNoHref, $3 the sizes clause."
+  },
+  "socFaviconNoHref": {
+    "message": "（无 href）",
+    "description": "WS-EXT-FINISH, Page declarations screen. Substituted into socFaviconLine when the link carries no href."
+  },
+  "socFaviconSizes": {
+    "message": "sizes $1",
+    "description": "WS-EXT-FINISH, Page declarations screen. Sizes clause when the link declares them. $1 the declared sizes."
+  },
+  "socFaviconNoSizes": {
+    "message": "未声明 sizes",
+    "description": "WS-EXT-FINISH, Page declarations screen. Sizes clause when it declares none. 🔴 Said, not left blank, and NOT as a fault: sizes is optional in HTML."
+  },
+  "socFaviconNone": {
+    "message": "未声明——浏览器或引用卡片会回落到 /favicon.ico，而那个文件可能在、也可能不在",
+    "description": "WS-EXT-FINISH, Page declarations screen. Shown when the page declares no icon link at all."
+  },
+  "socAnalytics": {
+    "message": "分析 / 广告",
+    "description": "WS-EXT-FINISH, Page declarations screen. Row label."
+  },
+  "socAnalyticsNotRead": {
+    "message": "未读取",
+    "description": "WS-EXT-FINISH, Page declarations screen. Shown when the payload carries no third-party reading."
+  },
+  "socAnalyticsNone": {
+    "message": "我们找的那三个一个都没有",
+    "description": "WS-EXT-FINISH, Page declarations screen. Shown when none of the three is declared."
+  },
+  "socHeadNote": {
+    "message": "读自本页声明的脚本，所以由 tag manager 之后注入的标签会读成不存在，而只是提到了名字的页面会读成存在。这两行都不评分——它们在这里，是因为它们是我们已经掌握的、关于这个页面的事实，不是因为它们会影响 AI 引用。",
+    "description": "WS-EXT-FINISH, Page declarations screen. "
+  },
+  "socEmptyValue": {
+    "message": "（空）",
+    "description": "WS-EXT-FINISH, Page declarations screen. Shown in place of a declaration’s value when it is empty."
+  },
+  "socTagsCaption": {
+    "message": "标签",
+    "description": "WS-EXT-FINISH, Page declarations screen. Caption of the declarations table."
+  },
+  "densTitle": {
+    "message": "词频密度",
+    "description": "WS-EXT-FINISH, Word density screen. Screen title."
+  },
+  "densIntro": {
+    "message": "对实时页面可见文本做的词与短语频次统计，用的是审计自己的分词器、停用词表和舍入方式——所以两条路径对同一段文本报出同一个数。",
+    "description": "WS-EXT-FINISH, Word density screen. Screen intro."
+  },
+  "densNotMeasurable": {
+    "message": "本页上无法测量",
+    "description": "WS-EXT-FINISH, Word density screen. Label of the refusal card."
+  },
+  "densCjkRefusal": {
+    "message": "本页文本中有 $1% 是中文、日文或韩文。我们的分词器按字母串切分，会把一整个 CJK 短语当作一个词——所以这里的密度数字描述的是分词器，不是页面。我们宁愿什么都不显示，也不显示一个看起来像测出来的数字。",
+    "description": "WS-EXT-FINISH, Word density screen. $1 the CJK share."
+  },
+  "densCjkRecord": {
+    "message": "仅作记录，不作为密度：分词器在 $2 个可见文本字符上产出了 $1 个 token。存储的审计在同一个页面上撞到同一个限制——这不是两条路径之间的差异。",
+    "description": "WS-EXT-FINISH, Word density screen. $1 tokens, $2 characters."
+  },
+  "densEnough": {
+    "message": "可见文本 $1 个词——足够让引擎有东西可引。",
+    "description": "WS-EXT-FINISH, Word density screen. $1 the word count."
+  },
+  "densThin": {
+    "message": "可见文本 $1 个词。稀薄的页面能让引擎取走的东西很少，而一个在浏览器里构建自己文案的页面，对任何不运行 JavaScript 的东西都会读起来很薄。",
+    "description": "WS-EXT-FINISH, Word density screen. $1 the word count."
+  },
+  "densCounts": {
+    "message": "计数",
+    "description": "WS-EXT-FINISH, Word density screen. Caption of the counts card."
+  },
+  "densCountWords": {
+    "message": "词数",
+    "description": "WS-EXT-FINISH, Word density screen. Counts card row label."
+  },
+  "densCountUnique": {
+    "message": "去重后",
+    "description": "WS-EXT-FINISH, Word density screen. Counts card row label."
+  },
+  "densCountCjk": {
+    "message": "CJK 占比",
+    "description": "WS-EXT-FINISH, Word density screen. Counts card row label: the Chinese/Japanese/Korean share."
+  },
+  "densDeclaredKeywords": {
+    "message": "keywords meta 标签里声明的",
+    "description": "WS-EXT-FINISH, Word density screen. Caption of the declared-keywords card."
+  },
+  "densKeywordsWhy": {
+    "message": "不评分，而且不是因为地方不够：自 2009 年起没有搜索引擎再用这个标签，AI 引擎也不读它。它在这里，是因为它是页面自己对主题的声称，而下面测出来的词才是文本真正说的。两者不一致时，文本在每一个读者和每一台机器面前都赢。",
+    "description": "WS-EXT-FINISH, Word density screen. "
+  },
+  "densTabOne": {
+    "message": "$1 个词",
+    "description": "WS-EXT-FINISH, Word density screen. Tab label for single words. $1 the phrase length. A singular and a plural message rather than a suffix switch."
+  },
+  "densTabMany": {
+    "message": "$1 个词",
+    "description": "WS-EXT-FINISH, Word density screen. Tab label for phrases. $1 the phrase length."
+  },
+  "densTopListOne": {
+    "message": "本页上最高频的 $1 个 $2——这是一份榜单的长度，不是页面上有多少的计数。",
+    "description": "WS-EXT-FINISH, Word density screen. $1 how many rows are shown, $2 the noun for the current tab. A distinct-word clause may follow. A singular and a plural message rather than a suffix switch."
+  },
+  "densTopList": {
+    "message": "本页上最高频的 $1 个 $2——这是一份榜单的长度，不是页面上有多少的计数。",
+    "description": "WS-EXT-FINISH, Word density screen. Plural. See densTopListOne."
+  },
+  "densNounSingleWord": {
+    "message": "单词",
+    "description": "WS-EXT-FINISH, Word density screen. Noun for the 1-word tab, substituted into densTopList."
+  },
+  "densNounPhrase": {
+    "message": "$1 词短语",
+    "description": "WS-EXT-FINISH, Word density screen. Noun for the n-word tabs, substituted into densTopList. $1 the phrase length."
+  },
+  "densDistinctWords": {
+    "message": "　本页一共用了 $1 个不同的词，统计覆盖每一个 token，包括下面这份列表没列到的。",
+    "description": "WS-EXT-FINISH, Word density screen. Appended to densTopList. Begins with a space. $1 the distinct-word count."
+  },
+  "densColumns": {
+    "message": "各列：出现次数 · 页面总词数 · 出现次数 ÷ 总词数。",
+    "description": "WS-EXT-FINISH, Word density screen. 🔴 The denominator is a column and not a footnote: a percentage on its own cannot be checked."
+  },
+  "densTermsCaption": {
+    "message": "词条",
+    "description": "WS-EXT-FINISH, Word density screen. Caption of the terms table."
+  },
+  "densNoCounterpart": {
+    "message": "这么长的短语只在这里被测量。存储的审计只数单词、二连和三连；它不数四词和五词短语，所以这个标签页没有第二份读数可以对照。分词器相同、停用词表相同、分母相同——只是没有对照方。",
+    "description": "WS-EXT-FINISH, Word density screen. Shown on the 4- and 5-word tabs."
+  },
+  "numFiguresHeading": {
+    "message": "正文里的数字",
+    "description": "WS-EXT-FINISH, numeral density row (GEO screen). Heading."
+  },
+  "numFiguresOne": {
+    "message": "$2 个词里有 $1 处数字表达——每千词 $3 处。",
+    "description": "WS-EXT-FINISH, numeral density row. $1 how many numeric expressions, $2 the word count, $3 the rate per thousand. A singular and a plural message rather than a suffix switch."
+  },
+  "numFiguresMany": {
+    "message": "$2 个词里有 $1 处数字表达——每千词 $3 处。",
+    "description": "WS-EXT-FINISH, numeral density row. Plural. See numFiguresOne."
+  },
+  "numFiguresWhy": {
+    "message": "当模型想把某件具体的事归给你时，它引用的就是具体数字。这是一个计数，不是判断：它分不出一个统计数字和一个步骤编号，所以只报告、不评分。",
+    "description": "WS-EXT-FINISH, numeral density row. Why it carries no verdict."
+  },
+  "blRankZeroTitle": {
+    "message": "不向这个域名传递任何权重——这是 0–100 标尺的最低端，不是缺测。",
+    "description": "WS-EXT-FINISH, rank cell tooltip, shared by the Backlinks and Print surfaces. 🔴 A rank of 0 is a real value, not an absent one."
+  },
+  "blTitle": {
+    "message": "外链",
+    "description": "WS-EXT-FINISH, Backlinks screen. Screen title, and the heading of the card shown when nothing is stored."
+  },
+  "blNoSnapshot": {
+    "message": "这个域名没有存储的外链快照。本面板只读缓存，从不购买新的——跑一次免费审计才会把它填上。",
+    "description": "WS-EXT-FINISH, Backlinks screen. "
+  },
+  "blSource": {
+    "message": "来源：$1",
+    "description": "WS-EXT-FINISH, Backlinks screen. Footer when no snapshot is stored. $1 the source."
+  },
+  "blMeasuredZero": {
+    "message": "存储的快照里外链为零、指向它的站点也为零。那是一个测出来的零，不是缺测——这个索引里没有任何东西指向这个域名。",
+    "description": "WS-EXT-FINISH, Backlinks screen. 🔴 The only place a reader is told the zero was MEASURED."
+  },
+  "blCounts": {
+    "message": "计数",
+    "description": "WS-EXT-FINISH, Backlinks screen. Caption of the counts card."
+  },
+  "blCountBacklinks": {
+    "message": "外链数",
+    "description": "WS-EXT-FINISH, Backlinks screen. Counts card row label."
+  },
+  "blCountWebsites": {
+    "message": "来源站点数",
+    "description": "WS-EXT-FINISH, Backlinks screen. Counts card row label."
+  },
+  "blCountsSource": {
+    "message": "来源：$1 · 测于 $2",
+    "description": "WS-EXT-FINISH, Backlinks screen. Footer of the counts card. $1 the source, $2 the date."
+  },
+  "blNoAutoRefresh": {
+    "message": "这里不会自己刷新。只有当有人为这个域名跑一次免费的 Backlink Checker 时它才会变——那一次运行会消耗我们这边一次付费查询，所以每位访客每天限三次。",
+    "description": "WS-EXT-FINISH, Backlinks screen. "
+  },
+  "blCheckerLink": {
+    "message": "免费 Backlink Checker →",
+    "description": "WS-EXT-FINISH, Backlinks screen. Outbound link to the tool that fills this screen."
+  },
+  "blTopKeywordsCapped": {
+    "message": "热门关键词 · $2 中的 $1",
+    "description": "WS-EXT-FINISH, Backlinks screen. 🔴 Names BOTH numbers when they differ — how many rows are shown and how many the snapshot holds. $1 shown, $2 held."
+  },
+  "blTopKeywords": {
+    "message": "热门关键词 · $1",
+    "description": "WS-EXT-FINISH, Backlinks screen. $1 how many rows there are, when nothing is held back."
+  },
+  "blKeywordVariants": {
+    "message": "+$1 个变体",
+    "description": "WS-EXT-FINISH, Backlinks screen. $1 how many near-duplicate phrasings were folded into this row."
+  },
+  "blKeywordColumns": {
+    "message": "粗体是关键词的月搜索量；浅色是这个域名从它那里估计得到的流量。两者都来自上面标注日期的那一份存储快照。",
+    "description": "WS-EXT-FINISH, Backlinks screen. "
+  },
+  "blKeywordOrder": {
+    "message": "这些是这个域名有排名的、搜索量最高的关键词——搜索量是我们向索引要的那个键，所以它是第一个显示的数字，也是往下读会递减的那个。这不是按流量排的名：这些行是按关键词多大挑出来的，不是按它送来多少流量，所以流量那一列上下跳动是合理的。",
+    "description": "WS-EXT-FINISH, Backlinks screen. "
+  },
+  "blKeywordFold": {
+    "message": "流量、搜索量和单次点击成本三者完全相同的行，是同一个关键词的近义写法；它们被折成一行并计为变体。与公开的 /site 报告用的是同一套折叠，所以同一份快照下两边显示的行数相同。",
+    "description": "WS-EXT-FINISH, Backlinks screen. "
+  },
+  "blShowAll": {
+    "message": "显示全部 $1 条",
+    "description": "WS-EXT-FINISH, Backlinks screen. Button that lifts the fold. $1 how many rows there are in all."
+  },
+  "whTitle": {
+    "message": "注册信息",
+    "description": "WS-EXT-FINISH, Whois screen. Screen title, and the heading of the card shown when nothing is stored."
+  },
+  "whNoRecord": {
+    "message": "这个域名没有存储的注册局记录。免费审计会去取一份；本面板只读已经在那里的东西。",
+    "description": "WS-EXT-FINISH, Whois screen. "
+  },
+  "whSource": {
+    "message": "来源：$1",
+    "description": "WS-EXT-FINISH, Whois screen. Footer when no record is stored. $1 the source."
+  },
+  "whAgeYearsOne": {
+    "message": "注册于 $1 年前。域龄是新域名买不到的少数信号之一。",
+    "description": "WS-EXT-FINISH, Whois screen. $1 the age in whole years. A singular and a plural message rather than a suffix switch."
+  },
+  "whAgeYears": {
+    "message": "注册于 $1 年前。域龄是新域名买不到的少数信号之一。",
+    "description": "WS-EXT-FINISH, Whois screen. Plural. See whAgeYearsOne."
+  },
+  "whAgeDays": {
+    "message": "注册于 $1 天前。域名年轻不是缺陷——只是历史还不站在你这边。",
+    "description": "WS-EXT-FINISH, Whois screen. $1 the age in days, for a domain under a year old."
+  },
+  "whExpiresMonths": {
+    "message": "注册还有 $1 个月到期。",
+    "description": "WS-EXT-FINISH, Whois screen. $1 how many months are left."
+  },
+  "whExpiresDays": {
+    "message": "注册将在 $1 天后到期。续费吧——一个到期的域名，是再多 SEO 也扛不过去的那种宕机。",
+    "description": "WS-EXT-FINISH, Whois screen. $1 how many days are left."
+  },
+  "whExpired": {
+    "message": "按存储的记录，注册已于 $1 天前到期。",
+    "description": "WS-EXT-FINISH, Whois screen. $1 how many days ago."
+  },
+  "whRegistrar": {
+    "message": "注册商",
+    "description": "WS-EXT-FINISH, Whois screen. Registry record row label."
+  },
+  "whRegistered": {
+    "message": "注册于",
+    "description": "WS-EXT-FINISH, Whois screen. Registry record row label."
+  },
+  "whUpdated": {
+    "message": "更新于",
+    "description": "WS-EXT-FINISH, Whois screen. Registry record row label."
+  },
+  "whExpires": {
+    "message": "到期于",
+    "description": "WS-EXT-FINISH, Whois screen. Registry record row label."
+  },
+  "whRegistryRecord": {
+    "message": "注册局记录",
+    "description": "WS-EXT-FINISH, Whois screen. Caption of the record card."
+  },
+  "whSourceMeasured": {
+    "message": "来源：$1 · 测于 $2",
+    "description": "WS-EXT-FINISH, Whois screen. Footer of the record card. $1 the source, $2 the date."
+  },
+  "whNsTag": {
+    "message": "NS",
+    "description": "WS-EXT-FINISH, Whois screen. Row tag in the nameserver table."
+  },
+  "whNameservers": {
+    "message": "域名服务器",
+    "description": "WS-EXT-FINISH, Whois screen. Caption of the nameserver table."
+  },
+  "hlTitle": {
+    "message": "hreflang",
+    "description": "WS-EXT-FINISH, hreflang screen. Screen title."
+  },
+  "hlIntro": {
+    "message": "实时页面里的备选语言声明，读法与审计一致：任何 rel 含 \"alternate\" 且带 hreflang 的链接。",
+    "description": "WS-EXT-FINISH, hreflang screen. Screen intro."
+  },
+  "hlLangDeclared": {
+    "message": "页面在 <html> 上声明了 lang=\"$1\"。",
+    "description": "WS-EXT-FINISH, hreflang screen. $1 the declared language."
+  },
+  "hlNoLang": {
+    "message": "<html> 上没有 lang 属性。页面上没有任何东西说明它是用什么语言写的。",
+    "description": "WS-EXT-FINISH, hreflang screen. "
+  },
+  "hlLangWhy": {
+    "message": "我们不在服务器端审计这一项，所以与它下面的一切不同，这里没有存储读数可以对照。引擎在决定要不要把你引进某种语言的答复里时，是从这个声明开始的；没有它，语言就只能靠推断，而错误语言的引用正是从推断里来的。",
+    "description": "WS-EXT-FINISH, hreflang screen. "
+  },
+  "hlNone": {
+    "message": "没有 hreflang 声明。只有当这个站点提供多于一种语言时这才是问题——单语言站点没有它们也是完整的。",
+    "description": "WS-EXT-FINISH, hreflang screen. "
+  },
+  "hlCount": {
+    "message": "$1 条 hreflang 声明。",
+    "description": "WS-EXT-FINISH, hreflang screen. $1 how many were declared."
+  },
+  "hlXDefault": {
+    "message": "声明了 x-default 回落。",
+    "description": "WS-EXT-FINISH, hreflang screen. "
+  },
+  "hlNoXDefault": {
+    "message": "没有 x-default。对于这里没有列出的语言，引擎没有可用的声明回落。",
+    "description": "WS-EXT-FINISH, hreflang screen. "
+  },
+  "hlAlternates": {
+    "message": "备选",
+    "description": "WS-EXT-FINISH, hreflang screen. Caption of the alternates table."
+  },
+  "issTitle": {
+    "message": "问题清单",
+    "description": "WS-EXT-FINISH, Issue list screen. Screen title."
+  },
+  "issNoAudit": {
+    "message": "这个域名还没有存储的审计。",
+    "description": "WS-EXT-FINISH, Issue list screen. "
+  },
+  "issNoCheckList": {
+    "message": "本次回复里没有检查项",
+    "description": "WS-EXT-FINISH, Issue list screen. Label of the card shown when the stored audit came back without its per-check list."
+  },
+  "issNoCheckListBody": {
+    "message": "审计是存着的、也有日期，但这次查询回来时没有带逐项检查列表，所以没有东西可以归入问题。那是我们这一端的事，不是一张健康证明。",
+    "description": "WS-EXT-FINISH, Issue list screen. "
+  },
+  "issAlsoGap": {
+    "message": "同时报为缺口 · $1",
+    "description": "WS-EXT-FINISH, Issue list screen. $1 the gap description."
+  },
+  "issAllPass": {
+    "message": "$1 项检查全部通过",
+    "description": "WS-EXT-FINISH, Issue list screen. $1 how many checks there are."
+  },
+  "issAllPassBody": {
+    "message": "存储的审计里没有任何一项失败、不足或未测量。完整清单在「SEO 检查」和「结构就绪度」两屏上。",
+    "description": "WS-EXT-FINISH, Issue list screen. "
+  },
+  "issPassingHidden": {
+    "message": "$2 项检查中有 $1 项通过，这里不重复列出——它们在「SEO 检查」和「结构就绪度」两屏上有完整清单。排序依据是审计给每一项的权重。",
+    "description": "WS-EXT-FINISH, Issue list screen. $1 how many pass, $2 how many there are."
+  },
+  "drTitle": {
+    "message": "域名评级",
+    "description": "WS-EXT-FINISH, Domain rating screen. Screen title."
+  },
+  "drAhrefsDr": {
+    "message": "Ahrefs Domain Rating",
+    "description": "WS-EXT-FINISH, Domain rating screen. Heading of the card. The vendor’s own product name, so it reads the same in every locale."
+  },
+  "drNotCached": {
+    "message": "我们的缓存里没有这个域名的记录。我们只读已经存下来的东西——本面板从不触发付费查询。",
+    "description": "WS-EXT-FINISH, Domain rating screen. "
+  },
+  "uuTitle": {
+    "message": "未知 URL",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Screen title."
+  },
+  "uuIntro": {
+    "message": "这个源对一条从未发布过的路径会怎么处理。爬虫顺着一条过期或拼错的链接过来，拿到的正是这个；而状态码决定了它是忘掉这个 URL，还是一次次回来要。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Screen intro."
+  },
+  "uuNoReading": {
+    "message": "本次扫描没有对这个源的读数。再读一次本页即可发出一次。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. "
+  },
+  "uuSource": {
+    "message": "来源：这个源，只问了一次 · 读于 $1 · 本次扫描未重发",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. 🔴 The probe’s OWN clock, not the page-read clock. $1 the time the held reading was taken."
+  },
+  "prtTitle": {
+    "message": "可打印报告",
+    "description": "WS-EXT-FINISH, Printable report screen. Screen title."
+  },
+  "prtPrintPdf": {
+    "message": "打印 / 存为 PDF",
+    "description": "WS-EXT-FINISH, Printable report screen. Button that opens the browser’s print dialog."
+  },
+  "prtCopyMarkdown": {
+    "message": "复制为 Markdown",
+    "description": "WS-EXT-FINISH, Printable report screen. Button label, and the label it returns to after the confirmation."
+  },
+  "prtCopied": {
+    "message": "已复制",
+    "description": "WS-EXT-FINISH, Printable report screen. 🔴 Written on the promise, never on the click."
+  },
+  "prtCouldNotCopy": {
+    "message": "复制失败",
+    "description": "WS-EXT-FINISH, Printable report screen. Shown when the clipboard write was refused."
+  },
+  "prtDisclosure": {
+    "message": "这会打开你浏览器的打印对话框，「存为 PDF」是其中一个目标。我们的服务器上不生成任何东西，也不上传任何东西。「复制为 Markdown」把同样这些读数写进你的剪贴板——同样在这台设备上，同样不去别处。",
+    "description": "WS-EXT-FINISH, Printable report screen. "
+  },
+  "prtStamp": {
+    "message": "$1 · $2 · 打印于 $3",
+    "description": "WS-EXT-FINISH, Printable report screen. $1 the host, $2 the URL, $3 the time it was printed."
+  },
+  "prtThisSite": {
+    "message": "本站点",
+    "description": "WS-EXT-FINISH, Printable report screen. Substituted into prtStamp when no host is held."
+  },
+  "prtLocalOnly": {
+    "message": "仅本地检查——没有存储读数",
+    "description": "WS-EXT-FINISH, Printable report screen. Caption above the local-only section."
+  },
+  "prtLocalOnlyNote": {
+    "message": "本页上的任何内容都不是关于这个站点的发现。它是这个浏览器靠自己能读到的东西，之所以印出来，是因为当时只有这些。",
+    "description": "WS-EXT-FINISH, Printable report screen. "
+  },
+  "prtDatesNote": {
+    "message": "本报告里的每一个读数，都带着它在来源那一屏上被测得的日期。这里没有任何东西是为打印重新算过的。",
+    "description": "WS-EXT-FINISH, Printable report screen. "
+  },
+  "geoTitle": {
+    "message": "结构就绪度",
+    "description": "WS-EXT-FINISH, Structure readiness screen. Screen title."
+  },
+  "geoScoreLabel": {
+    "message": "GEO 结构分",
+    "description": "WS-EXT-FINISH, Structure readiness screen. Label of the score card."
+  },
+  "geoNoneStored": {
+    "message": "这个域名没有任何存储内容。免费审计会解析首页并把这里填上。",
+    "description": "WS-EXT-FINISH, Structure readiness screen. Shown on the score card when nothing is stored."
+  },
+  "geoLayerNote": {
+    "message": "「被建成可以被 AI 引用」和「AI 真的引用了你」不是同一回事。这个数字是第一层；AI 可见度那一屏是第二层。",
+    "description": "WS-EXT-FINISH, Structure readiness screen. "
+  },
+  "ccCaption": {
+    "message": "读自本页 · 不计入分数",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Caption above the section, and above the unavailable card."
+  },
+  "ccNodeCap": {
+    "message": "⚠️ 本页声明的 JSON-LD 节点比我们遍历的多：我们读了前 $1 个就停了，还有 $2 个未读。下面四项检查是在我们**确实读到的**那些节点里找名称、sameAs 链接、作者和日期，所以这里任何一处「没找到」都只表示在那前一段里没有——不是页面上没有。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). 🔴 Said BEFORE the checks, because four of them are absence claims read off a list this cap may have cut. $1 the node cap, $2 how many were left unread."
+  },
+  "ccNotAudited": {
+    "message": "我们不在服务器端审计这些，所以没有存储检查可以对照，上面的 GEO 分里也没有它们的任何版本。它们读自你眼前的这个页面、此刻，而且每一项都说明了它为什么会影响 AI 引擎是否引用你。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). "
+  },
+  "ccMeasuredNotGraded": {
+    "message": "只测量，不评分",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Status word on the numeral-density row below the graded list."
+  },
+  "ccBeingRead": {
+    "message": "正在读取中。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Why the client checks are unavailable: the scan is still running."
+  },
+  "ccStale": {
+    "message": "在我们读到之前页面已经跳走了。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Why the client checks are unavailable."
+  },
+  "ccReadFailed": {
+    "message": "这次我们没能读到这个页面。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Why the client checks are unavailable."
+  },
+  "ccNothingToRead": {
+    "message": "这个页面没有给我们任何可供读取的东西。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Why the client checks are unavailable."
+  },
+  "ccUnavailable": {
+    "message": "这里本该还有十项检查——品牌名称、sameAs 链接、作者与日期、时效性、HTTPS、URL 形态、联系/隐私/条款页、问句式标题、列表与表格，以及本页是否服务端渲染。$1 它们都不在上面那个分数里，所以这里没有任何东西是从那个数字里少掉的——但它们在这一屏上的缺席，是我们的读取失败了，不是这个页面缺少它们。",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). $1 the reason, one of ccBeingRead / ccStale / ccReadFailed / ccNothingToRead."
+  },
+  "ccReadAgain": {
+    "message": "再读一次本页",
+    "description": "WS-EXT-FINISH, client-only checks (read from the page in front of the reader, never in the score). Scan button label on the unavailable card."
+  },
+  "ckTitle": {
+    "message": "SEO 检查",
+    "description": "WS-EXT-FINISH, SEO checks screen. Screen title."
+  },
+  "ckScoreLabel": {
+    "message": "SEO 分",
+    "description": "WS-EXT-FINISH, SEO checks screen. Label of the metric row."
+  },
+  "ckNoCheckList": {
+    "message": "本次回复里没有检查项",
+    "description": "WS-EXT-FINISH, SEO checks screen. Label of the card shown when a stored audit came back without its per-check list."
+  },
+  "ckNoCheckListBody": {
+    "message": "上面的审计是存着的、也有日期，但这次查询回来时没有带逐项检查列表。那是我们这一端的事，不是审计不存在。",
+    "description": "WS-EXT-FINISH, SEO checks screen. "
+  },
+  "ckNoAudit": {
+    "message": "这个域名还没有存储的审计，所以没有检查项可列。免费审计会把它们全部跑一遍。",
+    "description": "WS-EXT-FINISH, SEO checks screen. "
+  },
+  "prtExpiredTitle": {
+    "message": "没有可打印的内容",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Title of the print tab when the handoff is gone."
+  },
+  "prtExpiredLabel": {
+    "message": "这份报告已过期",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Label of the expired card."
+  },
+  "prtExpiredBody": {
+    "message": "打开这个页面时带着的那些读数已经不再保留——它们只在浏览器开着的这段时间里存在。请在你想要的页面上打开 TriRank 面板，再按一次打印。",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. "
+  },
+  "themeToggle": {
+    "message": "当前主题：$1。切换到 $2。",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Accessible name of the light/dark toggle. $1 the theme now shown, $2 the one the button switches to."
+  },
+  "themeDark": {
+    "message": "深色",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Theme name, substituted into themeToggle."
+  },
+  "themeLight": {
+    "message": "浅色",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Theme name, substituted into themeToggle."
+  },
+  "headerPrintSr": {
+    "message": "打印",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Screen-reader label on the header’s print button."
+  },
+  "headerCouldNotCopy": {
+    "message": "复制失败",
+    "description": "WS-EXT-FINISH, panel chrome outside any screen. Tooltip on the header’s copy button when the clipboard write was refused."
+  },
+  "lockCtaUpgrade": {
+    "message": "升级",
+    "description": "WS-EXT-FINISH, locked-row call to action. Shown to a reader on the free tier."
+  },
+  "lockCtaSignIn": {
+    "message": "登录",
+    "description": "WS-EXT-FINISH, locked-row call to action. Shown to a reader who is not signed in on a paid tier."
+  },
+  "lockCitedPages": {
+    "message": "最近 $2 天里有 $1 个页面被引用 —— $3",
+    "description": "WS-EXT-FINISH, locked card row — says how much is held back without showing a short list that looks complete. $1 how many are held, $2 the window in days, $3 the call to action."
+  },
+  "lockCitationRate": {
+    "message": "有结论的天数 $1 —— $2",
+    "description": "WS-EXT-FINISH, locked card row — says how much is held back without showing a short list that looks complete. $1 how many days, $2 the call to action."
+  },
+  "lockSelfPositions": {
+    "message": "已存储 $1 个位次 —— $2",
+    "description": "WS-EXT-FINISH, locked card row — says how much is held back without showing a short list that looks complete. $1 how many placements, $2 the call to action."
+  },
+  "lockBrandShare": {
+    "message": "本周有 $1 个品牌被引用 —— $2",
+    "description": "WS-EXT-FINISH, locked card row — says how much is held back without showing a short list that looks complete. $1 how many brands, $2 the call to action."
+  },
+  "lockMoreGaps": {
+    "message": "还有 $1 条 —— $2",
+    "description": "WS-EXT-FINISH, locked card row — says how much is held back without showing a short list that looks complete. The gap list’s locked row. $1 how many are held back, $2 the call to action."
+  },
+  "histSignInDays": {
+    "message": "登录可看 $1 天",
+    "description": "WS-EXT-FINISH, history block. Sign-in label naming the window a signed-in reader gets. $1 the window in days."
+  },
+  "uuDisclosure": {
+    "message": "我们向这个源请求过一次 $1，看它对一个不可能存在的 URL 怎么答复。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. 🔴 Names the exact path, because this is the only request the extension makes that the reader’s site did not ask for. $1 the path."
+  },
+  "ovSideOurFetch": {
+    "message": "我们抓的那次",
+    "description": "WS-EXT-FINISH, Overview comparison table. Names which of the two readings a verdict came from. 🔴 ON SCREEN THROUGH A DATA ATTRIBUTE. It is written to `dataset.side` and drawn by a CSS `content: attr(...)` rule, so no reader of the panel’s syntax tree can see that it is copy — it is not at a DOM text position by any rule a source walk has. Found by hand."
+  },
+  "ovSideThisPage": {
+    "message": "此刻这个页面",
+    "description": "WS-EXT-FINISH, Overview comparison table. Names which of the two readings a verdict came from. 🔴 ON SCREEN THROUGH A DATA ATTRIBUTE. It is written to `dataset.side` and drawn by a CSS `content: attr(...)` rule, so no reader of the panel’s syntax tree can see that it is copy — it is not at a DOM text position by any rule a source walk has. Found by hand."
+  },
+  "cardCitedPages": {
+    "message": "引擎引用过的页面",
+    "description": "WS-EXT-FINISH, insight card heading. "
+  },
+  "cardCitationRate": {
+    "message": "引用率随时间变化",
+    "description": "WS-EXT-FINISH, insight card heading. "
+  },
+  "cardCoOccurring": {
+    "message": "还有谁一起出现",
+    "description": "WS-EXT-FINISH, insight card heading. "
+  },
+  "cardCoOccShowing": {
+    "message": "显示 $2 个中的 $1 个 —— 其余 $3",
+    "description": "WS-EXT-FINISH, insight card heading. Cap row on the co-occurring list. 🔴 Not a lock row: this is a cap, not something a higher tier buys. $1 shown, $2 total, $3 the call to action."
+  },
+  "cardSelfPositions": {
+    "message": "你的页面排在哪里",
+    "description": "WS-EXT-FINISH, insight card heading. "
+  },
+  "cardBrandShare": {
+    "message": "本周品牌份额",
+    "description": "WS-EXT-FINISH, insight card heading. "
+  },
+  "uuRequestFailed": {
+    "message": "我们没能完成那次请求$1。那是我们的限制，不是关于这个站点的发现。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. $1 an optional bracketed error, or empty."
+  },
+  "uuErrorPart": {
+    "message": "（$1）",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. The bracketed error inside uuRequestFailed. Begins with a space. $1 the error."
+  },
+  "uuRedirectHome": {
+    "message": "未知 URL 被重定向到首页。搜索引擎把这当作软 404。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Verdict."
+  },
+  "uuClean": {
+    "message": "未知 URL 返回 $1。搜索引擎会干净地丢弃它们。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Verdict. $1 the status."
+  },
+  "uuSoft404": {
+    "message": "未知 URL 返回 200（软 404）。搜索引擎可能会索引空页面并浪费抓取预算。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Verdict."
+  },
+  "uuServerFault": {
+    "message": "未知 URL 返回 $1。搜索引擎把这当作服务器故障并不断重试；失效的入站链接看起来像宕机。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Verdict. $1 the status."
+  },
+  "uuOther": {
+    "message": "未知 URL 返回 $1。",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Verdict for any other status. $1 the status."
+  },
+  "uuRowStatus": {
+    "message": "状态码",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Detail row label."
+  },
+  "uuRowRedirected": {
+    "message": "是否重定向",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Detail row label."
+  },
+  "uuRedirectYes": {
+    "message": "是 → $1",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. $1 the final path."
+  },
+  "uuRedirectNo": {
+    "message": "否",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. "
+  },
+  "uuRowContentType": {
+    "message": "Content-Type",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Detail row label. The HTTP header name, so it reads the same in every locale."
+  },
+  "uuNotHtml": {
+    "message": "不是 text/html",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Shown when the response was not HTML."
+  },
+  "uuRowBody": {
+    "message": "响应体",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. Detail row label. 🔴 Named for the response bytes, not \"page size\": a 200 carrying two hundred bytes and one carrying a full layout are different soft-404s."
+  },
+  "uuBytes": {
+    "message": "$1 字节",
+    "description": "WS-EXT-FINISH, Unknown URLs screen. $1 how many bytes came back."
+  },
+  "mdReadDate": {
+    "message": " _(读于 $1)_",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Date suffix on a section. Begins with a space. $1 the date."
+  },
+  "mdNoReadDate": {
+    "message": " _(无读取日期)_",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Date suffix when the reading carries no date. Begins with a space."
+  },
+  "mdTitle": {
+    "message": "# TriRank 读数 —— $1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Document title. $1 the host, or mdThisSite."
+  },
+  "mdThisSite": {
+    "message": "本站点",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Substituted into mdTitle when no host is held."
+  },
+  "mdUrl": {
+    "message": "URL：$1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 the address the reading is of."
+  },
+  "mdPlan": {
+    "message": "套餐：$TIER$$QUOTA$",
+    "description": "WS-EXT-FINISH, the Markdown report. $TIER$ the plan name, $QUOTA$ an optional quota clause that begins with its own space. Absent entirely when the server said nothing about a plan. 🔴 NAMED, NOT POSITIONAL, AND NOT A STYLE CHOICE. Two positional markers written side by side make the pair of dollar signs between them read as a named placeholder’s delimiters, so Chrome looks for a declaration that is not there and refuses to load the whole extension — the catalogue is parsed before any of it runs. A named placeholder carries its own delimiters, so two of them can sit next to each other. Anything that follows another placeholder with no separator has to be named.",
+    "placeholders": {
+      "tier": {
+        "content": "$1"
+      },
+      "quota": {
+        "content": "$2"
+      }
+    }
+  },
+  "mdPlanQuota": {
+    "message": " · 今日已用 $1/$2 次",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Quota clause inside mdPlan. Begins with a space."
+  },
+  "mdOverall": {
+    "message": "## 总览",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading."
+  },
+  "mdScore": {
+    "message": "- AI 可见度：**$1/100**$2",
+    "description": "WS-EXT-FINISH, the Markdown report. 🔴 THE MEASURED CITATION READING, and the label says so. It carried the headline’s old label — a count of checks weighted by the audit — for the length of one edit, while the headline had already moved to this reading: the number changed underneath a sentence that stayed. $1 the score, $2 the date suffix, which must be the CITATION reading’s date and not the audit’s."
+  },
+  "mdScoreLine": {
+    "message": "- 分数：$1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 a line that already ends in its own “no score”, so this one does not repeat it."
+  },
+  "mdCounts": {
+    "message": "- 严重：$1 · 警告：$2 · 通过：$3（共 $4 项检查；$5 项信息，$6 项不可测）",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 critical, $2 warning, $3 passed, $4 how many checks, $5 info, $6 not measurable."
+  },
+  "mdDomainRating": {
+    "message": "- Domain Rating：$RATING$$DATE$",
+    "description": "WS-EXT-FINISH, the Markdown report. $RATING$ the rating, $DATE$ the date suffix, which begins with its own space. 🔴 NAMED, NOT POSITIONAL, AND NOT A STYLE CHOICE. Two positional markers written side by side make the pair of dollar signs between them read as a named placeholder’s delimiters, so Chrome looks for a declaration that is not there and refuses to load the whole extension — the catalogue is parsed before any of it runs. A named placeholder carries its own delimiters, so two of them can sit next to each other. Anything that follows another placeholder with no separator has to be named.",
+    "placeholders": {
+      "rating": {
+        "content": "$1"
+      },
+      "date": {
+        "content": "$2"
+      }
+    }
+  },
+  "mdEngines": {
+    "message": "## AI 引擎$1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading. $1 the date suffix, or empty."
+  },
+  "mdEngineRow": {
+    "message": "- $1：$2",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 the engine, $2 its verdict."
+  },
+  "mdNotChecked": {
+    "message": "未检查",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Verdict for an engine the payload carried no word for."
+  },
+  "mdEngineHistory": {
+    "message": "## 引擎历史",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading."
+  },
+  "mdTimeline": {
+    "message": "时间线",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Sub-heading inside the history section."
+  },
+  "mdSection": {
+    "message": "## $1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading taken from a card view. $1 the card’s own heading."
+  },
+  "mdFixFirst": {
+    "message": "## 优先修 · $1",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading. $1 how many rows follow."
+  },
+  "mdNothingFailing": {
+    "message": "- 已读到的内容里没有失败项。",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. "
+  },
+  "mdFixRow": {
+    "message": "- **$1** —— $2 _（$3）_",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 the check label, $2 its detail, $3 which reading it came from."
+  },
+  "mdNoDetail": {
+    "message": "未记录细节",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Substituted into mdFixRow when the check carried none."
+  },
+  "mdWhereStored": {
+    "message": "存储的审计，首页交付原样",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. 🔴 Printed per row because the list mixes two readings of two different things."
+  },
+  "mdWhereLive": {
+    "message": "在你浏览器里从本页读到的",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. The other of the two. See mdWhereStored."
+  },
+  "mdCrawlerAccess": {
+    "message": "## 爬虫访问",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Section heading."
+  },
+  "mdCrawlerNotRun": {
+    "message": "- 未运行。可达性测试会发出真实请求，只在被要求时才跑。",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. "
+  },
+  "mdCrawlerRun": {
+    "message": "_从你的浏览器、你的 IP 发出$1_",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. $1 the date suffix."
+  },
+  "mdCrawlerHeader": {
+    "message": "| 爬虫 | 厂商 | 结果 |",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Table header row. The pipes are Markdown and must survive translation."
+  },
+  "mdSource": {
+    "message": "来源：TriRank 扩展 $1 · $2",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Footer. $1 the version, $2 the date."
+  },
+  "mdUnknownVersion": {
+    "message": "版本未知",
+    "description": "WS-EXT-FINISH, the Markdown report (Copy as Markdown / the print sheet’s clipboard copy). 🔴 It is a DOCUMENT a reader hands to someone, not a data export — every section it prints is built from the same view functions the screens render, so leaving its scaffolding in English after those views were translated would paste a Chinese report under English headings. Substituted into mdSource when the manifest version could not be read."
+  },
+  "ckStatusPass": {
+    "message": "通过",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Check status word."
+  },
+  "ckStatusPartial": {
+    "message": "部分",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Check status word."
+  },
+  "ckStatusFail": {
+    "message": "未通过",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Check status word."
+  },
+  "ckStatusNeedsConnection": {
+    "message": "这里测不了",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Check status word. 🔴 Neutral: this is OUR limit for that row, not a verdict on the site."
+  },
+  "ckStatusNotMeasured": {
+    "message": "未测量",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Check status word for a client check that had nothing to read. Same neutral treatment."
+  },
+  "engVerdictCited": {
+    "message": "被引用",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Engine verdict."
+  },
+  "engVerdictNotCited": {
+    "message": "未被引用",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Engine verdict."
+  },
+  "engVerdictAnswered": {
+    "message": "已答复",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Engine verdict: the engine answered but the quartet is not complete, so no per-engine verdict is published yet."
+  },
+  "engVerdictNoAnswer": {
+    "message": "尚无答复",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Engine verdict."
+  },
+  "engVerdictNotProbed": {
+    "message": "快速检查未跑",
+    "description": "WS-EXT-1015-PROBE-SCOPE, verdict vocabulary. Engine verdict on the citation reading's `none` state. That reading holds only this panel's own quick check, so the chip says that check has not run — never that no engine was ever asked."
+  },
+  "accAllowed": {
+    "message": "放行",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Crawler access state."
+  },
+  "accBlocked": {
+    "message": "被拦",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Crawler access state."
+  },
+  "accChallenge": {
+    "message": "质询或错误",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Crawler access state. 🔴 429 and 503 land here, not in blocked: they mean “not now”, not “not you”."
+  },
+  "accUnmeasured": {
+    "message": "未测量",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Crawler access state."
+  },
+  "issSectionFailing": {
+    "message": "未通过",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section heading."
+  },
+  "issSectionFailingLead": {
+    "message": "这些是审计能查、而且没有通过的项。它们也正是审计报告为缺口的那些。",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section lead."
+  },
+  "issSectionPartly": {
+    "message": "部分具备",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section heading."
+  },
+  "issSectionPartlyLead": {
+    "message": "存在，但不是检查要找的那个形状。通常这是离通过最近的一段路。",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section lead."
+  },
+  "issSectionNotMeasurable": {
+    "message": "一次性审计测不了",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section heading."
+  },
+  "issSectionNotMeasurableLead": {
+    "message": "这些项本身没有任何问题。它们需要一次性审计拿不到的数据源，所以审计如实记下这一点而不是去猜——而且它的分数是在不含这些项的情况下算的。",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Issue list section lead."
+  },
+  "histNoHistory": {
+    "message": "还没有历史——还没有引擎为这个域名做过探测",
+    "description": "WS-EXT-FINISH, verdict vocabulary. History block, zero state."
+  },
+  "histSignInRecent": {
+    "message": "登录可看近期历史",
+    "description": "WS-EXT-FINISH, verdict vocabulary. History block sign-in label when no window is known."
+  },
+  "histUpgradeFull": {
+    "message": "升级可看完整历史",
+    "description": "WS-EXT-FINISH, verdict vocabulary. History block upgrade label."
+  },
+  "chkLiveContradicts": {
+    "message": "本页现在已经有它了；存储的判定会在审计下次运行时变化。",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Printed beside a stored verdict the live read contradicts. 🔴 The stored verdict is NOT rewritten — only the instruction is withdrawn."
+  },
+  "trafficRefreshButton": {
+    "message": "刷新这份估算",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Traffic screen refresh button. One spelling, used by the button and by the code that restores it."
+  },
+  "blSourceDataforseo": {
+    "message": "DataForSEO 外链索引，已缓存",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Where a backlink count came from."
+  },
+  "blSourceChecker": {
+    "message": "经免费 Backlink Checker 取得的 DataForSEO 外链索引，已缓存",
+    "description": "WS-EXT-FINISH, verdict vocabulary. Where a backlink count came from."
+  },
+  "navGroupSummary": {
+    "message": "概览",
+    "description": "WS-EXT-FINISH, navigation rail. Group name."
+  },
+  "navAgentVsHuman": {
+    "message": "机器 vs 人类",
+    "description": "WS-EXT-FINISH, navigation rail. Rail row for the Agent view vs Human view screen. Shorter than that screen’s own title (ahTitle) because the rail is narrow; both name the same screen."
+  },
+  "navStructure": {
+    "message": "结构",
+    "description": "WS-EXT-FINISH, navigation rail. Tab label, and the group name inside it."
+  },
+  "navGroupSiteBasics": {
+    "message": "站点基础",
+    "description": "WS-EXT-FINISH, navigation rail. Group name."
+  },
+  "navGroupExternal": {
+    "message": "外部（缓存）",
+    "description": "WS-EXT-FINISH, navigation rail. Group name for the rows that read a stored third-party lookup rather than the page."
+  },
+  "liveTitleChars": {
+    "message": "$1/60 字符 —— 「$2」",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 the title length, $2 the title. The denominator is the server’s own threshold, not a second judgement."
+  },
+  "liveNoTitle": {
+    "message": "没有 title 标签",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveDescChars": {
+    "message": "$1/160 字符",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 the description length."
+  },
+  "liveNoDesc": {
+    "message": "没有 meta description",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveNoCanonical": {
+    "message": "没有 canonical 标签",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveRobotsMeta": {
+    "message": "robots：$1",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 the meta robots content, verbatim."
+  },
+  "liveNoRobotsMeta": {
+    "message": "没有 robots meta",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveViewportPresent": {
+    "message": "有 viewport",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveNoViewport": {
+    "message": "没有 viewport meta",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveH1Count": {
+    "message": "$1 个 H1",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 how many H1 tags the live page carries."
+  },
+  "liveOgCount": {
+    "message": "$1 个 Open Graph 标签",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 how many."
+  },
+  "liveTwitterCount": {
+    "message": "$1 个 Twitter card 标签",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 how many."
+  },
+  "liveNoJsonLd": {
+    "message": "没有 JSON-LD",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveBreadcrumbPresent": {
+    "message": "有 BreadcrumbList",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveNoBreadcrumb": {
+    "message": "没有 BreadcrumbList",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveInternalLinks": {
+    "message": "$1 条站内链接",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 how many."
+  },
+  "liveNoImages": {
+    "message": "没有图片",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveWithoutAlt": {
+    "message": "$2 张中有 $1 张没有 alt",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 how many lack alt, $2 how many there are."
+  },
+  "liveFaqPresent": {
+    "message": "有 FAQPage",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveNoFaq": {
+    "message": "没有 FAQPage",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveReachable": {
+    "message": "可达",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveSitemapReachable": {
+    "message": "可达，而且长得像站点地图",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveFetchFailed": {
+    "message": "我们的请求失败了（$1）—— 是没读到，不是不存在",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. 🔴 Re-attributes a failure on OUR side. A statement about the site would be the wrong claim here. $1 the error."
+  },
+  "liveNotReachable": {
+    "message": "不可达（$1）",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. 🔴 Still correct for a STATUS — a 404 or a 503 is the server answering, and that answer is a fact about the site. $1 the status."
+  },
+  "liveNoResponse": {
+    "message": "无应答",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. Substituted into liveNotReachable when nothing came back."
+  },
+  "liveLlmsPresent": {
+    "message": "存在",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveLlmsEmpty": {
+    "message": "存在但是空的",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. 🔴 Not folded into “present”: the stored check fails a blank file, so folding would put the pair permanently out of step."
+  },
+  "liveEditorialLink": {
+    "message": "链接到了编辑方针 / 方法论 / 关于我们页面",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveNoEditorialLink": {
+    "message": "本页没有编辑方针、方法论或关于我们的链接",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "liveRobotsUnknown": {
+    "message": "我们的请求失败了（$1）—— 我们没有读到 robots.txt，所以它拦了哪些爬虫是未知的",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. 🔴 Unknown, said as unknown: nothing about a timeout says no crawler is blocked. $1 the error."
+  },
+  "liveRobots5xx": {
+    "message": "robots.txt 返回了 HTTP $1 —— 那是服务器错误，不是文件不存在。RFC 9309 要求爬虫在此期间假定「完全禁止」，所以这与「什么都没被拦」正好相反",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. 🔴 4xx and 5xx are opposite answers under RFC 9309 §2.3.1.3 / §2.3.1.4. $1 the status."
+  },
+  "liveNoRobotsFile": {
+    "message": "没有 robots.txt$1 —— 没有文件可读，也就什么都没被拦",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 an optional bracketed status, or empty. Correct for a 4xx and the exact reverse of the rule for a 5xx."
+  },
+  "liveRobotsStatusPart": {
+    "message": "（HTTP $1）",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. The bracketed status inside liveNoRobotsFile. Begins with a space. $1 the status."
+  },
+  "liveBlocks": {
+    "message": "拦了 $1",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. $1 the blocked crawler tokens."
+  },
+  "liveNoneBlocked": {
+    "message": "没有被拦的",
+    "description": "WS-EXT-FINISH, live reading beside a stored check. 🔴 A RAW READING, NEVER A VERDICT — the stored check keeps its own status and the difference between the two is left visible rather than graded. "
+  },
+  "toolNoteAeo": {
+    "message": "这两个工具都不会让引擎引用你，没有任何东西能做到。它们改变的是引擎来看的时候会找到什么：llms.txt 是一个文件，写明你站点上值得读的页面；FAQ 那个会起草问答对以及配套的 FAQPage JSON-LD。这一屏上的任何内容都不读这两个文件——它报告的是已经发生过的引用，不是你的站点声明了什么。FAQ 那个会为你跑一次模型，每位访客每天限三次。",
+    "description": "WS-EXT-FINISH, tool block on the aeo screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteGeo": {
+    "message": "这两个工具写的正是上面那些检查要找的两份产物。两者都完全在你的浏览器里运行——什么都不会发给我们，也没有次数限制。",
+    "description": "WS-EXT-FINISH, tool block on the geo screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteChecks": {
+    "message": "上面的检查里有两项是 title 标签和 meta description。这两个工具会按那两项检查期望的长度起草它们。两者都会为你跑一次模型，每位访客每天限三次。",
+    "description": "WS-EXT-FINISH, tool block on the checks screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteSchema": {
+    "message": "这两个工具产出的正是这一屏读回来的 JSON-LD：第一个适用于任何类型，第二个针对上面点名的 FAQPage 块。如果这一屏说你没有 FAQPage，第二个会用页面上已有的问题起草它——但如果它说的是你 FAQPage 里的问题不在页面上，那么再生成更多 schema 就是走错了方向：把那些答案发布到读者看得见的地方，或者把它们从块里删掉。第一个在你的浏览器里运行；第二个会跑一次模型，每位访客每天限三次。",
+    "description": "WS-EXT-FINISH, tool block on the schema screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteSocial": {
+    "message": "上面那份列表是这些标签；这两个工具是把它填满的两半。第一个写 og: 和 twitter: 块本身，第二个生成 og:image 标签必须指向的那张 1200×630 图片——请在上面的标签列表里找那个键，因为这一屏上的计数是所有 og: 属性加在一起，从不说明那一个是否在其中。两者都在你的浏览器里运行，什么都不会被上传。",
+    "description": "WS-EXT-FINISH, tool block on the social screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteRobots": {
+    "message": "这一屏从站点上读两个文件；这两个工具负责写它们。第一个按名字覆盖到各个 AI 爬虫，而不只是 Googlebot，所以上面报出来的一次拦截有具体可改的东西。两者都完全在你的浏览器里运行——什么都不会发给我们，也没有次数限制。",
+    "description": "WS-EXT-FINISH, tool block on the robots screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteCrawler": {
+    "message": "这一屏负责发出请求；这里没有任何东西会写 robots.txt。那个生成器会写，而且它会写进上面列出的每一个爬虫，包括这里标为未实测的那些。它完全在你的浏览器里运行——什么都不会发给我们，也没有次数限制。",
+    "description": "WS-EXT-FINISH, tool block on the crawler screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteHreflang": {
+    "message": "这个工具写的正是上面那一屏读回来的块，包含 x-default——它的缺席在上面是单独点名的。它在你的浏览器里运行，没有次数限制。它说不出你的站点到底需不需要 hreflang：单语言站点没有它也是完整的，这正是上面第一行说的。",
+    "description": "WS-EXT-FINISH, tool block on the hreflang screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteLinks": {
+    "message": "上面那个计数是「找到的链接」，不是「能用的链接」——这一屏从不跟进任何一条。这个工具会逐条访问站内链接并报告死链。它跑在我们的服务器上而不是你的浏览器里，所以按访客限次，而且每个页面只查前二十五条链接。",
+    "description": "WS-EXT-FINISH, tool block on the links screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteHeadings": {
+    "message": "把你的 HTML 粘进分析器，用来检查标题长度。它在你的浏览器里运行。",
+    "description": "WS-EXT-FINISH, tool block on the headings screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteDensity": {
+    "message": "把你的文案粘进分析器，用来比较不同稿件之间的词频。它在你的浏览器里运行。",
+    "description": "WS-EXT-FINISH, tool block on the density screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "toolNoteImages": {
+    "message": "把你的 HTML 粘进审查器，用来离开页面单独检查 alt 文本。它在你的浏览器里运行。",
+    "description": "WS-EXT-FINISH, tool block on the images screen. What these tools do and do not do, folded under the links. 🔴 The fold is over the explanation, never over the thing to click."
+  },
+  "mdChecksPassed": {
+    "message": "- 按诊断自己的权重计的通过项：**$1/100**$2",
+    "description": "WS-EXT-FINISH, the Markdown report. The audit’s own weighted count, demoted out of the headline and kept here under the label it has always had. Absent when no audit is stored — a reading nobody took is not a zero. $1 the score, $2 the audit’s date suffix."
+  },
+  "cardNextActionTitle": {
+    "message": "本周一件事",
+    "description": "WS-EXT-1015-NEXT-ACTION, Overview. Heading of the card that shows the ONE task TriRank picked for the reader's own site this week. Rendered only when the server sends a non-null nextAction (signed in, owned site, something to act on); the task sentence under it comes from the server in English."
+  },
+  "cardNextActionOpen": {
+    "message": "在 TriRank 中打开",
+    "description": "WS-EXT-1015-NEXT-ACTION, Overview. The card's only link, to the reader's action queue (/actions) on trirankai.com."
+  },
+  "enginesLineQuickCheckNotRun": {
+    "message": "面板的快速检查还没在这个域名上跑过 —— 没有分数",
+    "description": "WS-EXT-1015-PROBE-SCOPE, Overview headline and Markdown report, citation state `none`. Scoped to this panel's quick check: the reading behind it does not include the owner's daily sweep or the public checkers, so it must not claim anything about the engines."
+  },
+  "ovScoresOwnedTracked": {
+    "message": "查看你的监测问题和定期检查结果",
+    "description": "WS-EXT-1015-PROBE-SCOPE, Overview AI-visibility card, shown only to the site's owner when the quick check has not run. Points at /ai-visibility, where the daily tracked-question checks live."
+  },
+  "contextTitle": {
+    "message": "检查上下文"
+  },
+  "contextStored": {
+    "message": "已保存的测量 · 打开面板不发起 AI 检查。"
+  },
+  "contextPageReady": {
+    "message": "页面结构：来自当前浏览器读取。"
+  },
+  "contextPageStale": {
+    "message": "页面已改变，请从工具栏重新打开 TriRank 以授权读取。"
+  },
+  "contextPagePending": {
+    "message": "页面结构暂不可读；已保存的域名测量是独立数据。"
+  },
+  "contextOwnerOnly": {
+    "message": "私有监测历史和问题仅对该站点已登录的所有者显示。付费套餐不授予读取其他账号数据的权限。"
+  },
+  "contextOwnerCadence": {
+    "message": "你的监测：此处为 Global 结果，每个问题每 $1 天到期检查。下方品牌快速检查属于另一种测量。"
+  },
+  "contextOwner": {
+    "message": "持续监测历史与品牌快速检查分开显示。"
+  },
+  "contextPlatformLimit": {
+    "message": "TriRank 平台查询上限已触发，不是你的个人额度用尽，也不代表此站点有问题。"
+  },
+  "contextMonitoringUnavailable": {
+    "message": "监测记录暂时无法读取。缺失数据不代表零，也不代表未被引用。"
+  }
+}
